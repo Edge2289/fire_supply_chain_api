@@ -1,0 +1,15 @@
+{
+    "name": "基础管理",
+    "alias": "basisinfo",
+    "description": "基础管理模块",
+    "version": "1.0.0",
+    "keywords": [],
+    "order": 100,
+    "services": [
+        "\\catchAdmin\\common\\BasisInfoService"
+    ],
+    "aliases": [],
+    "files": [],
+    "requires": [],
+    "enable": true
+}
