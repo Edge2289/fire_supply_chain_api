@@ -8,19 +8,18 @@
 // +----------------------------------------------------------------------
 // | Author: JaguarJack [ njphper@gmail.com ]
 // +----------------------------------------------------------------------
-namespace catchAdmin\common;
+namespace catchAdmin\basisinfo;
 
 use catchAdmin\system\events\AttachmentEvent;
 use catcher\command\MigrateRunCommand;
 use catcher\command\SeedRunCommand;
 use catcher\ModuleService;
 
-class CommonService extends ModuleService
+class BasisInfoService extends ModuleService
 {
 
     public function loadRouteFrom()
     {
-        // TODO: Implement loadRouteFrom() method.
         return __DIR__ . DIRECTORY_SEPARATOR . 'route.php';
     }
 

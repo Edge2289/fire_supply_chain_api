@@ -10,6 +10,5 @@
 /* @var think\Route $router */
 
 $router->group(function () use ($router){
-    # 登入
-    $router->get('upload/img', '\catchAdmin\basisinfo\controller\UploadFile@uploadImg');
+    $router->get('suppliers/changeSuppliersSetting', '\catchAdmin\basisinfo\controller\Suppliers@changeSuppliersSetting');
 });

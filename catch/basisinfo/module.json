@@ -6,7 +6,7 @@
     "keywords": [],
     "order": 100,
     "services": [
-        "\\catchAdmin\\common\\BasisInfoService"
+        "\\catchAdmin\\basisinfo\\BasisInfoService"
     ],
     "aliases": [],
     "files": [],
