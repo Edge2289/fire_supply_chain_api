@@ -15,32 +15,10 @@ use Phinx\Db\Adapter\MysqlAdapter;
 
 class BusinessLicense extends Migrator
 {
-    /**
-     * Change Method.
-     *
-     * Write your reversible migrations using this method.
-     *
-     * More information on writing migrations is available here:
-     * http://docs.phinx.org/en/latest/migrations.html#the-abstractmigration-class
-     *
-     * The following commands can be used in this method and Phinx will
-     * automatically reverse them when rolling back:
-     *
-     *    createTable
-     *    renameTable
-     *    addColumn
-     *    renameColumn
-     *    addIndex
-     *    addForeignKey
-     *
-     * Remember to call "create()" or "update()" and NOT "save()" when working
-     * with the Table class.
-     */
     public function change()
     {
-        $table = $this->table('basis_business_license', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '营业执照表', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
-        $table->addColumn('business_license_url', 'string', ['limit' => 1000, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '执照编号图片url',])
-            ->addColumn('company_name', 'string', ['limit' => 1000, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '企业名称',])
+        $table = $this->table('business_license', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '营业执照表', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table->addColumn('company_name', 'string', ['limit' => 1000, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '企业名称',])
             ->addColumn('foreign_company', 'string', ['limit' => 1000, 'default' => "", 'signed' => false, 'comment' => '国外注册公司',])
             ->addColumn('company_type', 'string', ['limit' => 1000, 'default' => '', 'signed' => false, 'comment' => '企业类型',])
             ->addColumn('unified_code', 'string', ['limit' => 1000, 'null' => false, 'default' => '', 'signed' => false, 'comment' => '统一社会信用代码',])
