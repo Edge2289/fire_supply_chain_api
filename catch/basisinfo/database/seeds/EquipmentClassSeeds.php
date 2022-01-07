@@ -7,9 +7,6 @@
  * Time: 17:16
  */
 
-namespace catchAdmin\basisinfo\database\seeds;
-
-
 use think\migration\Seeder;
 
 /**
@@ -20,7 +17,7 @@ class EquipmentClassSeeds extends Seeder
 {
     public function run()
     {
-        \catcher\Utils::importTreeData($this->getPermissions(), 'equipment_classSeeds');
+        \think\facade\Db::name( 'equipment_class')->insertAll($this->getPermissions());
     }
 
     protected function getPermissions()
