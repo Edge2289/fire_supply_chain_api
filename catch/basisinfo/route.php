@@ -10,5 +10,9 @@
 /* @var think\Route $router */
 
 $router->group(function () use ($router){
+//    $router->get('suppliers/changeSuppliersSetting', '\catchAdmin\basisinfo\controller\Suppliers@changeSuppliersSetting');
+})->middleware('auth');
+
+$router->group(function () use ($router){
     $router->get('suppliers/changeSuppliersSetting', '\catchAdmin\basisinfo\controller\Suppliers@changeSuppliersSetting');
 });

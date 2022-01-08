@@ -13,31 +13,11 @@ use think\migration\Migrator;
 use think\migration\db\Column;
 use Phinx\Db\Adapter\MysqlAdapter;
 
-class SuppleMentary extends Migrator
+class SuppleInfo extends Migrator
 {
-    /**
-     * 补充信息
-     * supplementary
-     *被授权人姓名	name
-     *证件号码	certid
-     *手机号	phone
-     *邮箱	email
-     *授权日期	license_start_date
-    license_end_date
-    授权区域	license_area
-    产品线	product_line
-    备注	other
-
-     *发票抬头	invoice_head
-     *税号	invoice_no
-     *开户银行	invoice_bank
-     *银行账号	invoice_bankno
-    企业地址	company_address
-    企业电话	company_phone
-     */
     public function change()
     {
-        $table = $this->table('supplementary', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '补充信息', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table = $this->table('supple_info', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '补充信息', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('business_license_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '营业执照id',])
             ->addColumn('name', 'string', ['limit' => 1000, 'null' => false, 'default' => "", 'signed' => true, 'comment' => '被授权人姓名',])
             ->addColumn('certid', 'string', ['limit' => 1000, 'null' => false, 'default' => "", 'signed' => true, 'comment' => '证件号码',])

@@ -15,19 +15,6 @@ use Phinx\Db\Adapter\MysqlAdapter;
 
 class BusinessAttachment extends Migrator
 {
-    /**
-     *
-     * 1、营业执照
-    2、医疗器械经营许可证/生产许可证
-    3、第二类医疗器械经营备案凭证/生产备案凭证
-    4、开票资料
-    5、法人委托授权书
-    6、质量保证协议书
-    7、出库单模板
-    8、印章备案模板
-    9、质量体系调查表
-    10、年度报告
-     */
     public function change()
     {
         $table = $this->table('business_attachment', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '备案凭证', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);

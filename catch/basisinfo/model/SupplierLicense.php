@@ -16,9 +16,11 @@ use catcher\base\CatchModel;
  * Class Supplier
  * @package catchAdmin\basisinfo\model
  */
-class Supplier extends CatchModel
+class SupplierLicense extends CatchModel
 {
+    protected $name = 'business_license';
 
+    protected $pk = 'id';
     // 字段
     protected $field = [
         'id', //
