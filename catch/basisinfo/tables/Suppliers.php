@@ -10,6 +10,7 @@
 namespace catchAdmin\basisinfo\tables;
 
 
+use catchAdmin\basisinfo\tables\forms\Factory;
 use catcher\CatchTable;
 use catcher\library\table\Actions;
 use catcher\library\table\HeaderItem;
@@ -35,7 +36,7 @@ class Suppliers extends CatchTable
                 HeaderItem::label('经营范围')->prop('business_scope'),
                 HeaderItem::label('登记日期')->prop('establish_date'),
                 HeaderItem::label('操作')->width(200)->actions([
-//                    Actions::normal()
+                    Actions::normal("面单打印", 'success', "facePrint")->icon('el-icon-printer'),
                 ])
             ])
             ->withSearch([
@@ -46,9 +47,8 @@ class Suppliers extends CatchTable
             ])
             ->withApiRoute('users')
             ->withActions([
-//                Actions::create(),
-                Actions::normal("面单打印", 'danger', "facePrint")->icon('el-icon-view'),
-//                Actions::export()
+                Actions::normal("新增", 'primary', "addSuppliers")->icon('el-icon-plus'),
+                Actions::normal("编辑", 'primary', "editSuppliers")->icon('el-icon-edit'),
             ])
             ->selectionChange()
             ->render();
@@ -56,6 +56,6 @@ class Suppliers extends CatchTable
 
     protected function form()
     {
-//        return Factory::create('user');
+
     }
 }

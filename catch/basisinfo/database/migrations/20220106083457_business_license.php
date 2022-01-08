@@ -29,9 +29,11 @@ class BusinessLicense extends Migrator
             ->addColumn('registered_capital', 'string', ['limit' => 1000, 'default' => '', 'signed' => false, 'comment' => '注册资本',])
             ->addColumn('business_start_date', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '营业期限开始',])
             ->addColumn('business_end_date', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '营业期限结束',])
+            ->addColumn('business_date_long', 'integer', ['limit' => MysqlAdapter::INT_TINY, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '是否长期 {0:否,1:是}',])
             ->addColumn('establish_date', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '登记日期',])
             ->addColumn('business_scope', 'string', ['limit' => 1000, 'null' => false, 'default' => '', 'signed' => false, 'comment' => '经营范围',])
             ->addColumn('other', 'string', ['limit' => 1000, 'default' => '', 'signed' => false, 'comment' => '备注',])
+            ->addColumn('status', 'integer', ['limit' => MysqlAdapter::INT_TINY, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '是否长期 {0:禁用,1:启动}',])
 
             ->addColumn('created_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '创建时间',])
             ->addColumn('updated_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '更新时间',])
