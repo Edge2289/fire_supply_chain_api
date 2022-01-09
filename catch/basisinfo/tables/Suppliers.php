@@ -45,7 +45,7 @@ class Suppliers extends CatchTable
                 Search::label('法人')->text('legal_person', '法人'),
                 Search::hidden('id', '')
             ])
-            ->withApiRoute('users')
+            ->withApiRoute('suppliers')
             ->withActions([
                 Actions::normal("新增", 'primary', "addSuppliers")->icon('el-icon-plus'),
                 Actions::normal("编辑", 'primary', "editSuppliers")->icon('el-icon-edit'),

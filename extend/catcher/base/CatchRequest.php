@@ -21,6 +21,13 @@ class CatchRequest extends Request
      */
     protected $batch = false;
 
+    /**
+     * 检查的参数
+     *
+     * @var array
+     */
+    protected $param = [];
+
 
     /**
      * Request constructor.
@@ -55,7 +62,11 @@ class CatchRequest extends Request
             if (method_exists($this, 'message')) {
                 $message = $this->message();
             }
-            if (!$validate->message(empty($message) ? [] : $message)->check(request()->param(), $this->rules())) {
+            // 如果没有设置参数，则从请求头获取
+            if (empty($this->param)) {
+                $this->param = request()->param();
+            }
+            if (!$validate->message(empty($message) ? [] : $message)->check($this->param, $this->rules())) {
               throw new FailedException($validate->getError());
             }
           } catch (\Exception $e) {

@@ -10,7 +10,8 @@
 /* @var think\Route $router */
 
 $router->group(function () use ($router){
-//    $router->get('suppliers/changeSuppliersSetting', '\catchAdmin\basisinfo\controller\Suppliers@changeSuppliersSetting');
+    $router->get('suppliers', '\catchAdmin\basisinfo\controller\Suppliers@index');
+    $router->post('suppliers/save', '\catchAdmin\basisinfo\controller\Suppliers@save');
 })->middleware('auth');
 
 $router->group(function () use ($router){

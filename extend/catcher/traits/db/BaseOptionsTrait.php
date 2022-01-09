@@ -37,7 +37,7 @@ trait BaseOptionsTrait
      *
      * @time 2019年12月03日
      * @param array $data
-     * @return bool
+     * @return bool|int
      */
     public function storeBy(array $data)
     {

@@ -11,6 +11,7 @@ namespace catchAdmin\basisinfo\controller;
 
 
 use app\Request;
+use catchAdmin\basisinfo\request\SupplierLicenseRequest;
 use catcher\base\CatchController;
 use catchAdmin\basisinfo\model\SupplierLicense;
 use catcher\CatchResponse;
@@ -29,10 +30,13 @@ class Suppliers extends CatchController
         $this->supplier = $supplier;
     }
 
+    /**
+     * @author xiejiaqing
+     * @return \think\response\Json
+     */
     public function index()
     {
-//        $this->supplier->storeBy()
-        return 131;
+        return CatchResponse::paginate($this->supplier->getList());
     }
 
     /**
@@ -43,11 +47,36 @@ class Suppliers extends CatchController
      */
     public function save(Request $request)
     {
-        $type = $request->param('type') ?? "";
+        $type = $request->param('suppliers_type') ?? "";
         if (empty($type)) {
             return CatchResponse::fail("请求类型缺失");
         }
-        //
+        $result = $this->{$type}($request->param());
+        if ($result) {
+            return CatchResponse::success([
+                'id' => $result
+            ]);
+        }
+        return CatchResponse::fail();
+    }
+
+    /**
+     * 新增
+     *
+     * @author xiejiaqing
+     * @param array $params
+     * @return bool
+     */
+    public function businessLicenseCall(array $params)
+    {
+        $params['business_date_long'] = $params['business_date_long'] ? 1: 0;
+        $params['data_maintenance'] = implode(",", $params['data_maintenance']);
+        $params['registration_date'] = strtotime($params['registration_date']);
+        $params['business_start_date'] = strtotime($params['business_start_date']);
+        $params['establish_date'] = strtotime($params['establish_date']);
+        unset($params['suppliers_type']);
+        $this->validator(SupplierLicenseRequest::class, $params);
+        return $this->supplier->storeBy($params);
     }
 
     /**
@@ -70,42 +99,61 @@ class Suppliers extends CatchController
                 "component" => "business_license",
             ]
         ];
-        if ($id == 0) {
-            return CatchResponse::success($map);
-        }
-        $data = $this->supplier->field(['id', 'data_maintenance'])->find(['id' => $id]);
-        if (!$data) {
-            // 数据不存在
-            return CatchResponse::fail("数据不存在");
-        }
-        $data_maintenance = explode(",", $data['data_maintenance']);
-        $mustNeed = [
-            [
-                "id" => 4,
-                "name" => "补充信息",
-                "component" => "supplementary",
-            ],
-            [
-                "id" => 5,
-                "name" => "资质与附件",
-                "component" => "attachment",
-            ]
-        ];
-        foreach ($data_maintenance as $value) {
-            if ($value == 1) {
-                array_push($map, [
-                    "id" => 2,
-                    "name" => "经营许可证",
-                    "component" => "operating_license",
-                ]);
-            } else {
-                array_push($map, [
-                    "id" => 3,
-                    "name" => "经营备案凭证",
-                    "component" => "registration_license",
-                ]);
+        $businessData = [];
+        if ($id != 0) {
+            $data = $this->supplier->find(['id' => $id]);
+            if (!$data) {
+                // 数据不存在
+                return CatchResponse::fail("数据不存在");
             }
+            $data['data_maintenance'] = explode(",", $data['data_maintenance']);
+            $mustNeed = [
+                [
+                    "id" => 4,
+                    "name" => "补充信息",
+                    "component" => "supplementary",
+                ],
+                [
+                    "id" => 5,
+                    "name" => "资质与附件",
+                    "component" => "attachment",
+                ]
+            ];
+            foreach ($data['data_maintenance'] as $value) {
+                if ($value == 1) {
+                    array_push($map, [
+                        "id" => 2,
+                        "name" => "经营许可证",
+                        "component" => "operating_license",
+                    ]);
+                } else {
+                    array_push($map, [
+                        "id" => 3,
+                        "name" => "经营备案凭证",
+                        "component" => "registration_license",
+                    ]);
+                }
+            }
+            $map = array_merge($map, $mustNeed);
+            $data['registration_date'] = date("Y-m-d", $data['registration_date']);
+            $businessData['businessLicenseData'] = $data;
         }
-        return CatchResponse::success(array_merge($map, $mustNeed));
+        return CatchResponse::success([
+            'componentData' => $map,
+            'businessData' => $businessData
+        ]);
     }
+
+    /**
+     * 获取数据
+     *
+     * @author xiejiaqing
+     * @param array $ids
+     * @return array
+     */
+    private function getBusinessLicenseData(array $ids): array
+    {
+        return [];
+    }
+
 }
