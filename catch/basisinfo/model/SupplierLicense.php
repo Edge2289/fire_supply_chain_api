@@ -21,6 +21,25 @@ class SupplierLicense extends CatchModel
     protected $name = 'business_license';
 
     protected $pk = 'id';
+
+
+    public function getEstablishDateAttr($value)
+    {
+        return date("Y-m-d", $value);
+    }
+    public function getBusinessEndDateAttr($value)
+    {
+        return date("Y-m-d", $value);
+    }
+    public function getBusinessStartDateAttr($value)
+    {
+        return date("Y-m-d", $value);
+    }
+    public function getRegistrationDateAttr($value)
+    {
+        return date("Y-m-d", $value);
+    }
+
     // 字段
     protected $field = [
         'id', //

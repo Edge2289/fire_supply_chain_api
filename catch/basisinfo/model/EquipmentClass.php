@@ -10,11 +10,21 @@
 namespace catchAdmin\basisinfo\model;
 
 
+use catcher\base\CatchModel;
+
 /**
  * Class EquipmentClass
  * @package catchAdmin\basisinfo\model
  */
-class EquipmentClass
+class EquipmentClass extends CatchModel
 {
+    protected $name = 'equipment_class';
 
+    protected $pk = 'id';
+
+    protected $field = [
+        'id',
+        'scope2017',
+        'scope2002'
+    ];
 }
