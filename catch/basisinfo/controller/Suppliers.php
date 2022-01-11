@@ -16,7 +16,7 @@ use catchAdmin\basisinfo\model\EquipmentClass;
 use catchAdmin\basisinfo\model\OperatingLicense;
 use catchAdmin\basisinfo\model\RegistrationLicense;
 use catchAdmin\basisinfo\model\SuppleInfo;
-use catchAdmin\basisinfo\request\AuditSuppliers;
+use catchAdmin\basisinfo\request\AuditSuppliersRequest;
 use catchAdmin\basisinfo\request\OperatingLicenseRequest;
 use catchAdmin\basisinfo\request\RegistrationLicenseRequest;
 use catchAdmin\basisinfo\request\SuppleInfoRequest;
@@ -27,6 +27,8 @@ use catcher\CatchResponse;
 use catcher\exceptions\BusinessException;
 
 /**
+ * 供应商管理
+ *
  * Class UploadFile
  * @package catchAdmin\common\controller
  */
@@ -442,13 +444,13 @@ class Suppliers extends CatchController
      * 审核供应商
      *
      * @author xiejiaqing
-     * @param AuditSuppliers $auditSuppliers
+     * @param AuditSuppliersRequest $auditSuppliers
      * @return \think\response\Json
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function auditSuppliers(AuditSuppliers $auditSuppliers)
+    public function auditSuppliers(AuditSuppliersRequest $auditSuppliers)
     {
         $data = $auditSuppliers->param();
         $supplierData = $this->supplier->findBy($data['id']);

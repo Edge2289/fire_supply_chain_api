@@ -66,4 +66,18 @@ class SupplierLicense extends CatchModel
         'updated_at', // 更新时间
         'deleted_at', // 删除状态，null 未删除 timestamp 已删除
     ];
+
+    /**
+     * 列表
+     *
+     * @time 2020年01月09日
+     * @param $params
+     * @throws \think\db\exception\DbException
+     * @return \think\Paginator
+     */
+    public function getList()
+    {
+        return $this->catchSearch()
+            ->paginate();
+    }
 }

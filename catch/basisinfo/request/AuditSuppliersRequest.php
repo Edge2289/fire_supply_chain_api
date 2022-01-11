@@ -16,7 +16,7 @@ use catcher\base\CatchRequest;
  * Class AuditSuppliers
  * @package catchAdmin\basisinfo\request
  */
-class AuditSuppliers extends CatchRequest
+class AuditSuppliersRequest extends CatchRequest
 {
     protected function rules(): array
     {
