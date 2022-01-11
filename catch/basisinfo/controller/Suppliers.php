@@ -387,7 +387,6 @@ class Suppliers extends CatchController
                     }
                     $data['equipment_class'] = $equipmentClass;
                     $data['operation_mode'] = (string)$data['operation_mode'];
-                    $data['operation_mode'] = (string)$data['operation_mode'];
                     return $data;
                 }
             ],
