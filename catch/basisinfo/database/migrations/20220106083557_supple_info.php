@@ -22,12 +22,12 @@ class SuppleInfo extends Migrator
             ->addColumn('name', 'string', ['limit' => 60, 'null' => false, 'default' => "", 'signed' => true, 'comment' => '被授权人姓名',])
             ->addColumn('certid', 'string', ['limit' => 60, 'null' => false, 'default' => "", 'signed' => true, 'comment' => '证件号码',])
             ->addColumn('phone', 'string', ['limit' => 20, 'null' => false, 'default' => "", 'signed' => true, 'comment' => '手机号',])
-            ->addColumn('email', 'string', ['limit' => 30, 'null' => false, 'default' => '1', 'signed' => false, 'comment' => '邮箱',])
+            ->addColumn('email', 'string', ['limit' => 30, 'null' => false, 'default' => '', 'signed' => false, 'comment' => '邮箱',])
             ->addColumn('license_start_date', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '授权日期开始',])
             ->addColumn('license_end_date', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '授权日期结束',])
             ->addColumn('license_date_long', 'integer', ['limit' => MysqlAdapter::INT_TINY, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '是否长期 {0:否,1:是}',])
 
-            ->addColumn('license_area', 'string', ['limit' => 500, 'default' => 0, 'signed' => true, 'comment' => '授权区域',])
+            ->addColumn('license_area', 'string', ['limit' => 500, 'default' => '', 'signed' => true, 'comment' => '授权区域',])
             ->addColumn('product_line', 'string', ['limit' => 500, 'default' => '', 'signed' => false, 'comment' => '产品线',])
             ->addColumn('other', 'string', ['limit' => 500, 'default' => '', 'signed' => false, 'comment' => '备注',])
             // 付款信息

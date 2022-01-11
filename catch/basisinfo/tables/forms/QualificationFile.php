@@ -33,7 +33,9 @@ class QualificationFile extends Form
             "system_survey_form_url" => "质量体系调查表",
             "annual_report_url" => "年度报告",
         ];
-        $assemblyImageData = [];
+        $assemblyImageData = [
+            self::hidden("business_license_id", 0)
+        ];
         $assemblyCheckboxData = [];
         $i = 0;
         foreach ($imageData as $k => $v) {
@@ -47,34 +49,10 @@ class QualificationFile extends Form
             unset($spilt[count($spilt) - 1]);
             $assemblyCheckboxData[] = self::checkbox("check_".implode("_", $spilt), '')
                 ->options(function () use ($k, $v) {
-                    return [Elm::option(0, $v . "（复印件 / 原件）已核对，验收合格")];
+                    return [Elm::option(1, $v . "（复印件 / 原件）已核对，验收合格")];
                 })
                 ->col(12);
         }
         return array_merge($assemblyImageData, $assemblyCheckboxData);
-//        return [
-//            self::image('营业执照照片', 'business_license_url')->col(12)->required(),
-//            self::image('医疗器械经营许可证', 'production_license_url')->col(12)->required(),
-//
-//            self::checkbox('check_business_license', '')
-//                ->options(function () {
-//                    $options = [];
-//                    foreach (['生产许可证（复印件/原件）已核对，验收合格'] as $k => $v) {
-//                        $options[] = Elm::option($k, $v);
-//                    }
-//                    return $options;
-//                })
-//                ->col(12),
-//            self::checkbox('check_production_license', '')
-//                ->options(function () {
-//                    $options = [];
-//                    foreach (['医疗器械经营许可证已核对，验收合格'] as $k => $v) {
-//                        $options[] = Elm::option($k, $v);
-//                    }
-//                    return $options;
-//                })
-//                ->col(12),
-//
-//        ];
     }
 }

@@ -31,7 +31,6 @@ class OperatingLicense extends Migrator
             ->addColumn('residence', 'string', ['limit' => 300, 'null' => false, 'default' => '', 'signed' => false, 'comment' => '经营场所',])
             ->addColumn('warehouse_address', 'string', ['limit' => 300, 'null' => false, 'default' => '', 'signed' => false, 'comment' => '库房地址',])
             ->addColumn('equipment_class', 'string', ['limit' => 300, 'null' => false, 'default' => '', 'signed' => false, 'comment' => '医疗分类',])
-
             ->addColumn('created_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '创建时间',])
             ->addColumn('updated_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '更新时间',])
             ->addColumn('deleted_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '软删除',])

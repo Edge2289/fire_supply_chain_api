@@ -74,7 +74,7 @@ return [
     */
     'validates' => [
         \catcher\validates\Sometimes::class,
-        \catcher\validates\SensitiveWord::class,
+//        \catcher\validates\SensitiveWord::class, // 敏感词
     ],
     /**
     * 上传设置

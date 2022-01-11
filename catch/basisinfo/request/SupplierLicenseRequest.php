@@ -20,7 +20,7 @@ use catcher\base\CatchRequest;
  */
 class SupplierLicenseRequest extends CatchRequest
 {
-    public function __construct(array $params)
+    public function __construct(array $params = null)
     {
         $this->param = $params;
         parent::__construct();

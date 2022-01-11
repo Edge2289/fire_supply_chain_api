@@ -59,6 +59,8 @@ class SupplierLicense extends CatchModel
         'business_scope', // 经营范围
         'data_maintenance', // 资料维护
         'other', // 备注
+        'audit_status', // 审核状态
+        'audit_info', // 审核信息
         'status', // 状态
         'created_at', // 创建时间
         'updated_at', // 更新时间

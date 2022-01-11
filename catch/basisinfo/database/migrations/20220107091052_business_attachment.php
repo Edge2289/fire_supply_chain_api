@@ -17,8 +17,9 @@ class BusinessAttachment extends Migrator
 {
     public function change()
     {
-        $table = $this->table('business_attachment', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '备案凭证', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
-        $table->addColumn('business_license_url', 'string', ['limit' => 300, 'default' => '', 'signed' => true, 'comment' => '营业执照url',])
+        $table = $this->table('business_attachment', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '资质与附件', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table->addColumn('business_license_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '营业执照id',])
+            ->addColumn('business_license_url', 'string', ['limit' => 300, 'default' => '', 'signed' => true, 'comment' => '营业执照url',])
             ->addColumn('check_business_license', 'integer', ['limit' => MysqlAdapter::INT_TINY, 'default' => 0, 'signed' => true, 'comment' => '核对营业执照',])
             ->addColumn('production_license_url', 'string', ['limit' => 300, 'default' => "", 'signed' => true, 'comment' => '医疗器械经营许可证url',])
             ->addColumn('check_production_license', 'integer', ['limit' => MysqlAdapter::INT_TINY, 'default' => 0, 'signed' => true, 'comment' => '核对医疗器械经营许可证',])

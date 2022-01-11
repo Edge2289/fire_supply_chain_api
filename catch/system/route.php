@@ -35,20 +35,8 @@ $router->group(function () use ($router) {
     $router->post('generate/preview', '\catchAdmin\system\controller\Generate@preview'); // 预览
     $router->post('generate/create/module', '\catchAdmin\system\controller\Generate@createModule'); // 创建模块
 
-    // 敏感词
-    $router->resource('sensitive/word', '\catchAdmin\system\controller\SensitiveWord');
-
     //developer路由
     $router->resource('developer', '\catchAdmin\system\controller\Developer')->middleware('auth');
-    // 开发者认证
-    $router->post('developer/authenticate', '\catchAdmin\system\controller\Developer@authenticate');
-
-    // 模块管理
-    $router->get('modules', '\catchAdmin\system\controller\Module@index');
-    $router->put('modules/<module>', '\catchAdmin\system\controller\Module@disOrEnable');
-    $router->put('cache/modules', '\catchAdmin\system\controller\Module@cache');
-    $router->delete('clear/modules', '\catchAdmin\system\controller\Module@clear');
-
     // excel 导入&导出通用
     $router->post('excel/export', '\catchAdmin\system\controller\Excel@export');
     $router->post('excel/import', '\catchAdmin\system\controller\Excel@import');
