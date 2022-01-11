@@ -16,6 +16,7 @@ use catchAdmin\basisinfo\model\EquipmentClass;
 use catchAdmin\basisinfo\model\OperatingLicense;
 use catchAdmin\basisinfo\model\RegistrationLicense;
 use catchAdmin\basisinfo\model\SuppleInfo;
+use catchAdmin\basisinfo\request\AuditSuppliers;
 use catchAdmin\basisinfo\request\OperatingLicenseRequest;
 use catchAdmin\basisinfo\request\RegistrationLicenseRequest;
 use catchAdmin\basisinfo\request\SuppleInfoRequest;
@@ -435,6 +436,94 @@ class Suppliers extends CatchController
     public function getBusinessScope(): array
     {
         return $this->equipmentClassModel->select()->toArray();
+    }
+
+    /**
+     * 审核供应商
+     *
+     * @author xiejiaqing
+     * @param AuditSuppliers $auditSuppliers
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function auditSuppliers(AuditSuppliers $auditSuppliers)
+    {
+        $data = $auditSuppliers->param();
+        $supplierData = $this->supplier->findBy($data['id']);
+        if (empty($supplierData)) {
+            throw new BusinessException("不存在供应商");
+        }
+        $b = $this->supplier->updateBy($data['id'], [
+            'audit_status' => $data['audit_status'],
+            'audit_info' => $data['audit_info'],
+            'audit_user_id' => request()->user()->id,
+            'audit_user_name' => request()->user()->username,
+        ]);
+        if ($b) {
+            return CatchResponse::success();
+        }
+        return CatchResponse::fail("操作失败");
+    }
+
+    /**
+     * 开启供应商
+     *
+     * @author xiejiaqing
+     * @param Request $request
+     * @return \think\response\Json
+     */
+    public function openSuppliers(Request $request)
+    {
+        $data = $request->param();
+        if (!isset($data['id']) || empty($data['id'])) {
+            throw new BusinessException("请选择供应商进行操作");
+        }
+        $supplierData = $this->supplier->findBy($data['id']);
+        if (empty($supplierData)) {
+            throw new BusinessException("不存在供应商");
+        }
+        // 开启的供应商必须要是审核过后的
+        // 审核状态 {0:未审核,1:已审核,2:审核失败}
+        if ($supplierData['audit_status'] != 1) {
+            throw new BusinessException("审核状态不是已审核，无法开启");
+        }
+        // 开启
+        $b = $this->supplier->findBy($data['id'], [
+            'status' => 1
+        ]);
+        if ($b) {
+            return CatchResponse::success();
+        }
+        return CatchResponse::fail("操作失败");
+    }
+
+    /**
+     * 关闭供应商状态
+     *
+     * @author xiejiaqing
+     * @param Request $request
+     * @return \think\response\Json
+     */
+    public function disabledSuppliers(Request $request)
+    {
+        $data = $request->param();
+        if (!isset($data['id']) || empty($data['id'])) {
+            throw new BusinessException("请选择供应商进行操作");
+        }
+        $supplierData = $this->supplier->findBy($data['id']);
+        if (empty($supplierData)) {
+            throw new BusinessException("不存在供应商");
+        }
+        // 开启
+        $b = $this->supplier->findBy($data['id'], [
+            'status' => 0
+        ]);
+        if ($b) {
+            return CatchResponse::success();
+        }
+        return CatchResponse::fail("操作失败");
     }
 
 }

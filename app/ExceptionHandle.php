@@ -1,8 +1,10 @@
 <?php
 namespace app;
 
+use catcher\CatchResponse;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
+use think\Env;
 use think\exception\Handle;
 use think\exception\HttpException;
 use think\exception\HttpResponseException;
@@ -51,7 +53,12 @@ class ExceptionHandle extends Handle
      */
     public function render($request, Throwable $e): Response
     {
-        // 其他错误交给系统处理
-        return parent::render($request, $e);
+        if (!Env("APP_DEBUG")) {
+            // 不是debug模式 返回json
+            return CatchResponse::fail($e->getMessage(), $e->getCode());
+        } else {
+            // 其他错误交给系统处理
+            return parent::render($request, $e);
+        }
     }
 }

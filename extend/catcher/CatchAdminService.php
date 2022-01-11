@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace catcher;
 
+use app\ExceptionHandle;
 use catcher\event\LoadModuleRoutes;
 use think\exception\Handle;
 use think\facade\Validate;
@@ -121,7 +122,7 @@ class CatchAdminService extends Service
    */
     protected function registerExceptionHandle(): void
     {
-        $this->app->bind(Handle::class, CatchExceptionHandle::class);
+        $this->app->bind(Handle::class, ExceptionHandle::class);
     }
 
     /**
