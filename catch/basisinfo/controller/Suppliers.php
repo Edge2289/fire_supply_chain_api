@@ -112,8 +112,8 @@ class Suppliers extends CatchController
     }
 
     /**
-     * @author xiejiaqing
      * @return \think\response\Json
+     * @author xiejiaqing
      */
     public function delete()
     {
@@ -215,12 +215,12 @@ class Suppliers extends CatchController
     /**
      * 补充信息
      *
-     * @author xiejiaqing
      * @param array $params
      * @return bool|int|string
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
+     * @author xiejiaqing
      */
     public function suppleInfoCall(array $params)
     {
@@ -240,12 +240,12 @@ class Suppliers extends CatchController
     }
 
     /**
-     * @author xiejiaqing
      * @param array $params
      * @return bool|int|string
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
+     * @author xiejiaqing
      */
     public function businessAttachmentCall(array $params)
     {
@@ -255,7 +255,7 @@ class Suppliers extends CatchController
                 $map[$key] = $param;
                 continue;
             }
-            $map[$key] = empty($param)? 0: $param[0];
+            $map[$key] = empty($param) ? 0 : $param[0];
         }
         unset($map['suppliers_type']);
         if (isset($params['id']) && !empty($params['id'])) {
@@ -385,7 +385,8 @@ class Suppliers extends CatchController
                     foreach (explode(",", $data['equipment_class']) as $equipment_class) {
                         $equipmentClass[] = (int)$equipment_class;
                     }
-                    $data['equipment_class'] = $equipmentClass;                    $data['operation_mode'] = (string)$data['operation_mode'];
+                    $data['equipment_class'] = $equipmentClass;
+                    $data['operation_mode'] = (string)$data['operation_mode'];
                     $data['operation_mode'] = (string)$data['operation_mode'];
                     return $data;
                 }
@@ -397,7 +398,7 @@ class Suppliers extends CatchController
             5 => [
                 'name' => 'businessAttachmentData',
                 'model' => $this->businessAttachmentModel,
-                'handle' => function($data) {
+                'handle' => function ($data) {
                     foreach ($data as $key => $param) {
                         if (strpos($key, "check") === false) {
                             continue;
