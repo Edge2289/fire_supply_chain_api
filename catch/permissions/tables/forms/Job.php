@@ -13,7 +13,7 @@ class Job extends Form
 
             self::input('coding', '岗位编码'),
 
-            self::image('images', '上传'),
+            self::image('上传', 'images'),
 
             self::radio('status', '状态')->value(1)->options(
                 self::options()->add('启用', 1)->add('禁用', 2)->render()

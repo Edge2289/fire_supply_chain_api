@@ -10,9 +10,6 @@
 // +----------------------------------------------------------------------
 namespace catchAdmin\basisinfo;
 
-use catchAdmin\system\events\AttachmentEvent;
-use catcher\command\MigrateRunCommand;
-use catcher\command\SeedRunCommand;
 use catcher\ModuleService;
 
 class BasisInfoService extends ModuleService
