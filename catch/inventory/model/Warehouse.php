@@ -18,6 +18,8 @@ use catcher\base\CatchModel;
  */
 class Warehouse extends CatchModel
 {
+    protected $connection = 'business';
+
     protected $name = 'warehouse';
 
     protected $pk = 'id';
