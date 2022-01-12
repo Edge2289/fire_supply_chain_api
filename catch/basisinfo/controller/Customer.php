@@ -11,6 +11,9 @@ namespace catchAdmin\basisinfo\controller;
 
 
 use catcher\base\CatchController;
+use catchAdmin\basisinfo\model\Customer as CustomerModel;
+use catcher\base\CatchRequest;
+use catcher\CatchResponse;
 
 /**
  * 客户管理
@@ -20,5 +23,33 @@ use catcher\base\CatchController;
  */
 class Customer extends CatchController
 {
+    public $customerModel;
+
+    public function __construct(
+        CustomerModel $customerModel
+    )
+    {
+        $this->customerModel = $customerModel;
+    }
+
+    public function index()
+    {
+        return CatchResponse::paginate($this->customerModel->getList());
+    }
+
+    public function save()
+    {
+
+    }
+
+    public function update()
+    {
+
+    }
+
+    public function audit()
+    {
+
+    }
 
 }
