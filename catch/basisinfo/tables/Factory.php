@@ -3,48 +3,47 @@
  * Created by PhpStorm.
  * author: xiejiaqing
  * Note: Tired as a dog
- * Date: 2022/1/6
- * Time: 19:49
+ * Date: 2022/1/12
+ * Time: 21:14
  */
 
 namespace catchAdmin\basisinfo\tables;
 
 
-use catchAdmin\basisinfo\tables\forms\Factory;
 use catcher\CatchTable;
 use catcher\library\table\Actions;
 use catcher\library\table\HeaderItem;
 use catcher\library\table\Search;
 
 /**
- * Class Suppliers
+ * Class Factory
  * @package catchAdmin\basisinfo\tables
  */
-class Suppliers extends CatchTable
+class Factory extends CatchTable
 {
-    public function table()
+
+    protected function table()
     {
-        return $this->getTable('suppliers')
+        return $this->getTable('factory')
             ->header([
                 HeaderItem::label()->selection(),
                 HeaderItem::label('编号')->prop('id'),
-                HeaderItem::label('统一社会信用代码')->prop('unified_code'),
-                HeaderItem::label('企业名称')->prop('company_name'),
-                HeaderItem::label('企业类型')->prop('company_type'),
-                HeaderItem::label('法人')->prop('legal_person'),
-                HeaderItem::label('经营范围')->prop('business_scope'),
-                HeaderItem::label('登记日期')->prop('establish_date'),
+                HeaderItem::label('厂家编号')->prop('factory_code'),
+                HeaderItem::label('厂家名称')->prop('factory_name'),
+                HeaderItem::label('厂家名称(英文名)')->prop('factory_name_en'),
+                HeaderItem::label('营业执照有效期')->prop('business_date'),
+                HeaderItem::label('厂家类型')->prop('factory_type'),
                 HeaderItem::label('审核状态')->prop('audit_status'),
                 HeaderItem::label('状态')->prop('status'),
                 HeaderItem::label('审核信息')->prop('audit_info'),
                 HeaderItem::label('操作')->width(200)->actions([
-                    Actions::normal("面单打印", 'success', "facePrint")->icon('el-icon-printer'),
+                    Actions::update(),
+                    Actions::normal("导出审批", 'success', "facePrint")->icon('el-icon-printer'),
                 ])
             ])
             ->withSearch([
-                Search::label('企业名称')->text('company_name', '企业名称'),
-                Search::label('企业类型')->text('email', '企业类型'),
-                Search::label('法人')->text('legal_person', '法人'),
+                Search::label('厂家名称')->text('factory_name', '厂家名称'),
+                Search::label('厂家类型')->text('email', '企业类型'),
                 Search::label('状态')->select('status', '请选择供应商状态',
                     Search::options()->add('全部', '')
                         ->add('停用', 0)
@@ -60,13 +59,10 @@ class Suppliers extends CatchTable
                 ),
                 Search::hidden('id', '')
             ])
-            ->withApiRoute('suppliers')
+            ->withApiRoute('factory')
             ->withActions([
-                Actions::normal("新增", 'primary', "addSuppliers")->icon('el-icon-plus'),
-                Actions::normal("编辑", 'primary', "editSuppliers")->icon('el-icon-edit'),
+                Actions::normal("新增", 'primary', "addFactory")->icon('el-icon-plus'),
                 Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu'),
-                Actions::normal("启动", 'primary', "audit")->icon('el-icon-success'),
-                Actions::normal("停用", 'warning', "audit")->icon('el-icon-error'),
             ])
             ->selectionChange()
             ->render();
@@ -74,6 +70,6 @@ class Suppliers extends CatchTable
 
     protected function form()
     {
-
+        // TODO: Implement form() method.
     }
 }

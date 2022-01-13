@@ -21,6 +21,11 @@ $router->group(function () use ($router){
         $router->post('suppliers/disabled/<id>', '\catchAdmin\basisinfo\controller\Suppliers@disabledSuppliers'); // 禁用供应商
     });
     // 厂家路由
+    $router->group(function () use ($router) {
+        $router->get('factory', '\catchAdmin\basisinfo\controller\Factory@index'); // 厂家
+        $router->post('factory', '\catchAdmin\basisinfo\controller\Factory@save'); // 厂家
+
+    });
     // 购货者路由
     // 仓库路由
     // 产品路由
@@ -29,4 +34,5 @@ $router->group(function () use ($router){
 
 $router->group(function () use ($router){
     $router->get('suppliers/changeSuppliersSetting', '\catchAdmin\basisinfo\controller\Suppliers@changeSuppliersSetting');
+    $router->get('factory/changeFactorySetting', '\catchAdmin\basisinfo\controller\Factory@changeFactorySetting');
 });
