@@ -132,6 +132,11 @@ class CatchQuery extends Query
             // value in [null, '']
             if ($value !== null && $value !== '' && method_exists($this->model, $method)) {
                 $this->model->$method($this, $value, $params);
+            } else if ($value !== null && $value !== '') {
+                if ($field == 'limit' || $field == 'page') {
+                    continue;
+                }
+                $this->where($field, $value);
             }
         }
 

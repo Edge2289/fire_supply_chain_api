@@ -15,7 +15,6 @@ use catchAdmin\basisinfo\model\FactoryProduction;
 use catchAdmin\basisinfo\model\FactoryRecord;
 use catchAdmin\basisinfo\request\FactoryRequest;
 use catcher\base\CatchController;
-use catcher\base\CatchRequest;
 use catcher\CatchResponse;
 use \catchAdmin\basisinfo\model\Factory as FactoryModel;
 use catcher\exceptions\BusinessException;
@@ -220,7 +219,6 @@ class Factory extends CatchController
             $map['business_end_date'] = strtotime($map['business_end_date']);
             $map['establish_date'] = strtotime($map['establish_date']);
             $map['registration_date'] = strtotime($map['registration_date']);
-            $map['factory_code'] = "FC" . date("YmdH") . rand(100, 999) . rand(100, 999);
             unset($map['form_factory_type']);
         }
         if (isset($map['id']) && !empty($map['id'])) {
@@ -230,6 +228,7 @@ class Factory extends CatchController
             }
             return $this->factory->updateBy($map['id'], $map);
         } else {
+            $map['factory_code'] = "FC" . date("YmdH") . rand(100, 999) . rand(100, 999);
             return $this->factory->storeBy($map);
         }
     }

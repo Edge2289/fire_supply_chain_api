@@ -77,7 +77,7 @@ class SupplierLicense extends CatchModel
      */
     public function getList()
     {
-        return $this->catchSearch()
+        return $this->catchSearch()->order("id desc")
             ->paginate();
     }
 }

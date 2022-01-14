@@ -41,14 +41,8 @@ class Factory extends CatchTable
                 ])
             ])
             ->withSearch([
-                Search::label('厂家名称')->text('factory_name', '厂家名称'),
-                Search::label('厂家类型')->text('email', '企业类型'),
-                Search::label('状态')->select('status', '请选择供应商状态',
-                    Search::options()->add('全部', '')
-                        ->add('停用', 0)
-                        ->add('启用', 1)
-                        ->render()
-                ),
+                Search::label('公司名称')->text('company_name', '公司名称'),
+                Search::label('厂家类型')->text('factory_type', '企业类型'),
                 Search::label('审核状态')->select('status', '请选择审核状态',
                     Search::options()->add('全部', '')
                         ->add('未审核', 0)
