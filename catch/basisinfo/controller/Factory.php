@@ -52,7 +52,22 @@ class Factory extends CatchController
      */
     public function index()
     {
-        return CatchResponse::paginate($this->factory->getList());
+        // 审核状态 {0:未审核,1:已审核,2:审核失败}
+        $auditStatusI = [
+            "未审核", "已审核", "审核失败"
+        ];
+        $data = $this->factory->getList();
+        foreach ($data as &$datum) {
+            $datum['business_end_date_z'] = "";
+            if ($datum['business_date_long'] == 1) {
+                $datum['business_end_date_z'] = "长期";
+            } elseif (!empty($datum['business_end_date'])) {
+                $datum['business_end_date_z'] = $datum['business_end_date'];
+            }
+            $datum['factory_type_name'] = $datum['factory_type'] == 1? "国内厂家": "国外厂家";
+            $datum['audit_status_i'] = $auditStatusI[$datum['audit_status']];
+        }
+        return CatchResponse::paginate($data);
     }
 
     /**
@@ -205,6 +220,7 @@ class Factory extends CatchController
             $map['business_end_date'] = strtotime($map['business_end_date']);
             $map['establish_date'] = strtotime($map['establish_date']);
             $map['registration_date'] = strtotime($map['registration_date']);
+            $map['factory_code'] = "FC" . date("YmdH") . rand(100, 999) . rand(100, 999);
             unset($map['form_factory_type']);
         }
         if (isset($map['id']) && !empty($map['id'])) {
@@ -259,11 +275,6 @@ class Factory extends CatchController
     }
 
     public function audit()
-    {
-
-    }
-
-    public function delete()
     {
 
     }

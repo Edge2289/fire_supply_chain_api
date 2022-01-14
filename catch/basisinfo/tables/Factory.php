@@ -31,10 +31,9 @@ class Factory extends CatchTable
                 HeaderItem::label('厂家编号')->prop('factory_code'),
                 HeaderItem::label('公司名称')->prop('company_name'),
                 HeaderItem::label('公司(英文名)')->prop('company_name_en'),
-                HeaderItem::label('营业执照有效期')->prop('business_end_date'),
-                HeaderItem::label('厂家类型')->prop('factory_type'),
-                HeaderItem::label('审核状态')->prop('audit_status'),
-                HeaderItem::label('状态')->prop('status'),
+                HeaderItem::label('营业执照有效期(结束)')->prop('business_end_date_z'),
+                HeaderItem::label('厂家类型')->prop('factory_type_name'),
+                HeaderItem::label('审核状态')->prop('audit_status_i'),
                 HeaderItem::label('审核信息')->prop('audit_info'),
                 HeaderItem::label('操作')->width(200)->actions([
                     Actions::update("编辑", "editFactory"),

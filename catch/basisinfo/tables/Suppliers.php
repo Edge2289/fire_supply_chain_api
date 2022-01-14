@@ -34,10 +34,11 @@ class Suppliers extends CatchTable
                 HeaderItem::label('法人')->prop('legal_person'),
                 HeaderItem::label('经营范围')->prop('business_scope'),
                 HeaderItem::label('登记日期')->prop('establish_date'),
-                HeaderItem::label('审核状态')->prop('audit_status'),
-                HeaderItem::label('状态')->prop('status'),
+                HeaderItem::label('审核状态')->prop('audit_status_i'),
+                HeaderItem::label('状态')->prop('status_i'),
                 HeaderItem::label('审核信息')->prop('audit_info'),
                 HeaderItem::label('操作')->width(200)->actions([
+                    Actions::update("编辑", "editSuppliers"),
                     Actions::normal("面单打印", 'success', "facePrint")->icon('el-icon-printer'),
                 ])
             ])
@@ -63,7 +64,6 @@ class Suppliers extends CatchTable
             ->withApiRoute('suppliers')
             ->withActions([
                 Actions::normal("新增", 'primary', "addSuppliers")->icon('el-icon-plus'),
-                Actions::normal("编辑", 'primary', "editSuppliers")->icon('el-icon-edit'),
                 Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu'),
                 Actions::normal("启动", 'primary', "audit")->icon('el-icon-success'),
                 Actions::normal("停用", 'warning', "audit")->icon('el-icon-error'),

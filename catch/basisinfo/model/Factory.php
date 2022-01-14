@@ -53,21 +53,21 @@ class Factory extends CatchModel
 
     public function getBusinessStartDateAttr($value)
     {
-        return date("Y-m-d", $value);
+        return $value? date("Y-m-d", $value): $value;
     }
     public function getBusinessEndDateAttr($value)
     {
-        return date("Y-m-d", $value);
+        return $value? date("Y-m-d", $value): $value;
     }
 
     public function getRegistrationDateAttr($value)
     {
-        return date("Y-m-d", $value);
+        return $value? date("Y-m-d", $value): $value;
     }
 
     public function getEstablishDateAttr($value)
     {
-        return date("Y-m-d", $value);
+        return $value? date("Y-m-d", $value): $value;
     }
 
     /**
