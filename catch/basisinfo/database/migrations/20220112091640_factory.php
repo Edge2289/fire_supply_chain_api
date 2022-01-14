@@ -22,13 +22,12 @@ class Factory extends Migrator
     public function change()
     {
         $table = $this->table('factory', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '厂家营业执照信息', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
-        $table->addColumn('factory_code', 'string', ['limit' => 20, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '厂家编号',])
-            ->addColumn('company_name', 'string', ['limit' => 60, 'null' => false, 'default' => "", 'signed' => true, 'comment' => '厂家名称',])
-            ->addColumn('factory_type', 'string', ['limit' => 300, 'null' => false, 'default' => '', 'signed' => false, 'comment' => '厂家类型{1:国内公司,2:国外公司}',])
-            ->addColumn('company_name_en', 'integer', ['limit' => 60, 'default' => 0, 'signed' => true, 'comment' => '厂家英文名称',])
+        $table->addColumn('factory_code', 'string', ['limit' => 20, 'null' => false, 'default' => '', 'signed' => true, 'comment' => '厂家编号',])
+            ->addColumn('factory_type', 'integer', ['limit' => MysqlAdapter::INT_TINY, 'null' => false, 'default' => 1, 'signed' => false, 'comment' => '厂家类型{1:国内公司,2:国外公司}',])
+            ->addColumn('company_name', 'string', ['limit' => 300, 'default' => '', 'signed' => true, 'comment' => '企业名称',])
+            ->addColumn('company_name_en', 'string', ['limit' => 60, 'default' => '', 'signed' => true, 'comment' => '企业英文名称',])
             ->addColumn('business_license_url', 'string', ['limit' => 300, 'default' => '', 'signed' => true, 'comment' => '营业执照url',])
             ->addColumn('contract_url', 'string', ['limit' => 300, 'default' => '', 'signed' => true, 'comment' => '合同url',])
-            ->addColumn('company_name', 'string', ['limit' => 300, 'default' => 0, 'signed' => true, 'comment' => '企业名称',])
             ->addColumn('unified_code', 'string', ['limit' => 100, 'default' => '', 'signed' => false, 'comment' => '统一社会信用代码',])
             ->addColumn('residence', 'string', ['limit' => 300, 'default' => '', 'signed' => false, 'comment' => '住所',])
             ->addColumn('legal_person', 'string', ['limit' => 60, 'default' => '', 'signed' => false, 'comment' => '法人',])

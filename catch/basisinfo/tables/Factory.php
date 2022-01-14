@@ -29,15 +29,15 @@ class Factory extends CatchTable
                 HeaderItem::label()->selection(),
                 HeaderItem::label('编号')->prop('id'),
                 HeaderItem::label('厂家编号')->prop('factory_code'),
-                HeaderItem::label('厂家名称')->prop('factory_name'),
-                HeaderItem::label('厂家名称(英文名)')->prop('factory_name_en'),
-                HeaderItem::label('营业执照有效期')->prop('business_date'),
+                HeaderItem::label('公司名称')->prop('company_name'),
+                HeaderItem::label('公司(英文名)')->prop('company_name_en'),
+                HeaderItem::label('营业执照有效期')->prop('business_end_date'),
                 HeaderItem::label('厂家类型')->prop('factory_type'),
                 HeaderItem::label('审核状态')->prop('audit_status'),
                 HeaderItem::label('状态')->prop('status'),
                 HeaderItem::label('审核信息')->prop('audit_info'),
                 HeaderItem::label('操作')->width(200)->actions([
-                    Actions::update(),
+                    Actions::update("编辑", "editFactory"),
                     Actions::normal("导出审批", 'success', "facePrint")->icon('el-icon-printer'),
                 ])
             ])

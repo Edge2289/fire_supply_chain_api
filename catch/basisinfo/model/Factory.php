@@ -24,9 +24,51 @@ class Factory extends CatchModel
 
     protected $field = [
         'id',
-        'scope2017',
-        'scope2002'
+        'factory_code',
+        'factory_type',
+        'company_name',
+        'company_name_en',
+        'business_license_url',
+        'contract_url',
+        'unified_code',
+        'residence',
+        'legal_person',
+        'registration_date',
+        'registered_capital',
+        'business_start_date',
+        'business_end_date',
+        'business_date_long',
+        'establish_date',
+        'data_maintenance',
+        'other',
+        'audit_status',
+        'audit_info',
+        'status',
+        'audit_user_id',
+        'audit_user_name',
+        'created_at',
+        'updated_at',
+        'deleted_at'
     ];
+
+    public function getBusinessStartDateAttr($value)
+    {
+        return date("Y-m-d", $value);
+    }
+    public function getBusinessEndDateAttr($value)
+    {
+        return date("Y-m-d", $value);
+    }
+
+    public function getRegistrationDateAttr($value)
+    {
+        return date("Y-m-d", $value);
+    }
+
+    public function getEstablishDateAttr($value)
+    {
+        return date("Y-m-d", $value);
+    }
 
     /**
      * 列表

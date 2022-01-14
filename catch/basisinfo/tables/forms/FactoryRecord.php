@@ -21,8 +21,9 @@ class FactoryRecord extends Form
     public function fields(): array
     {
         return [
+            self::hidden("factory_id", 0),
             self::image("备案凭证照片", "record_license_url")->required(),
-            self::input("license_code", "备案号")->col(12)->required(),
+            self::input("record_code", "备案号")->col(12)->required(),
             self::input("company_name", "企业名称")->col(12)->required(),
             self::input("legal_person", "法人")->col(12)->required(),
             self::input("head_name", "企业负责人")->col(12)->required(),

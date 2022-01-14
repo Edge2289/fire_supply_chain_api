@@ -24,6 +24,7 @@ $router->group(function () use ($router){
     $router->group(function () use ($router) {
         $router->get('factory', '\catchAdmin\basisinfo\controller\Factory@index'); // 厂家
         $router->post('factory', '\catchAdmin\basisinfo\controller\Factory@save'); // 厂家
+        $router->put('factory/<id>', '\catchAdmin\basisinfo\controller\Factory@update'); // 厂家
 
     });
     // 购货者路由

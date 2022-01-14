@@ -18,5 +18,30 @@ use catcher\base\CatchModel;
  */
 class FactoryRecord extends CatchModel
 {
+    protected $name = "factory_record";
+
+    protected $pk = 'id';
+
+    protected $field = [
+        'id',
+        'factory_id',
+        'record_license_url',
+        'record_code',
+        'company_name',
+        'legal_person',
+        'head_name',
+        'production_address',
+        'production_scope',
+        'record_department',
+        'record_date',
+        'created_at',
+        'updated_at',
+        'deleted_at'
+    ];
+
+    public function getRecordDateAttr($value)
+    {
+        return date("Y-m-d", $value);
+    }
 
 }
