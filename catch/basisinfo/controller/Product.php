@@ -10,7 +10,10 @@
 namespace catchAdmin\basisinfo\controller;
 
 
+use catchAdmin\basisinfo\model\ProductBasicInfo;
 use catcher\base\CatchController;
+use catcher\base\CatchRequest;
+use catcher\CatchResponse;
 
 /**
  * 产品管理
@@ -20,13 +23,17 @@ use catcher\base\CatchController;
  */
 class Product extends CatchController
 {
-    public function __construct()
-    {
+    private $productBasicInfoModel;
 
+    public function __construct(
+        ProductBasicInfo $productBasicInfo
+    )
+    {
+        $this->productBasicInfoModel = $productBasicInfo;
     }
 
     public function index()
     {
-
+        return CatchResponse::paginate($this->productBasicInfoModel->getList());
     }
 }
