@@ -20,18 +20,19 @@ class ProductDistributionInfo extends Migrator
      */
     public function change()
     {
-        $table = $this->table('product_sku', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '厂家生产许可证', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table = $this->table('product_distribution_info', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '产品经销商信息', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('product_id', 'integer', ['limit' => MysqlAdapter::INT_MEDIUM, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '产品id',])
-            ->addColumn('product_code', 'string', ['limit' => 200, 'null' => false, 'default' => "", 'signed' => true, 'comment' => '产品编号',])
-            ->addColumn('sku_code', 'string', ['limit' => 100, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '规格型号',])
-            ->addColumn('item_number', 'string', ['limit' => 100, 'null' => false, 'default' => '', 'signed' => false, 'comment' => '货号/sku',])
-            ->addColumn('unit_price', 'decimal', ['limit' => MysqlAdapter::BLOB_MEDIUM, 'default' => '', 'null' => false, 'signed' => true, 'comment' => '单价',])
-            ->addColumn('tax_rate', 'decimal', ['limit' => MysqlAdapter::BLOB_MEDIUM, 'default' => '', 'null' => false, 'signed' => false, 'comment' => '税率%',])
-            ->addColumn('n_tax_price', 'decimal', ['limit' => MysqlAdapter::BLOB_MEDIUM, 'default' => '', 'null' => false, 'signed' => false, 'comment' => '不含税单价',])
-            ->addColumn('packing_size', 'string', ['limit' => 300, 'default' => '', 'null' => false, 'signed' => false, 'comment' => '最少包装规格',])
-            ->addColumn('packing_specification', 'string', ['limit' => 300, 'default' => '', 'null' => false, 'signed' => false, 'comment' => '包装规格',])
-            ->addColumn('valid_start_time', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => '', 'signed' => false, 'comment' => '有效时间开始',])
-            ->addColumn('valid_end_time', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => '', 'signed' => true, 'comment' => '有效时间结束',])
+            ->addColumn('distribution_agreement_url', 'string', ['limit' => 200, 'default' => "", 'signed' => true, 'comment' => '经销协议url',])
+            ->addColumn('signing_date', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '签约日期',])
+            ->addColumn('end_time', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '有效期',])
+            ->addColumn('payment_days', 'integer', ['limit' => MysqlAdapter::INT_MEDIUM, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '账期 天数',])
+            ->addColumn('transaction_type', 'string', ['limit' => 100, 'null' => false, 'default' => '', 'signed' => false, 'comment' => '交易类型',])
+            ->addColumn('admission_lowest_price', 'decimal', ['limit' => MysqlAdapter::INT_MEDIUM, 'default' => '', 'signed' => true, 'comment' => '当地进院最低价',])
+            ->addColumn('guide_price', 'decimal', ['limit' => MysqlAdapter::INT_MEDIUM, 'default' => '', 'signed' => false, 'comment' => '当地指导价',])
+            ->addColumn('provincial_price', 'decimal', ['limit' => MysqlAdapter::INT_MEDIUM, 'default' => '', 'signed' => false, 'comment' => '当地省标价',])
+            ->addColumn('local_price', 'decimal', ['limit' => MysqlAdapter::INT_MEDIUM, 'default' => '', 'signed' => false, 'comment' => '当地市标价',])
+            ->addColumn('clinical_use_department', 'string', ['limit' => 300, 'default' => '', 'signed' => true, 'comment' => '产品临床使用科室',])
+            ->addColumn('remark', 'string', ['limit' => 300, 'default' => '', 'signed' => true, 'comment' => '备注',])
 
             ->addColumn('created_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '创建时间',])
             ->addColumn('updated_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '更新时间',])

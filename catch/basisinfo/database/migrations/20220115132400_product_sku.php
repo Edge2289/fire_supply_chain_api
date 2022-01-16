@@ -20,12 +20,12 @@ class ProductSku extends Migrator
      */
     public function change()
     {
-        $table = $this->table('product_sku', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '厂家生产许可证', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table = $this->table('product_sku', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '产品sku', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('product_id', 'integer', ['limit' => MysqlAdapter::INT_MEDIUM, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '产品id',])
             ->addColumn('product_code', 'string', ['limit' => 200, 'null' => false, 'default' => "", 'signed' => true, 'comment' => '产品编号',])
             ->addColumn('sku_code', 'string', ['limit' => 100, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '规格型号',])
             ->addColumn('item_number', 'string', ['limit' => 100, 'null' => false, 'default' => '', 'signed' => false, 'comment' => '货号/sku',])
-            ->addColumn('unit_price', 'decimal', ['limit' => MysqlAdapter::INT_MEDIUM, 'default' => '', 'null' => false, 'signed' => true, 'comment' => '单价',])
+            ->addColumn('unit_price', 'decimal', ['limit' => MysqlAdapter::INT_MEDIUM, 'default' => 0, 'null' => false, 'signed' => true, 'comment' => '单价',])
             ->addColumn('tax_rate', 'decimal', ['limit' => MysqlAdapter::INT_MEDIUM, 'default' => '', 'null' => false, 'signed' => false, 'comment' => '税率%',])
             ->addColumn('n_tax_price', 'decimal', ['limit' => MysqlAdapter::INT_MEDIUM, 'default' => '', 'null' => false, 'signed' => false, 'comment' => '不含税单价',])
             ->addColumn('packing_size', 'string', ['limit' => 300, 'default' => '', 'null' => false, 'signed' => false, 'comment' => '最少包装规格',])

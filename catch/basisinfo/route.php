@@ -29,8 +29,14 @@ $router->group(function () use ($router){
 
     });
     // 购货者路由
-    // 仓库路由
     // 产品路由
+    $router->group(function () use ($router) {
+        $router->get('product', '\catchAdmin\basisinfo\controller\Product@index'); // 厂家
+        $router->post('product', '\catchAdmin\basisinfo\controller\Product@save'); // 厂家
+        $router->put('product/<id>', '\catchAdmin\basisinfo\controller\Product@update'); // 厂家
+        $router->post('product/audio/<id>', '\catchAdmin\basisinfo\controller\Product@update'); // 厂家
+
+    });
 
 })->middleware('auth');
 

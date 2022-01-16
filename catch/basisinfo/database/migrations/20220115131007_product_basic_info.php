@@ -20,7 +20,7 @@ class ProductBasicInfo extends Migrator
      */
     public function change()
     {
-        $table = $this->table('product_distribution_info', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '产品基础信息', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table = $this->table('product_basic_info', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '产品基础信息', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('product_name', 'string', ['limit' => 300, 'null' => false, 'default' => '', 'signed' => true, 'comment' => '产品名称',])
             ->addColumn('product_img', 'string', ['limit' => 200, 'default' => '', 'signed' => false, 'comment' => '产品实物图片',])
             ->addColumn('storage_conditions', 'string', ['limit' => 100, 'default' => '', 'signed' => true, 'comment' => '储运条件',])
