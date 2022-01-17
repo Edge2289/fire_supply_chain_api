@@ -23,7 +23,7 @@ class ProductRegistered extends Migrator
         $table = $this->table('product_registered', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '产品注册证', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('product_id', 'integer', ['limit' => MysqlAdapter::INT_MEDIUM, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '产品id',])
             ->addColumn('registered_license_url', 'string', ['limit' => 200, 'null' => false, 'default' => "", 'signed' => true, 'comment' => ' 注册证',])
-            ->addColumn('registered_product_categories', 'integer', ['limit' => MysqlAdapter::INT_MEDIUM, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '产品分类',])
+            ->addColumn('registered_product_categories', 'integer', ['limit' => MysqlAdapter::INT_MEDIUM, 'default' => 0, 'signed' => false, 'comment' => '产品分类',])
             ->addColumn('registered_code', 'string', ['limit' => 100, 'null' => false, 'default' => '', 'signed' => false, 'comment' => '注册证编号',])
             ->addColumn('registered_address', 'string', ['limit' => 300, 'default' => '', 'null' => false, 'signed' => true, 'comment' => '生产地址',])
             ->addColumn('registered_name', 'string', ['limit' => 60, 'default' => '', 'null' => false, 'signed' => false, 'comment' => '注册人名称',])

@@ -27,6 +27,5 @@ class ProductBasicInfo extends CatchTable
     protected function form()
     {
         return Factory::create('productBasicInfo');
-
     }
 }

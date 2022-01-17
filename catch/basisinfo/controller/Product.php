@@ -16,6 +16,8 @@ use catchAdmin\basisinfo\model\ProductRecord;
 use catchAdmin\basisinfo\model\ProductRegistered;
 use catchAdmin\basisinfo\model\ProductSku;
 use catchAdmin\basisinfo\request\ProductBasicInfoRequest;
+use catchAdmin\basisinfo\request\ProductRecordRequest;
+use catchAdmin\basisinfo\request\ProductRegisteredRequest;
 use catcher\base\CatchController;
 use catcher\CatchResponse;
 use catcher\exceptions\BusinessException;
@@ -37,11 +39,11 @@ class Product extends CatchController
 
 
     public function __construct(
-        ProductBasicInfo $productBasicInfo,
-        ProductRecord $productRecord,
+        ProductBasicInfo        $productBasicInfo,
+        ProductRecord           $productRecord,
         ProductDistributionInfo $productDistributionInfo,
-        ProductSku $productSku,
-        ProductRegistered $productRegistered
+        ProductSku              $productSku,
+        ProductRegistered       $productRegistered
     )
     {
         $this->productBasicInfoModel = $productBasicInfo;
@@ -59,9 +61,9 @@ class Product extends CatchController
     /**
      * 保存
      *
-     * @author xiejiaqing
      * @param Request $request
      * @return \think\response\Json
+     * @author xiejiaqing
      */
     public function save(Request $request)
     {
@@ -79,14 +81,36 @@ class Product extends CatchController
     }
 
     /**
+     * 更新
+     *
+     * @param Request $request
+     * @return \think\response\Json
+     * @author xiejiaqing
+     */
+    public function update(Request $request)
+    {
+        $type = $request->param('form_product_type') ?? "";
+        if (empty($type)) {
+            return CatchResponse::fail("请求类型缺失");
+        }
+        $result = $this->{$type}($request->param());
+        if ($result) {
+            return CatchResponse::success([
+                'id' => $result
+            ]);
+        }
+        return CatchResponse::fail();
+    }
+
+    /**
      * 基础数据保存
      *
-     * @author xiejiaqing
      * @param array $map
      * @return bool|int
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
+     * @author xiejiaqing
      */
     protected function BasicInfoCall(array $map)
     {
@@ -103,17 +127,107 @@ class Product extends CatchController
         }
     }
 
-    public function update()
+    /**
+     * 注册证信息
+     *
+     * @param array $map
+     * @return bool|int
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @author xiejiaqing
+     */
+    protected function registeredCall(array $map)
+    {
+        $map['end_time'] = strtotime($map['end_time']);
+        $map['registered_time'] = strtotime($map['registered_time']);
+
+        $this->validator(ProductRegisteredRequest::class, $map);
+
+        if (isset($map['id']) && !empty($map['id'])) {
+            $data = $this->productRegistered->where('id', $map['id'])->find();
+            if (!$data) {
+                throw new BusinessException("数据不存在");
+            }
+            return $this->productRegistered->updateBy($map['id'], $map);
+        } else {
+            return $this->productRegistered->storeBy($map);
+        }
+    }
+
+    /**
+     * 备案信息
+     *
+     * @param array $map
+     * @return bool|int
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @author xiejiaqing
+     */
+    protected function recordCall(array $map)
+    {
+        $map['record_time'] = strtotime($map['record_time']);
+        $this->validator(ProductRecordRequest::class, $map);
+        if (isset($map['id']) && !empty($map['id'])) {
+            $data = $this->productRecord->where('id', $map['id'])->find();
+            if (!$data) {
+                throw new BusinessException("数据不存在");
+            }
+            return $this->productRecord->updateBy($map['id'], $map);
+        } else {
+            return $this->productRecord->storeBy($map);
+        }
+    }
+
+    /**
+     * sku保存
+     *
+     * @author xiejiaqing
+     * @param array $skuData
+     */
+    protected function skuSave(array $skuData)
     {
 
     }
 
     /**
+     * 经销商信息
+     *
+     * @author xiejiaqing
+     * @param array $map
+     * @return bool|int
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    protected function distributionInfoCall(array $map)
+    {
+        $map['signing_date'] = empty($map['signing_date'])? $map['signing_date']: strtotime($map['signing_date']);
+        $map['end_time'] = empty($map['end_time'])? $map['end_time']: strtotime($map['end_time']);
+        if (empty($map['product_id']) || empty($map['payment_days']) || empty($map['transaction_type'])) {
+            throw new BusinessException("请填写完整信息");
+        }
+        if (isset($map['id']) && !empty($map['id'])) {
+            $data = $this->productDistributionInfo->where('id', $map['id'])->find();
+            if (!$data) {
+                throw new BusinessException("数据不存在");
+            }
+            return $this->productDistributionInfo->updateBy($map['id'], $map);
+        } else {
+            return $this->productDistributionInfo->storeBy($map);
+        }
+    }
+
+    /**
      * 改变
      *
+     * @author xiejiaqing
      * @param Request $request
      * @return \think\response\Json
-     * @author xiejiaqing
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
      */
     public function changeProductSetting(Request $request)
     {

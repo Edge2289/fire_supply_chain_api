@@ -3,8 +3,8 @@
  * Created by PhpStorm.
  * author: xiejiaqing
  * Note: Tired as a dog
- * Date: 2022/1/9
- * Time: 20:59
+ * Date: 2022/1/17
+ * Time: 20:58
  */
 
 namespace catchAdmin\basisinfo\tables;
@@ -14,21 +14,17 @@ use catchAdmin\basisinfo\tables\forms\Factory;
 use catcher\CatchTable;
 
 /**
- * Class QualificationFile
+ * Class ProductRegistered
  * @package catchAdmin\basisinfo\tables
  */
-class QualificationFile extends CatchTable
+class ProductRegistered extends CatchTable
 {
     protected function table()
     {
-        return $this->getTable('qualificationFile')
-            ->withApiRoute('basisinfo')
-            ->selectionChange()
-            ->render();
     }
 
     protected function form()
     {
-        return Factory::create('qualificationFile');
+        return Factory::create('productRegistered');
     }
 }
