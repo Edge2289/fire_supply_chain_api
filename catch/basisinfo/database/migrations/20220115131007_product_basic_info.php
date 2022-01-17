@@ -23,6 +23,7 @@ class ProductBasicInfo extends Migrator
         $table = $this->table('product_basic_info', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '产品基础信息', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('product_name', 'string', ['limit' => 300, 'null' => false, 'default' => '', 'signed' => true, 'comment' => '产品名称',])
             ->addColumn('product_img', 'string', ['limit' => 200, 'default' => '', 'null' => false, 'signed' => false, 'comment' => '产品实物图片',])
+            ->addColumn('factory_id', 'integer', ['limit' => 10, 'default' => 0, 'null' => false, 'signed' => false, 'comment' => '生产厂家',])
             ->addColumn('storage_conditions', 'string', ['limit' => 100, 'null' => false, 'default' => '', 'signed' => true, 'comment' => '储运条件',])
             ->addColumn('data_maintenance', 'string', ['limit' => 30, 'default' => "", 'null' => false, 'signed' => false, 'comment' => '资料维护 1 注册证 2 备案凭证',])
             ->addColumn('audit_status', 'integer', ['limit' => MysqlAdapter::INT_TINY, 'default' => 0, 'signed' => true, 'comment' => '审核状态 {0:未审核,1:已审核,2:审核失败}',])

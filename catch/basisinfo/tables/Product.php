@@ -35,7 +35,7 @@ class Product extends CatchTable
                 HeaderItem::label('有效期')->prop('factory_type_name'),
                 HeaderItem::label('状态')->prop('audit_status_i'),
                 HeaderItem::label('操作')->width(200)->actions([
-                    Actions::update("编辑", "editFactory"),
+                    Actions::update("编辑", "editProduct"),
                     Actions::normal("导出审批", 'success', "facePrint")->icon('el-icon-printer'),
                 ])
             ])
@@ -53,7 +53,7 @@ class Product extends CatchTable
             ])
             ->withApiRoute('product')
             ->withActions([
-                Actions::normal("新增", 'primary', "addFactory")->icon('el-icon-plus'),
+                Actions::normal("新增", 'primary', "addProduct")->icon('el-icon-plus'),
                 Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu'),
             ])
             ->selectionChange()
