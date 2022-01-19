@@ -228,7 +228,7 @@ class Factory extends CatchController
             }
             return $this->factory->updateBy($map['id'], $map);
         } else {
-            $map['factory_code'] = "FC" . date("YmdH") . rand(100, 999) . rand(100, 999);
+            $map['factory_code'] = getCode("FC");
             return $this->factory->storeBy($map);
         }
     }

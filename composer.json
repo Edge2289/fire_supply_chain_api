@@ -1,6 +1,6 @@
 {
-    "name": "jaguarjack/catchadmin",
-    "description": "The api framework base on thinkphp, help you to create admin management soon 🚀",
+    "name": "meridian/supply_chain",
+    "description": "supply_chain",
     "type": "project",
     "keywords": [
         "framework",
@@ -12,8 +12,8 @@
     "license": "Apache-2.0",
     "authors": [
         {
-            "name": "jaguarjack",
-            "email": "njphper@gmail.com"
+            "name": "meridian",
+            "email": "1131191695@qq.com"
         }
     ],
     "require": {
@@ -49,7 +49,10 @@
         },
         "psr-0": {
             "": "extend/"
-        }
+        },
+        "files" : [
+            "extend/helpers/CommonHelper.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
