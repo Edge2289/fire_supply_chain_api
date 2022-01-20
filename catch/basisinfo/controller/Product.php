@@ -21,6 +21,7 @@ use catchAdmin\basisinfo\request\ProductRegisteredRequest;
 use catcher\base\CatchController;
 use catcher\CatchResponse;
 use catcher\exceptions\BusinessException;
+use think\Db;
 use think\Request;
 
 /**
@@ -105,26 +106,76 @@ class Product extends CatchController
     /**
      * 基础数据保存
      *
+     * @author xiejiaqing
      * @param array $map
      * @return bool|int
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
      */
     protected function BasicInfoCall(array $map)
     {
         $this->validator(ProductBasicInfoRequest::class, $map);
 
-        if (isset($map['id']) && !empty($map['id'])) {
-            $data = $this->productBasicInfoModel->where('id', $map['id'])->find();
-            if (!$data) {
-                throw new BusinessException("数据不存在");
+        $skuData = $map['skuData'] ?? [];
+        unset($map['skuData']);
+        $skuIds = [];
+        $addSkus = [];
+        $updateSkus = [];
+        if ($skuData) {
+            // 如果存在sku信息
+            foreach ($skuData as $datum) {
+                $datum['valid_start_time'] = strtotime($datum['valid_start_time']);
+                $datum['valid_end_time'] = strtotime($datum['valid_end_time']);
+                $datum['updated_at'] = time();
+                if (!empty($datum['id'])) {
+                    $skuIds[] = $datum['id'];
+                    $updateSkus[] = $datum;
+                } else {
+                    $datum['product_code'] = getCode("PO");
+                    $datum['created_at'] = time();
+                    $addSkus[] = $datum;
+                }
             }
-            return $this->productBasicInfoModel->updateBy($map['id'], $map);
-        } else {
-            return $this->productBasicInfoModel->storeBy($map);
         }
+
+        app(Db::class)->startTrans();
+        try {
+            if (isset($map['id']) && !empty($map['id'])) {
+                $data = $this->productBasicInfoModel->where('id', $map['id'])->find();
+                if (!$data) {
+                    throw new BusinessException("数据不存在");
+                }
+                $id = $this->productBasicInfoModel->updateBy($map['id'], $map);
+                if (!$id) {
+                    throw new \Exception("修改失败");
+                }
+                $id = $map['id'];
+            } else {
+                $id = $this->productBasicInfoModel->storeBy($map);
+            }
+            if ($skuData) {
+                // 删除
+                foreach ($this->productSku->whereNotIn('id', $skuIds)->select() as $item) {
+                    $item->delete();
+                }
+                if (!empty($addSkus)) {
+                    // 新增
+                    foreach ($addSkus as &$datum) {
+                        $datum['product_id'] = $id;
+                    }
+                    $this->productSku->insertAllBy($addSkus);
+                }
+                if (!empty($updateSkus)) {
+                    // 更新
+                    foreach ($updateSkus as $updateSku) {
+                        $this->productSku->updateBy($updateSku['id'], $updateSku);
+                    }
+                }
+            }
+        } catch (\Exception $exception) {
+            app(Db::class)->rollback();
+            throw new BusinessException(sprintf("操作失败【%s】", $exception->getMessage()));
+        }
+        app(Db::class)->commit();
+        return $id;
     }
 
     /**
@@ -178,17 +229,6 @@ class Product extends CatchController
         } else {
             return $this->productRecord->storeBy($map);
         }
-    }
-
-    /**
-     * sku保存
-     *
-     * @author xiejiaqing
-     * @param array $skuData
-     */
-    protected function skuSave(array $skuData)
-    {
-
     }
 
     /**
@@ -270,6 +310,7 @@ class Product extends CatchController
                 "component" => "distribution_info",
             ];
             $productData['distribution_info'] = $this->productDistributionInfo->where("product_id", $id)->find();
+            $productData['sku_data'] = $this->productSku->where("product_id", $id)->select();
         }
         return CatchResponse::success([
             'componentData' => $map,
