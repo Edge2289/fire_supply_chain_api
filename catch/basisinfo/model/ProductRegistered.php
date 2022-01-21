@@ -18,5 +18,15 @@ use catcher\base\CatchModel;
  */
 class ProductRegistered extends CatchModel
 {
+    protected $name = 'product_registered';
 
+    public function getRegisteredTimeAttr($value)
+    {
+        return date("Y-m-d", $value);
+    }
+
+    public function getEndTimeAttr($value)
+    {
+        return date("Y-m-d", $value);
+    }
 }

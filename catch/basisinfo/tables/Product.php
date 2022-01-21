@@ -28,11 +28,11 @@ class Product extends CatchTable
             ->header([
                 HeaderItem::label()->selection(),
                 HeaderItem::label('序号')->prop('id'),
-                HeaderItem::label('产品名称')->prop('factory_code'),
-                HeaderItem::label('注册证号')->prop('company_name'),
-                HeaderItem::label('备案凭证号')->prop('company_name_en'),
-                HeaderItem::label('生产厂家')->prop('business_end_date_z'),
-                HeaderItem::label('有效期')->prop('factory_type_name'),
+                HeaderItem::label('产品名称')->prop('product_name'),
+                HeaderItem::label('注册证号')->prop('registered_code'),
+                HeaderItem::label('备案凭证号')->prop('record_code'),
+                HeaderItem::label('生产厂家')->prop('factory_company_name'),
+                HeaderItem::label('有效期')->prop('end_time'),
                 HeaderItem::label('状态')->prop('audit_status_i'),
                 HeaderItem::label('操作')->width(200)->actions([
                     Actions::update("编辑", "editProduct"),

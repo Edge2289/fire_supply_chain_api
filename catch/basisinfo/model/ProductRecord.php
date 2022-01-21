@@ -19,4 +19,5 @@ use catcher\base\CatchModel;
 class ProductRecord extends CatchModel
 {
     protected $name = 'product_record';
+
 }

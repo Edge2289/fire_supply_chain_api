@@ -56,7 +56,23 @@ class Product extends CatchController
 
     public function index()
     {
-        return CatchResponse::paginate($this->productBasicInfoModel->getList());
+        // 审核状态 {0:未审核,1:已审核,2:审核失败}
+        $auditStatusI = [
+            "未审核", "已审核", "审核失败"
+        ];
+        $data = $this->productBasicInfoModel->getList();
+        foreach ($data as &$datum) {
+            $datum['factory_company_name'] = $datum['withFactory']['company_name'] ?? "";
+            $datum['registered_code'] = $datum['withRegistered']['registered_code'] ?? "";
+            $datum['end_time'] = $datum['withRegistered']['end_time'] ?? "";
+            $datum['record_code'] = $datum['withRecord']['record_code'] ?? "";
+            $datum['audit_status_i'] = $auditStatusI[$datum['audit_status']];
+
+            unset($datum['withFactory']);
+            unset($datum['withRecord']);
+            unset($datum['withRegistered']);
+        }
+        return CatchResponse::paginate($data);
     }
 
     /**
@@ -245,7 +261,7 @@ class Product extends CatchController
     {
         $map['signing_date'] = empty($map['signing_date'])? $map['signing_date']: strtotime($map['signing_date']);
         $map['end_time'] = empty($map['end_time'])? $map['end_time']: strtotime($map['end_time']);
-        if (empty($map['product_id']) || empty($map['payment_days']) || empty($map['transaction_type'])) {
+        if (empty($map['product_id']) || empty($map['payment_days'])) {
             throw new BusinessException("请填写完整信息");
         }
         if (isset($map['id']) && !empty($map['id'])) {
@@ -306,7 +322,7 @@ class Product extends CatchController
             }
             $map[] = [
                 "id" => 4,
-                "name" => "经销商信息",
+                "name" => "经销信息",
                 "component" => "distribution_info",
             ];
             $productData['distribution_info'] = $this->productDistributionInfo->where("product_id", $id)->find();
