@@ -56,7 +56,7 @@ class Product extends CatchController
 
     public function index()
     {
-        // 审核状态 {0:未审核,1:已审核,2:审核失败}
+        //审核状态 {0:未审核,1:已审核,2:审核失败}
         $auditStatusI = [
             "未审核", "已审核", "审核失败"
         ];
