@@ -503,8 +503,11 @@ class Suppliers extends CatchController
         if ($supplierData['audit_status'] != 1) {
             throw new BusinessException("审核状态不是已审核，无法开启");
         }
+        if ($supplierData['status'] == 1) {
+            throw new BusinessException("已开启");
+        }
         // 开启
-        $b = $this->supplier->findBy($data['id'], [
+        $b = $this->supplier->updateBy($data['id'], [
             'status' => 1
         ]);
         if ($b) {
@@ -530,8 +533,11 @@ class Suppliers extends CatchController
         if (empty($supplierData)) {
             throw new BusinessException("不存在供应商");
         }
+        if ($supplierData['status'] == 0) {
+            throw new BusinessException("未开启无法停用");
+        }
         // 开启
-        $b = $this->supplier->findBy($data['id'], [
+        $b = $this->supplier->updateBy($data['id'], [
             'status' => 0
         ]);
         if ($b) {

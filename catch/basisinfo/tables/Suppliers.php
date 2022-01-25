@@ -65,8 +65,8 @@ class Suppliers extends CatchTable
             ->withActions([
                 Actions::normal("新增", 'primary', "addSuppliers")->icon('el-icon-plus'),
                 Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu'),
-                Actions::normal("启动", 'primary', "audit")->icon('el-icon-success'),
-                Actions::normal("停用", 'warning', "audit")->icon('el-icon-error'),
+                Actions::normal("启动", 'primary', "open")->icon('el-icon-success'),
+                Actions::normal("停用", 'warning', "disabled")->icon('el-icon-error'),
             ])
             ->selectionChange()
             ->render();
