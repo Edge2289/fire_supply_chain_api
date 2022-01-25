@@ -33,7 +33,8 @@ class Product extends CatchTable
                 HeaderItem::label('备案凭证号')->prop('record_code'),
                 HeaderItem::label('生产厂家')->prop('factory_company_name'),
                 HeaderItem::label('有效期')->prop('end_time'),
-                HeaderItem::label('状态')->prop('audit_status_i'),
+                HeaderItem::label('审核状态')->prop('audit_status_i'),
+                HeaderItem::label('审核信息')->prop('audit_info'),
                 HeaderItem::label('操作')->width(200)->actions([
                     Actions::update("编辑", "editProduct"),
                     Actions::normal("导出审批", 'success', "facePrint")->icon('el-icon-printer'),

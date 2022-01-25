@@ -333,4 +333,32 @@ class Product extends CatchController
             'productData' => $productData,
         ]);
     }
+
+    /**
+     * 审核
+     * @author xiejiaqing
+     * @param Request $request
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function audio(Request $request)
+    {
+        $data = $request->param();
+        $productData = $this->productBasicInfoModel->findBy($data['id']);
+        if (empty($productData)) {
+            throw new BusinessException("不存在产品");
+        }
+        $b = $this->productBasicInfoModel->updateBy($data['id'], [
+            'audit_status' => $data['audit_status'],
+            'audit_info' => $data['audit_info'],
+            'audit_user_id' => request()->user()->id,
+            'audit_user_name' => request()->user()->username,
+        ]);
+        if ($b) {
+            return CatchResponse::success();
+        }
+        return CatchResponse::fail("操作失败");
+    }
 }

@@ -273,8 +273,29 @@ class Factory extends CatchController
         return $this->factoryRecord->storeBy($data);
     }
 
-    public function audit()
+    /**
+     * 缺少审核
+     * 审核成功不可以再次审核
+     * 审核失败允许再次审核
+     */
+    public function audit(Request $request)
     {
-
+        // 审核
+        // 审核id、审核状态、审核信息
+        $data = $request->param();
+        $factoryData = $this->factory->findBy($data['id']);
+        if (empty($factoryData)) {
+            throw new BusinessException("不存在产品");
+        }
+        $b = $this->factory->updateBy($data['id'], [
+            'audit_status' => $data['audit_status'],
+            'audit_info' => $data['audit_info'],
+            'audit_user_id' => request()->user()->id,
+            'audit_user_name' => request()->user()->username,
+        ]);
+        if ($b) {
+            return CatchResponse::success();
+        }
+        return CatchResponse::fail("操作失败");
     }
 }
