@@ -145,7 +145,7 @@ class Product extends CatchController
                     $skuIds[] = $datum['id'];
                     $updateSkus[] = $datum;
                 } else {
-                    $datum['product_code'] = getCode("PO");
+                    $datum['product_code'] = getCode("PC");
                     $datum['created_at'] = time();
                     $addSkus[] = $datum;
                 }
