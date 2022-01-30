@@ -18,7 +18,7 @@ class PurchaseOrder extends Migrator
     public function change()
     {
         $table = $this->table('purchase_order', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '营业执照表', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
-        $table->addColumn('code', 'string', ['limit' => 30, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '采购编号',])
+        $table->addColumn('purchase_code', 'string', ['limit' => 30, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '采购编号',])
             ->addColumn('purchase_date', 'integer', ['limit' =>  MysqlAdapter::INT_REGULAR, 'null' => false, 'signed' => false, 'comment' => '采购日期',])
             ->addColumn('user_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '采购人员',])
             ->addColumn('supplier_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => false, 'comment' => '供应商',])
@@ -26,8 +26,7 @@ class PurchaseOrder extends Migrator
             // 数量 - 金额 (总金额-退款金额)
             ->addColumn('num', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '商品总数量',])
             ->addColumn('put_num', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '入库数量',])
-            ->addColumn('amount', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'signed' => true, 'comment' => '商品总数量',])
-            ->addColumn('refund_amount', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'signed' => true, 'comment' => '商品总数量',])
+            ->addColumn('amount', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'signed' => true, 'comment' => '价格',])
 
             // 状态
             ->addColumn('status', 'integer', ['limit' => MysqlAdapter::INT_TINY, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '状态{0:未完成,1:已完成}',])
