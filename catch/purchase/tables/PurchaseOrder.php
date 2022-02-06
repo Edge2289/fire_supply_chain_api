@@ -44,9 +44,14 @@ class PurchaseOrder extends CatchTable
                 ])
             ])
             ->withSearch([
-                Search::label('采购编号')->text('company_name', '采购编号'),
-                Search::label('结算类型')->text('factory_type', '结算类型'),
-                Search::label('审核状态')->select('status', '请选择审核状态',
+                Search::label('采购编号')->text('purchase_code', '采购编号'),
+                Search::label('结算类型')->text('invoice_status', '结算类型'),
+                Search::label('订单状态')->select('audit_status', '请选择审核状态',
+                    Search::options()->add('全部', '')
+                        ->add('未完成', 0)
+                        ->add('已完成', 1)
+                        ->render()
+                ),Search::label('审核状态')->select('audit_status', '请选择审核状态',
                     Search::options()->add('全部', '')
                         ->add('未审核', 0)
                         ->add('已审核', 1)
@@ -55,7 +60,7 @@ class PurchaseOrder extends CatchTable
                 ),
                 Search::hidden('id', '')
             ])
-            ->withApiRoute('factory')
+            ->withApiRoute('purchase')
             ->withActions([
                 Actions::normal("新增", 'primary', "addPurchaseOrder")->icon('el-icon-plus'),
                 Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu'),

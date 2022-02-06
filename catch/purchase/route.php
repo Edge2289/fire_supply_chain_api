@@ -9,9 +9,11 @@
 // | Author: JaguarJack [ njphper@gmail.com ]
 // +----------------------------------------------------------------------
 
-// you should use `$router`
 /* @var think\Route $router */
 
 $router->group(function () use ($router){
+    $router->group(function() use ($router) {
+        $router->get("purchase", "catchAdmin\purchase\controller\PurchaseOrder@index"); // 采购订单列表
+    });
 })->middleware('auth');
 

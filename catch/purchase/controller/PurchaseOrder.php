@@ -10,7 +10,10 @@
 namespace catchAdmin\purchase\controller;
 
 
+use app\Request;
 use catcher\base\CatchController;
+use catchAdmin\purchase\model\PurchaseOrder as PurchaseOrderModel;
+use catcher\CatchResponse;
 
 /**
  * 采购订单
@@ -19,16 +22,29 @@ use catcher\base\CatchController;
  */
 class PurchaseOrder extends CatchController
 {
+    protected $purchaseOrderModel;
+
+    public function __construct(
+        PurchaseOrderModel $purchaseOrderModel
+    )
+    {
+        // 构造函数
+        $this->purchaseOrderModel = $purchaseOrderModel;
+    }
+
     // 列表
     public function index()
     {
-
+        return CatchResponse::paginate($this->purchaseOrderModel->getList());
     }
 
     // 保存
-    public function save()
+    public function save(Request $request)
     {
-
+        // 保存基础信息
+        $params = $request->param();
+        // 保存商品
+        $goodsDetails = $params['goods_details'];
     }
 
     // 更新
@@ -48,11 +64,4 @@ class PurchaseOrder extends CatchController
     {
 
     }
-
-    // 入库
-    public function putWarehouse()
-    {
-
-    }
-
 }
