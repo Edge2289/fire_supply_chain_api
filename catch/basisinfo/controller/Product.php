@@ -361,4 +361,28 @@ class Product extends CatchController
         }
         return CatchResponse::fail("操作失败");
     }
+
+    /**
+     * 获取sku列表
+     *
+     * @author xiejiaqing
+     * @param Request $request
+     * @return \think\response\Json
+     * @throws \think\db\exception\DbException
+     */
+    public function skuList(Request $request)
+    {
+        $data = $request->param();
+        // 搜索条件 时间
+        $data = $this->productSku->leftJoin("product_basic_info pbi", "pbi.id = f_product_sku.product_id")
+            ->where("pbi.audit_status", 1) // 已审核的
+            ->field([
+                "f_product_sku.id", "f_product_sku.product_id", "f_product_sku.product_code",
+                "f_product_sku.sku_code", "f_product_sku.item_number", "f_product_sku.unit_price",
+                "f_product_sku.tax_rate", "f_product_sku.n_tax_price", "f_product_sku.packing_size",
+                "f_product_sku.packing_specification"
+            ])
+            ->paginate();
+        return CatchResponse::paginate($data);
+    }
 }

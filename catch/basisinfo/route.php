@@ -31,11 +31,11 @@ $router->group(function () use ($router){
     // 购货者路由
     // 产品路由
     $router->group(function () use ($router) {
-        $router->get('product', '\catchAdmin\basisinfo\controller\Product@index'); // 厂家
-        $router->post('product', '\catchAdmin\basisinfo\controller\Product@save'); // 厂家
-        $router->put('product/<id>', '\catchAdmin\basisinfo\controller\Product@update'); // 厂家
-        $router->post('product/audio/<id>', '\catchAdmin\basisinfo\controller\Product@update'); // 厂家
-
+        $router->get('product', '\catchAdmin\basisinfo\controller\Product@index'); // 产品列表
+        $router->post('product', '\catchAdmin\basisinfo\controller\Product@save'); // 产品保存
+        $router->put('product/<id>', '\catchAdmin\basisinfo\controller\Product@update'); // 产品变更
+        $router->post('product/audio/<id>', '\catchAdmin\basisinfo\controller\Product@audio'); // 产品审核
+        $router->get('product/sku', '\catchAdmin\basisinfo\controller\Product@skuList'); // 产品sku列表
     });
 
 })->middleware('auth');
