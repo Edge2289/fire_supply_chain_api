@@ -26,6 +26,7 @@ class PurchaseOrderDetails extends Migrator
             ->addColumn('receipt_quantity', 'string', ['limit' => 60, 'null' => false, 'default' => "", 'signed' => false, 'comment' => '收货数量',])
             ->addColumn('warehousing_quantity', 'string', ['limit' => 60, 'null' => false, 'default' => "", 'signed' => false, 'comment' => '入库数量',])
             ->addColumn('return_quantity', 'string', ['limit' => 60, 'null' => false, 'default' => "", 'signed' => false, 'comment' => '退货数量',])
+            ->addColumn('note', 'string', ['limit' => 60, 'null' => false, 'default' => "", 'signed' => false, 'comment' => '备注',])
             // 旧数据维护 资格证之类的
 
             ->addColumn('created_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '创建时间',])

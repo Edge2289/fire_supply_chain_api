@@ -23,21 +23,21 @@ class ChangePurchase extends Form
         // 获取当前公司下的人员
         // request()->user()->id
         return [
-            self::date("purchase_date", "采购日期")->col(12)->required(),
+            self::date("purchase_date", "采购日期")->col(8)->required(),
             self::select("user_id", "采购人员")
                 ->options(
                     self::options()->add('待检库', "1")
                         ->add('合格库', 2)
                         ->add('不合格库', 3)
                         ->add('非医疗器械库', 4)->render()
-                )->col(12)->required(),
+                )->col(8)->required(),
             self::select("supplier_id", "供应商")
                 ->options(
-                    self::options()->add('待检库', 1)
+                    self::options()->add('待检库', "1")
                         ->add('合格库', 2)
                         ->add('不合格库', 3)
                         ->add('非医疗器械库', 4)->render()
-                )->col(12)->required(),
+                )->col(8)->required(),
         ];
     }
 }

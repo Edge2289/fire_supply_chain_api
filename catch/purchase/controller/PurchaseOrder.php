@@ -102,6 +102,7 @@ class PurchaseOrder extends CatchController
         }
         // 保存商品
         $goodsDetails = $params['goods_details'];
+        unset($params['goods_details']);
 
         $this->purchaseOrderModel->startTrans();
         // 添加事务 排他锁
@@ -127,10 +128,21 @@ class PurchaseOrder extends CatchController
                 throw new \Exception("修改采购订单失败");
             }
             // 重新添加商品数据
-            foreach ($goodsDetails as &$goodsDetail) {
-                $goodsDetail['purchase_order_id'] = $params['id'];
+            $map = [];
+            foreach ($goodsDetails as $goodsDetail) {
+                $map[] = [
+                    'purchase_order_id' => $params['id'],
+                    'product_id' => $goodsDetail['id'],
+                    'price' => $params['id'],
+                    'tax_price' => $params['id'],
+                    'quantity' => $goodsDetail['number'],
+                    'receipt_quantity' => 0,
+                    'warehousing_quantity' => 0,
+                    'return_quantity' => 0,
+                    'note' => $goodsDetail['note'],
+                ];
             }
-            $gId = $this->purchaseOrderDetailsModel->insertAll($goodsDetails);
+            $gId = $this->purchaseOrderDetailsModel->insertAll($map);
             if (empty($gId)) {
                 throw new \Exception("采购订单商品添加失败");
             }
