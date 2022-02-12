@@ -23,4 +23,25 @@ class PurchaseOrder extends CatchModel
 
     protected $name = 'purchase_order';
 
+    protected $pk = 'id';
+
+    public function getPurchaseDateAttr($value)
+    {
+        return $value? date("Y-m-d", $value): $value;
+    }
+
+    public function hasPurchaseOrderDetails()
+    {
+        return $this->hasMany(PurchaseOrderDetails::class, "purchase_order_id", "id");
+    }
+
+    public function getList()
+    {
+        $data = $this->catchSearch()->with("hasPurchaseOrderDetails")->order("id desc")
+            ->paginate();
+        foreach ($data as &$datum) {
+            $datum['goods_details'] = $datum['hasPurchaseOrderDetails'];
+        }
+        return $data;
+    }
 }

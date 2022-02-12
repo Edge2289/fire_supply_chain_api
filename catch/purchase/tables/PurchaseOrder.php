@@ -40,6 +40,8 @@ class PurchaseOrder extends CatchTable
                 HeaderItem::label('审核信息')->prop('audit_info'),
                 HeaderItem::label('操作')->width(200)->actions([
                     Actions::update("编辑", "editPurchaseOrder"),
+                    Actions::normal("复制", 'primary', "copy")->icon('el-icon-document-copy'),
+                    Actions::normal("一键入库", 'success', "putStorage"),
                     Actions::normal("导出信息", 'success', "facePrint")->icon('el-icon-printer'),
                 ])
             ])
@@ -64,7 +66,10 @@ class PurchaseOrder extends CatchTable
             ->withActions([
                 Actions::normal("新增", 'primary', "addPurchaseOrder")->icon('el-icon-plus'),
                 Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu'),
-                Actions::normal("导出", 'primary', "export")->icon('el-icon-bangzhu'),
+                Actions::normal("结单", 'primary', "audit"),
+                Actions::normal("取消结单", 'primary', "audit"),
+                Actions::normal("作废", 'primary', "cancel"),
+                Actions::normal("导出", 'primary', "export"),
             ])
             ->selectionChange()
             ->render();

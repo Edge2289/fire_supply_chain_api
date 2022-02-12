@@ -20,4 +20,16 @@ class PurchaseService extends ModuleService
         // TODO: Implement loadRouteFrom() method.
         return __DIR__ . DIRECTORY_SEPARATOR . 'route.php';
     }
+    public function loadEvents()
+    {
+        return [
+            'attachment' => [ ],
+        ];
+    }
+
+    protected function registerCommands()
+    {
+        $this->commands([
+        ]);
+    }
 }

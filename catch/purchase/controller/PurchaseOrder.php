@@ -56,22 +56,41 @@ class PurchaseOrder extends CatchController
         $this->validator(PurchaseOrderRequest::class, $params);
         // 保存商品
         $goodsDetails = $params['goods_details'];
-        unset($params['goods_details']);
+        unset($params['goods_details'], $params['id']);
         $params['purchase_code'] = getCode("PO");
         $this->purchaseOrderModel->startTrans();
         try {
-            $purchaseMap = [];
-            $id = $this->purchaseOrderModel->createBy($purchaseMap);
+            $params['purchase_date'] = strtotime($params['purchase_date']);
+            $id = $this->purchaseOrderModel->createBy($params);
             if (empty($id)) {
                 throw new \Exception("采购订单添加失败");
             }
-            foreach ($goodsDetails as &$goodsDetail) {
-                $goodsDetail['purchase_order_id'] = $id;
+            $totalNum = 0;
+            $totalPrice = 0;
+            // 重新添加商品数据
+            foreach ($goodsDetails as $goodsDetail) {
+                $totalNum += $goodsDetail['number'];
+                $totalPrice += $goodsDetail['number'];
+                $map[] = [
+                    'purchase_order_id' => $id,
+                    'product_id' => $goodsDetail['id'],
+                    'price' => $goodsDetail['unit_price'],
+                    'tax_rate' => $goodsDetail['tax_rate'],
+                    'quantity' => $goodsDetail['number'],
+                    'receipt_quantity' => 0,
+                    'warehousing_quantity' => 0,
+                    'return_quantity' => 0,
+                    'note' => $goodsDetail['note'] ?? "",
+                ];
             }
-            $gId = $this->purchaseOrderDetailsModel->insertAll($goodsDetails);
+            $gId = $this->purchaseOrderDetailsModel->insertAll($map);
             if (empty($gId)) {
                 throw new \Exception("采购订单商品添加失败");
             }
+            $this->purchaseOrderModel->updateBy($id, [
+                   'num' => $totalNum,
+                   'amount' => (string)$totalPrice,
+               ]);
             // 提交事务
             $this->purchaseOrderModel->commit();
         } catch (\Exception $exception) {
@@ -79,7 +98,7 @@ class PurchaseOrder extends CatchController
             $this->purchaseOrderModel->rollback();
             return CatchResponse::fail($exception->getMessage());
         }
-        return CatchResponse::success();
+        return CatchResponse::success(['id' => $id]);
     }
 
     /**
@@ -118,8 +137,10 @@ class PurchaseOrder extends CatchController
             return CatchResponse::fail("采购订单已完成,无法修改");
         }
         try {
-
-            $b = $this->purchaseOrderDetailsModel->where("product_id", $params['id'])->delete();
+            $params['purchase_date'] = strtotime($params['purchase_date']);
+            $b = $this->purchaseOrderDetailsModel->destroy([
+                'purchase_order_id' => 1
+            ]);
             if (!$b) {
                 throw new \Exception("清除采购订单商品失败");
             }
@@ -127,25 +148,33 @@ class PurchaseOrder extends CatchController
             if (!$pb) {
                 throw new \Exception("修改采购订单失败");
             }
+            $totalNum = 0;
+            $totalPrice = 0;
             // 重新添加商品数据
             $map = [];
             foreach ($goodsDetails as $goodsDetail) {
+                $totalNum += $goodsDetail['number'];
+                $totalPrice += $goodsDetail['number'];
                 $map[] = [
                     'purchase_order_id' => $params['id'],
                     'product_id' => $goodsDetail['id'],
-                    'price' => $params['id'],
-                    'tax_price' => $params['id'],
+                    'price' => $goodsDetail['unit_price'],
+                    'tax_rate' => $goodsDetail['tax_rate'],
                     'quantity' => $goodsDetail['number'],
                     'receipt_quantity' => 0,
                     'warehousing_quantity' => 0,
                     'return_quantity' => 0,
-                    'note' => $goodsDetail['note'],
+                    'note' => $goodsDetail['note'] ?? "",
                 ];
             }
             $gId = $this->purchaseOrderDetailsModel->insertAll($map);
             if (empty($gId)) {
                 throw new \Exception("采购订单商品添加失败");
             }
+            $this->purchaseOrderModel->updateBy($params['id'], [
+                'num' => $totalNum,
+                'amount' => (string)$totalPrice,
+            ]);
             // 清除采购订单的商品数据
             $this->purchaseOrderModel->commit();
         } catch (\Exception $exception) {
@@ -188,14 +217,14 @@ class PurchaseOrder extends CatchController
         }
         // 更新
         try {
-            $b = $this->purchaseOrderDetailsModel->updateBy($params['id'], [
+            $b = $this->purchaseOrderModel->updateBy($params['id'], [
                 'audit_status' => $params['audit_status'],
                 'audit_info' => $params['audit_info'],
                 'audit_user_id' => request()->user()->id,
                 'audit_user_name' => request()->user()->username,
             ]);
             if (!$b) {
-                throw new \Exception("清除采购订单商品失败");
+                throw new \Exception("审核采购订单失败");
             }
             $this->purchaseOrderModel->commit();
         } catch (\Exception $exception) {
@@ -203,5 +232,17 @@ class PurchaseOrder extends CatchController
             return CatchResponse::fail($exception->getMessage());
         }
         return CatchResponse::success();
+    }
+
+    // 结单/返回结单
+    public function statement()
+    {
+
+    }
+
+    // 作废
+    public function invalid()
+    {
+
     }
 }
