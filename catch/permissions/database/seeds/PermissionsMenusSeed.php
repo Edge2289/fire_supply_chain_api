@@ -579,7 +579,7 @@ class PermissionsMenusSeed extends Seeder
       3 => 
       array (
         'id' => 26,
-        'permission_name' => '部门管理',
+        'permission_name' => '公司管理',
         'parent_id' => 1,
         'level' => '1',
         'route' => '/permissions/departments',

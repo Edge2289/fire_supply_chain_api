@@ -3,8 +3,8 @@
  * Created by PhpStorm.
  * author: xiejiaqing
  * Note: Tired as a dog
- * Date: 2022/1/12
- * Time: 16:56
+ * Date: 2022/2/13
+ * Time: 20:47
  */
 
 namespace catchAdmin\basisinfo\model;
@@ -13,10 +13,12 @@ namespace catchAdmin\basisinfo\model;
 use catcher\base\CatchModel;
 
 /**
- * Class Customer
+ * Class CustomerAttachment
  * @package catchAdmin\basisinfo\model
  */
-class Customer extends CatchModel
+class CustomerAttachment extends CatchModel
 {
+    protected $name = "customer_attachment";
 
+    protected $pk = 'id';
 }

@@ -74,7 +74,10 @@ class PurchaseOrder extends CatchController
                 $map[] = [
                     'purchase_order_id' => $id,
                     'product_id' => $goodsDetail['id'],
-                    'price' => $goodsDetail['unit_price'],
+                    'product_code' => $goodsDetail['product_code'],
+                    'item_number' => $goodsDetail['item_number'],
+                    'sku_code' => $goodsDetail['sku_code'],
+                    'unit_price' => $goodsDetail['unit_price'],
                     'tax_rate' => $goodsDetail['tax_rate'],
                     'quantity' => $goodsDetail['number'],
                     'receipt_quantity' => 0,
@@ -158,7 +161,10 @@ class PurchaseOrder extends CatchController
                 $map[] = [
                     'purchase_order_id' => $params['id'],
                     'product_id' => $goodsDetail['id'],
-                    'price' => $goodsDetail['unit_price'],
+                    'product_code' => $goodsDetail['product_code'],
+                    'item_number' => $goodsDetail['item_number'],
+                    'sku_code' => $goodsDetail['sku_code'],
+                    'unit_price' => $goodsDetail['unit_price'],
                     'tax_rate' => $goodsDetail['tax_rate'],
                     'quantity' => $goodsDetail['number'],
                     'receipt_quantity' => 0,

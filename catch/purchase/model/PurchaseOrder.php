@@ -25,6 +25,21 @@ class PurchaseOrder extends CatchModel
 
     protected $pk = 'id';
 
+    public function getUserIdAttr($value)
+    {
+        return (string)$value;
+    }
+
+    public function getSupplierIdAttr($value)
+    {
+        return (string)$value;
+    }
+
+    public function getSettlementStatusAttr($value)
+    {
+        return (string)$value;
+    }
+
     public function getPurchaseDateAttr($value)
     {
         return $value? date("Y-m-d", $value): $value;

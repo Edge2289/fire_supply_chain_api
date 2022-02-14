@@ -28,7 +28,6 @@ $router->group(function () use ($router){
         $router->post('factory/audio/<id>', '\catchAdmin\basisinfo\controller\Factory@audio'); // 厂家审核
 
     });
-    // 购货者路由
     // 产品路由
     $router->group(function () use ($router) {
         $router->get('product', '\catchAdmin\basisinfo\controller\Product@index'); // 产品列表
@@ -37,6 +36,15 @@ $router->group(function () use ($router){
         $router->post('product/audio/<id>', '\catchAdmin\basisinfo\controller\Product@audio'); // 产品审核
         $router->get('product/sku', '\catchAdmin\basisinfo\controller\Product@skuList'); // 产品sku列表
     });
+    // 客户路由
+    $router->group(function () use ($router) {
+        $router->get('customer', '\catchAdmin\basisinfo\controller\Customer@index'); // 客户列表
+        $router->post('customer', '\catchAdmin\basisinfo\controller\Customer@save'); // 客户保存
+        $router->put('customer/<id>', '\catchAdmin\basisinfo\controller\Customer@update'); // 客户变更
+        $router->post('customer/audio/<id>', '\catchAdmin\basisinfo\controller\Customer@audit'); // 审核客户
+        $router->post('customer/open/<id>', '\catchAdmin\basisinfo\controller\Customer@open'); // 启用客户
+        $router->post('customer/disabled/<id>', '\catchAdmin\basisinfo\controller\Customer@disabled'); // 禁用客户
+    });
 
 })->middleware('auth');
 
@@ -44,4 +52,5 @@ $router->group(function () use ($router){
     $router->get('suppliers/changeSuppliersSetting', '\catchAdmin\basisinfo\controller\Suppliers@changeSuppliersSetting');
     $router->get('factory/changeFactorySetting', '\catchAdmin\basisinfo\controller\Factory@changeFactorySetting');
     $router->get('product/changeProductSetting', '\catchAdmin\basisinfo\controller\Product@changeProductSetting');
+    $router->get('customer/changeCustomerSetting', '\catchAdmin\basisinfo\controller\Customer@changeCustomerSetting');
 });

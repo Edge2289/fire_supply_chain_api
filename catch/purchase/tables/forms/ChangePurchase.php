@@ -10,6 +10,8 @@
 namespace catchAdmin\purchase\tables\forms;
 
 
+use catchAdmin\basisinfo\model\SupplierLicense;
+use catchAdmin\permissions\model\Users;
 use catcher\library\form\Form;
 
 /**
@@ -18,33 +20,67 @@ use catcher\library\form\Form;
  */
 class ChangePurchase extends Form
 {
+    private $users;
+    private $supplier;
+
+    public function __construct(
+        Users $users,
+        SupplierLicense $supplier
+    )
+    {
+        $this->users = $users;
+        $this->supplier = $supplier;
+    }
+
     public function fields(): array
     {
-        // 获取当前公司下的人员
-        // request()->user()->id
         return [
-            self::date("purchase_date", "采购日期")->col(8)->required(),
+            self::date("purchase_date", "采购日期")->col(12)->required(),
             self::select("user_id", "采购人员")
                 ->options(
                     // 获取自身公司下的员工
-                    self::options()->add('待检库', "1")
-                        ->add('合格库', 2)
-                        ->add('不合格库', 3)
-                        ->add('非医疗器械库', 4)->render()
-                )->col(8)->required(),
+                    $this->getUser()
+                )->col(12)->required(),
             self::select("supplier_id", "供应商")
                 ->options(
-                    // 从供应商数据表读取
-                    self::options()->add('待检库', "1")
-                        ->add('合格库', 2)
-                        ->add('不合格库', 3)
-                        ->add('非医疗器械库', 4)->render()
-                )->col(8)->required(),
+                   $this->getSupplier()
+                )->col(12)->required(),
             self::select("settlement_status", "结算类型")
                 ->options(
                     self::options()->add('现结', "0")
                         ->add('月结', "1")->render()
-                )->col(8)->required(),
+                )->col(12)->required(),
         ];
+    }
+
+    public function getSupplier()
+    {
+        $data = $this->supplier->where("status", 1)->where("audit_status", 1)->select();
+        $map = [];
+        foreach ($data as $datum) {
+            $map[] = [
+                'value' => (string)$datum['id'],
+                'label' => $datum['company_name'],
+            ];
+        }
+        return $map;
+    }
+
+    public function getUser()
+    {
+        $userId = request()->user()->id;
+        $data = $this->users->where("id", $userId)->find();
+        if (!$data['department_id']) {
+            return [];
+        }
+        $data = $this->users->where("department_id", $data['department_id'])->select();
+        $map = [];
+        foreach ($data as $datum) {
+            $map[] = [
+                'value' => (string)$datum['id'],
+                'label' => $datum['username'],
+            ];
+        }
+        return $map;
     }
 }

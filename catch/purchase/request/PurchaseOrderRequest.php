@@ -21,17 +21,19 @@ class PurchaseOrderRequest extends CatchRequest
     protected function rules(): array
     {
         return [
-            'id|采购订单' => 'require',
-            'audit_status|审核状态' => 'require',
-            'audit_info|审核信息' => 'require|max:100'
+            'purchase_date|采购日期' => 'require',
+            'user_id|采购人员' => 'require',
+            'supplier_id|供应商' => 'require|max:100',
+            'goods_details|商品' => 'require'
         ];
     }
 
     // 检查商品
     protected function checkGoods($value, $rule, $data = [])
     {
+//        dd($value);
         // bool | message
-        return true;
+//        return false;
     }
 
     protected function message()

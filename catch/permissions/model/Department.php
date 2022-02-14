@@ -16,7 +16,7 @@ class Department extends CatchModel
     
     protected $field = [
             'id', // 
-			'department_name', // 部门名称
+			'department_name', // 公司名称
 			'parent_id', // 父级ID
 			'principal', // 负责人
 			'mobile', // 联系电话

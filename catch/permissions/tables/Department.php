@@ -20,7 +20,7 @@ class Department extends CatchTable
     {
         // TODO: Implement table() method.
         return $this->getTable('department')->header([
-            HeaderItem::label('部门名称')->prop('department_name'),
+            HeaderItem::label('公司名称')->prop('department_name'),
             HeaderItem::label('排序')->prop('sort')->withEditNumberComponent(),
             HeaderItem::label('状态')->prop('status')->withSwitchComponent(),
             HeaderItem::label('创建时间')->prop('created_at'),
@@ -31,7 +31,7 @@ class Department extends CatchTable
         ])->withApiRoute('departments')->withActions([
             Actions::create()
         ])->withSearch([
-            Search::label('部门名称')->text('department_name', '请输入部门名称'),
+            Search::label('公司名称')->text('department_name', '请输入公司名称'),
             Search::label('状态')->status()
         ])->withDialogWidth('35%')
             ->toTreeTable()->render();

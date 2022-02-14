@@ -19,8 +19,8 @@ class Department extends Form
                     'checkStrictly' => true
                 ],
             ])->style(['width' => '100%']),
-            Form::input('department_name', '部门名称')->required()->placeholder('请输入部门名称'),
-            Form::input('principal', '部门负责人'),
+            Form::input('department_name', '公司名称')->required()->placeholder('请输入部门名称'),
+            Form::input('principal', '公司负责人'),
             Form::input('mobile', '负责人联系方式'),
             Form::email('email', '邮箱'),
             Form::radio('status', '状态')->value(1)->options(

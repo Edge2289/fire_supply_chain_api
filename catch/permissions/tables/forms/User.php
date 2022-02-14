@@ -14,7 +14,7 @@ class User extends Form
         return [
             self::input('username', '昵称')->col(self::col(12))->clearable(true)->required(),
 
-            self::cascader('department_id', '部门', [])
+            self::cascader('department_id', '公司', [])
                 ->col(self::col(12))
                 ->options(
                     DepartmentModel::field(['id', 'parent_id', 'department_name'])->select()->toTree()

@@ -10,6 +10,7 @@
 // +----------------------------------------------------------------------
 namespace catchAdmin\permissions;
 
+use catchAdmin\permissions\event\CompanyCreateMysql;
 use catchAdmin\permissions\event\OperateLogEvent;
 use catchAdmin\permissions\middleware\AuthTokenMiddleware;
 use catchAdmin\permissions\middleware\PermissionsMiddleware;
@@ -30,6 +31,7 @@ class PermissionService extends ModuleService
     {
         return [
             'operateLog' => [ OperateLogEvent::class ],
+            'companyAddMysql' => [ CompanyCreateMysql::class ],
         ];
     }
 

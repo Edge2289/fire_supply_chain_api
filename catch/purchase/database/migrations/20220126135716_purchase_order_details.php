@@ -20,7 +20,10 @@ class PurchaseOrderDetails extends Migrator
         $table = $this->table('purchase_order_details', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '营业执照表', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('purchase_order_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '采购订单id',])
             ->addColumn('product_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '产品id',])
-            ->addColumn('price', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'signed' => false, 'comment' => '价格',])
+            ->addColumn('product_code', 'string', ['limit' => 50, 'null' => false, 'default' => "", 'signed' => false, 'comment' => '产品编号',])
+            ->addColumn('item_number', 'string', ['limit' => 50, 'null' => false, 'default' => "", 'signed' => false, 'comment' => '货号',])
+            ->addColumn('sku_code', 'string', ['limit' => 50, 'null' => false, 'default' => "", 'signed' => false, 'comment' => 'sku',])
+            ->addColumn('unit_price', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'signed' => false, 'comment' => '价格',])
             ->addColumn('tax_rate', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'signed' => false, 'comment' => '税率',])
             ->addColumn('quantity', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '数量',])
             ->addColumn('receipt_quantity', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '收货数量',])
