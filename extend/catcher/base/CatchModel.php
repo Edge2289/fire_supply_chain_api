@@ -58,4 +58,22 @@ abstract class CatchModel extends \think\Model
             $this->autoWithRelation();
         }
     }
+
+    /**
+     * 数据库转换日期
+     *
+     * @param $value
+     * @return false|string
+     * @author xiejiaqing
+     */
+    protected function toDate($value)
+    {
+        if (empty($value)) {
+            return "";
+        }
+        if (is_string($value)) {
+            return $value;
+        }
+        return date("Y-m-d", $value);
+    }
 }

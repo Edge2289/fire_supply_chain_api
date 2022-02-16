@@ -21,4 +21,40 @@ class CustomerInfo extends CatchModel
     protected $name = "customer_info";
 
     protected $pk = 'id';
+
+    /**
+     * @return \think\model\relation\HasOne
+     * @author xiejiaqing
+     */
+    public function hasCustomerLicense()
+    {
+        return $this->hasOne(CustomerLicense::class, "customer_info_id", "id");
+    }
+
+    /**
+     * @return mixed|\think\Paginator
+     * @throws \think\db\exception\DbException
+     * @author xiejiaqing
+     */
+    public function getList()
+    {
+        return $this->with(["hasCustomerLicense"])->catchSearch()->order("id desc")
+            ->paginate();
+    }
+
+    public function getEffectiveStartDateAttr($value)
+    {
+        return $this->toDate($value);
+    }
+
+    public function getEffectiveEndDateAttr($value)
+    {
+        return $this->toDate($value);
+    }
+
+    public function getCertificationDateAttr($value)
+    {
+        return $this->toDate($value);
+    }
+
 }

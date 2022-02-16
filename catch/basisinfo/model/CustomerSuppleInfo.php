@@ -3,8 +3,8 @@
  * Created by PhpStorm.
  * author: xiejiaqing
  * Note: Tired as a dog
- * Date: 2022/2/13
- * Time: 20:48
+ * Date: 2022/2/14
+ * Time: 22:45
  */
 
 namespace catchAdmin\basisinfo\model;
@@ -13,21 +13,21 @@ namespace catchAdmin\basisinfo\model;
 use catcher\base\CatchModel;
 
 /**
- * Class CustomerOperating
+ * Class CustomerSuppleInfo
  * @package catchAdmin\basisinfo\model
  */
-class CustomerOperating extends CatchModel
+class CustomerSuppleInfo extends CatchModel
 {
-    protected $name = "customer_operating_license";
+    protected $name = "customer_supple_info";
 
     protected $pk = 'id';
 
-    public function getBusinessStartDateAttr($value)
+    public function getLicenseStartDateAttr($value)
     {
         return date("Y-m-d", $value);
     }
 
-    public function getBusinessEndDateAttr($value)
+    public function getLicenseEndDateAttr($value)
     {
         return date("Y-m-d", $value);
     }

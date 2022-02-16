@@ -149,7 +149,7 @@ class Suppliers extends CatchController
     {
         $params['business_date_long'] = $params['business_date_long'] ? 1 : 0;
         $params['data_maintenance'] = implode(",", $params['data_maintenance']);
-        $params['registration_date'] = strtotime($params['registration_date']);
+        $params['registration_date'] = isset($params['registration_date']) ? strtotime($params['registration_date']) : 0;
         $params['business_start_date'] = strtotime($params['business_start_date']);
         if (!empty($params['business_end_date'])) {
             $params['business_end_date'] = strtotime($params['business_end_date']);
@@ -434,7 +434,7 @@ class Suppliers extends CatchController
                     $data = $infoHandle[$id]['handle']($data);
                 }
             }
-            $businessData[$infoHandle[$id]['name']] = $data ?: [];
+            $businessData[$infoHandle[$id]['name']] = $data ?: "";
         }
     }
 
@@ -455,12 +455,12 @@ class Suppliers extends CatchController
     /**
      * 审核供应商
      *
-     * @author xiejiaqing
      * @param AuditSuppliersRequest $auditSuppliers
      * @return \think\response\Json
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
+     * @author xiejiaqing
      */
     public function auditSuppliers(AuditSuppliersRequest $auditSuppliers)
     {
@@ -484,9 +484,9 @@ class Suppliers extends CatchController
     /**
      * 开启供应商
      *
-     * @author xiejiaqing
      * @param Request $request
      * @return \think\response\Json
+     * @author xiejiaqing
      */
     public function openSuppliers(Request $request)
     {
@@ -519,9 +519,9 @@ class Suppliers extends CatchController
     /**
      * 关闭供应商状态
      *
-     * @author xiejiaqing
      * @param Request $request
      * @return \think\response\Json
+     * @author xiejiaqing
      */
     public function disabledSuppliers(Request $request)
     {

@@ -21,4 +21,9 @@ class CustomerRegistration extends CatchModel
     protected $name = "customer_registration_license";
 
     protected $pk = 'id';
+
+    public function getRegistrationDateAttr($value)
+    {
+        return date("Y-m-d", $value);
+    }
 }

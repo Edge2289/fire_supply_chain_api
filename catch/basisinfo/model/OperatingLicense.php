@@ -38,10 +38,12 @@ class OperatingLicense extends CatchModel
         'warehouse_address',
         'equipment_class'
     ];
+
     public function getBusinessStartDateAttr($value)
     {
         return date("Y-m-d", $value);
     }
+    
     public function getBusinessEndDateAttr($value)
     {
         return date("Y-m-d", $value);

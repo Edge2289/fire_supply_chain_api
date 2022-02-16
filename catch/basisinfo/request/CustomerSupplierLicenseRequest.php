@@ -15,10 +15,10 @@ use catchAdmin\permissions\model\Users;
 use catcher\base\CatchRequest;
 
 /**
- * Class SuplierLicenseRequest
+ * Class CustomerSupplierLicenseRequest
  * @package catchAdmin\basisinfo\request
  */
-class SupplierLicenseRequest extends CatchRequest
+class CustomerSupplierLicenseRequest extends CatchRequest
 {
     public function __construct(array $params = null)
     {
@@ -29,6 +29,7 @@ class SupplierLicenseRequest extends CatchRequest
     protected function rules(): array
     {
         return [
+            'customer_info_id|营业执照id' => 'require',
             'company_name|企业名称' => 'require|max:200',
             'foreign_company|国外注册公司' => 'max:200',
             'unified_code|统一社会信用代码' => 'require',

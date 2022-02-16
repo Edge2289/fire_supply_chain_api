@@ -21,23 +21,25 @@ class CustomerLicense extends CatchModel
     protected $name = "customer_license";
 
     protected $pk = 'id';
-
-
+    
     public function getEstablishDateAttr($value)
     {
-        return date("Y-m-d", $value);
+        return $this->toDate($value);
     }
+
     public function getBusinessEndDateAttr($value)
     {
-        return date("Y-m-d", $value);
+        return $this->toDate($value);
     }
+
     public function getBusinessStartDateAttr($value)
     {
-        return date("Y-m-d", $value);
+        return $this->toDate($value);
     }
+
     public function getRegistrationDateAttr($value)
     {
-        return date("Y-m-d", $value);
+        return $this->toDate($value);
     }
 
     // 字段
@@ -72,8 +74,8 @@ class CustomerLicense extends CatchModel
      *
      * @time 2020年01月09日
      * @param $params
-     * @throws \think\db\exception\DbException
      * @return \think\Paginator
+     * @throws \think\db\exception\DbException
      */
     public function getList()
     {
