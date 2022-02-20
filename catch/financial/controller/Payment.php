@@ -10,12 +10,22 @@
 namespace catchAdmin\financial\controller;
 
 
+use catcher\base\CatchController;
+use catchAdmin\financial\model\Payment as PaymentModel;
+
 /**
  * Class Payment
  * @package catchAdmin\financial\controller
  * @note 付款单
  */
-class Payment
+class Payment extends CatchController
 {
+    protected $paymentModel;
 
+    public function __construct(
+        PaymentModel $paymentModel
+    )
+    {
+        $this->paymentModel = $paymentModel;
+    }
 }

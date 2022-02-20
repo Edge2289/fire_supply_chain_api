@@ -10,12 +10,22 @@
 namespace catchAdmin\financial\controller;
 
 
+use catcher\base\CatchController;
+use catchAdmin\financial\model\Invoice as InvoiceModel;
+
 /**
  * Class Invoice
  * @package catchAdmin\financial\controller
  * @note 开票
  */
-class Invoice
+class Invoice extends CatchController
 {
+    protected $invoiceModel;
 
+    public function __construct(
+        InvoiceModel $invoiceModel
+    )
+    {
+        $this->invoiceModel = $invoiceModel;
+    }
 }

@@ -28,7 +28,7 @@ class PurchaseOrder extends CatchController
     protected $purchaseOrderDetailsModel;
 
     public function __construct(
-        PurchaseOrderModel $purchaseOrderModel,
+        PurchaseOrderModel   $purchaseOrderModel,
         PurchaseOrderDetails $purchaseOrderDetailsModel
     )
     {
@@ -39,8 +39,8 @@ class PurchaseOrder extends CatchController
     /**
      * 列表
      *
-     * @author xiejiaqing
      * @return \think\response\Json
+     * @author xiejiaqing
      */
     public function index()
     {
@@ -50,9 +50,9 @@ class PurchaseOrder extends CatchController
     /**
      * 保存
      *
-     * @author xiejiaqing
      * @param Request $request
      * @return \think\response\Json
+     * @author xiejiaqing
      */
     public function save(Request $request)
     {
@@ -78,7 +78,8 @@ class PurchaseOrder extends CatchController
                 $totalPrice += $goodsDetail['number'];
                 $map[] = [
                     'purchase_order_id' => $id,
-                    'product_id' => $goodsDetail['id'],
+                    'product_id' => $goodsDetail['product_id'] ?? 0,
+                    'product_sku_id' => $goodsDetails['id'],
                     'product_code' => $goodsDetail['product_code'],
                     'item_number' => $goodsDetail['item_number'],
                     'sku_code' => $goodsDetail['sku_code'],
@@ -96,9 +97,9 @@ class PurchaseOrder extends CatchController
                 throw new \Exception("采购订单商品添加失败");
             }
             $this->purchaseOrderModel->updateBy($id, [
-                   'num' => $totalNum,
-                   'amount' => (string)$totalPrice,
-               ]);
+                'num' => $totalNum,
+                'amount' => (string)$totalPrice,
+            ]);
             // 提交事务
             $this->purchaseOrderModel->commit();
         } catch (\Exception $exception) {
@@ -112,12 +113,12 @@ class PurchaseOrder extends CatchController
     /**
      * 更新
      *
-     * @author xiejiaqing
      * @param Request $request
      * @return \think\response\Json
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
+     * @author xiejiaqing
      */
     public function update(Request $request)
     {
@@ -165,7 +166,8 @@ class PurchaseOrder extends CatchController
                 $totalPrice += $goodsDetail['number'];
                 $map[] = [
                     'purchase_order_id' => $params['id'],
-                    'product_id' => $goodsDetail['id'],
+                    'product_id' => $goodsDetail['product_id'] ?? 0,
+                    'product_sku_id' => $goodsDetails['id'],
                     'product_code' => $goodsDetail['product_code'],
                     'item_number' => $goodsDetail['item_number'],
                     'sku_code' => $goodsDetail['sku_code'],
@@ -198,12 +200,12 @@ class PurchaseOrder extends CatchController
     /**
      * 审核
      *
-     * @author xiejiaqing
      * @param Request $request
      * @return \think\response\Json
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
+     * @author xiejiaqing
      */
     public function audit(Request $request)
     {
