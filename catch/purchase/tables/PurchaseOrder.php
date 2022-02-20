@@ -26,23 +26,21 @@ class PurchaseOrder extends CatchTable
         return $this->getTable('purchase')
             ->header([
                 HeaderItem::label()->selection(),
-                HeaderItem::label('id')->prop('id'),
+//                HeaderItem::label('id')->prop('id'),
                 HeaderItem::label('状态')->prop('status_i'),
                 HeaderItem::label('采购编号')->prop('purchase_code'),
+                HeaderItem::label('供货者')->prop('supplier_name'),
+                HeaderItem::label('明细摘要')->prop('user_name'),
+                HeaderItem::label('总额')->prop('user_name'),
                 HeaderItem::label('采购日期')->prop('purchase_date'),
-                HeaderItem::label('采购人员')->prop('user_name'),
-                HeaderItem::label('供应商')->prop('supplier_name'),
-                HeaderItem::label('商品总数量')->prop('num'),
-                HeaderItem::label('入库数量')->prop('put_num'),
-                HeaderItem::label('开票状态')->prop('settlement_status'),
-                HeaderItem::label('结算类型')->prop('invoice_status'),
-                HeaderItem::label('审核状态')->prop('audit_status_i'),
-                HeaderItem::label('审核信息')->prop('audit_info'),
+                HeaderItem::label('结算类型')->prop('purchase_date'),
+                HeaderItem::label('是否作废')->prop('num'),
+                HeaderItem::label('备注')->prop('put_num'),
                 HeaderItem::label('操作')->width(200)->actions([
                     Actions::update("编辑", "editPurchaseOrder"),
                     Actions::normal("复制", 'primary', "copy")->icon('el-icon-document-copy'),
                     Actions::normal("一键入库", 'success', "putStorage"),
-                    Actions::normal("导出信息", 'success', "facePrint")->icon('el-icon-printer'),
+//                    Actions::normal("导出信息", 'success', "facePrint")->icon('el-icon-printer'),
                 ])
             ])
             ->withSearch([
@@ -53,7 +51,7 @@ class PurchaseOrder extends CatchTable
                         ->add('未完成', 0)
                         ->add('已完成', 1)
                         ->render()
-                ),Search::label('审核状态')->select('audit_status', '请选择审核状态',
+                ), Search::label('审核状态')->select('audit_status', '请选择审核状态',
                     Search::options()->add('全部', '')
                         ->add('未审核', 0)
                         ->add('已审核', 1)
@@ -65,7 +63,7 @@ class PurchaseOrder extends CatchTable
             ->withApiRoute('purchase')
             ->withActions([
                 Actions::normal("新增", 'primary', "addPurchaseOrder")->icon('el-icon-plus'),
-                Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu'),
+//                Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu'),
                 Actions::normal("结单", 'primary', "audit"),
                 Actions::normal("取消结单", 'primary', "audit"),
                 Actions::normal("作废", 'primary', "cancel"),

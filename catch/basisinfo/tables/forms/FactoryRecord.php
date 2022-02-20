@@ -22,7 +22,7 @@ class FactoryRecord extends Form
     {
         return [
             self::hidden("factory_id", 0),
-            self::image("备案凭证照片", "record_license_url")->required(),
+            self::file("备案凭证", "record_license_url")->required(),
             self::input("record_code", "备案号")->col(12)->required(),
             self::input("company_name", "企业名称")->col(12)->required(),
             self::input("legal_person", "法人")->col(12)->required(),

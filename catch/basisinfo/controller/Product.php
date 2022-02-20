@@ -122,9 +122,9 @@ class Product extends CatchController
     /**
      * 基础数据保存
      *
-     * @author xiejiaqing
      * @param array $map
      * @return bool|int
+     * @author xiejiaqing
      */
     protected function BasicInfoCall(array $map)
     {
@@ -250,17 +250,17 @@ class Product extends CatchController
     /**
      * 经销商信息
      *
-     * @author xiejiaqing
      * @param array $map
      * @return bool|int
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
+     * @author xiejiaqing
      */
     protected function distributionInfoCall(array $map)
     {
-        $map['signing_date'] = empty($map['signing_date'])? $map['signing_date']: strtotime($map['signing_date']);
-        $map['end_time'] = empty($map['end_time'])? $map['end_time']: strtotime($map['end_time']);
+        $map['signing_date'] = empty($map['signing_date']) ? $map['signing_date'] : strtotime($map['signing_date']);
+        $map['end_time'] = empty($map['end_time']) ? $map['end_time'] : strtotime($map['end_time']);
         if (empty($map['product_id']) || empty($map['payment_days'])) {
             throw new BusinessException("请填写完整信息");
         }
@@ -278,12 +278,12 @@ class Product extends CatchController
     /**
      * 改变
      *
-     * @author xiejiaqing
      * @param Request $request
      * @return \think\response\Json
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
+     * @author xiejiaqing
      */
     public function changeProductSetting(Request $request)
     {
@@ -336,12 +336,12 @@ class Product extends CatchController
 
     /**
      * 审核
-     * @author xiejiaqing
      * @param Request $request
      * @return \think\response\Json
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
+     * @author xiejiaqing
      */
     public function audio(Request $request)
     {
@@ -365,10 +365,10 @@ class Product extends CatchController
     /**
      * 获取sku列表
      *
-     * @author xiejiaqing
      * @param Request $request
      * @return \think\response\Json
      * @throws \think\db\exception\DbException
+     * @author xiejiaqing
      */
     public function skuList(Request $request)
     {
@@ -376,11 +376,20 @@ class Product extends CatchController
         // 搜索条件 时间
         $data = $this->productSku->leftJoin("product_basic_info pbi", "pbi.id = f_product_sku.product_id")
             ->where("pbi.audit_status", 1) // 已审核的
+            ->when(!empty($data), function ($query) use ($data) {
+                if ($data['product_name']) {
+                    $query->where("pbi.product_name", "like", "%" . $data['product_name'] . "%");
+                }
+                if ($data['sku_code']) {
+                    $query->where("f_product_sku.sku_code", "like", "%" . $data['sku_code'] . "%");
+                }
+            })
             ->field([
                 "f_product_sku.id", "f_product_sku.product_id", "f_product_sku.product_code",
                 "f_product_sku.sku_code", "f_product_sku.item_number", "f_product_sku.unit_price",
                 "f_product_sku.tax_rate", "f_product_sku.n_tax_price", "f_product_sku.packing_size",
-                "f_product_sku.packing_specification"
+                "f_product_sku.packing_specification", "pbi.product_name", "f_product_sku.udi",
+                "f_product_sku.entity"
             ])
             ->paginate();
         return CatchResponse::paginate($data);

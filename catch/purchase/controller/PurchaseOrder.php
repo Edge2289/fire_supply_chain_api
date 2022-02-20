@@ -36,7 +36,12 @@ class PurchaseOrder extends CatchController
         $this->purchaseOrderDetailsModel = $purchaseOrderDetailsModel;
     }
 
-    // 列表
+    /**
+     * 列表
+     *
+     * @author xiejiaqing
+     * @return \think\response\Json
+     */
     public function index()
     {
         return CatchResponse::paginate($this->purchaseOrderModel->getList());
