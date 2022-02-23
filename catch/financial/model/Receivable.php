@@ -21,7 +21,13 @@ class Receivable extends CatchModel
     // 这个根据登陆的账号去获取链接
     protected $connection = 'business';
 
-    protected $name = 'receivable';
+    protected $name = 'receivable_sheet';
 
     protected $pk = 'id';
+
+    public function getReceivableTimeAttr($value)
+    {
+        return $this->toDate($value);
+    }
+
 }

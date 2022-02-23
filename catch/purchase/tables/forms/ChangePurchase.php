@@ -24,7 +24,7 @@ class ChangePurchase extends Form
     private $supplier;
 
     public function __construct(
-        Users $users,
+        Users           $users,
         SupplierLicense $supplier
     )
     {
@@ -38,12 +38,12 @@ class ChangePurchase extends Form
             self::date("purchase_date", "采购日期")->col(12)->required(),
             self::select("user_id", "采购人员")
                 ->options(
-                    // 获取自身公司下的员工
+                // 获取自身公司下的员工
                     $this->getUser()
                 )->col(12)->required(),
             self::select("supplier_id", "供应商")
                 ->options(
-                   $this->getSupplier()
+                    $this->supplier->getSupplier()
                 )->col(12)->required(),
             self::select("settlement_status", "结算类型")
                 ->options(
@@ -51,19 +51,6 @@ class ChangePurchase extends Form
                         ->add('月结', "1")->render()
                 )->col(12)->required(),
         ];
-    }
-
-    public function getSupplier()
-    {
-        $data = $this->supplier->where("status", 1)->where("audit_status", 1)->select();
-        $map = [];
-        foreach ($data as $datum) {
-            $map[] = [
-                'value' => (string)$datum['id'],
-                'label' => $datum['company_name'],
-            ];
-        }
-        return $map;
     }
 
     public function getUser()

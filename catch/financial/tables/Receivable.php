@@ -28,24 +28,28 @@ class Receivable extends CatchTable
             ->header([
                 HeaderItem::label()->selection(),
                 HeaderItem::label('编号')->prop('id'),
-                HeaderItem::label('仓库编码')->prop('warehouse_code'),
-                HeaderItem::label('仓库名称')->prop('warehouse_name'),
-                HeaderItem::label('仓库类别')->prop('warehouse_type_name'),
-                HeaderItem::label('仓库地址')->prop('address'),
-                HeaderItem::label('联系人')->prop('contact'),
-                HeaderItem::label('联系电话')->prop('contact_phone'),
-                HeaderItem::label('备注')->prop('note'),
+                HeaderItem::label('回款单号')->prop('receivable_code'),
+                HeaderItem::label('回款时间')->prop('receivable_time'),
+                HeaderItem::label('回款金额')->prop('amount'),
+                HeaderItem::label('回款类型')->prop('payment_type'),
+                HeaderItem::label('支付方式')->prop('payment_method'),
+                HeaderItem::label('备注')->prop('other'),
                 HeaderItem::label('操作')->width(200)->actions([
                     Actions::update(), Actions::delete()
                 ])
             ])
             ->withSearch([
-                Search::label('仓库编码')->text('warehouse_code', '仓库编码'),
-                Search::label('仓库名称')->text('warehouse_name', '仓库名称'),
+                Search::label('回款类型')->select('payment_type', '回款类型', Search::options()->add('常规', "1")
+                    ->add('现金', "2")
+                    ->add('尾款', "3")
+                    ->add('保证金', "4")
+                    ->add('其他', "5")
+                    ->render()),
+                Search::label('回款时间')->datetime('warehouse_name', '仓库名称'),
             ])
-            ->withApiRoute('warehouse')
+            ->withApiRoute('receivable')
             ->withActions([
-                Actions::create()
+                Actions::normal("新增", "primary", "handleAdd", "el-icon-plus")
             ])
             ->selectionChange()
             ->render();
@@ -53,6 +57,5 @@ class Receivable extends CatchTable
 
     protected function form()
     {
-        return Factory::create('warehouse');
     }
 }

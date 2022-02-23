@@ -74,18 +74,18 @@ class PurchaseOrder extends CatchController
             $totalPrice = 0;
             // 重新添加商品数据
             foreach ($goodsDetails as $goodsDetail) {
-                $totalNum += $goodsDetail['number'];
-                $totalPrice += $goodsDetail['number'];
+                $totalNum += $goodsDetail['quantity'];
+                $totalPrice = bcadd($totalPrice, bcmul($goodsDetail['unit_price'], $goodsDetail['quantity'], 2), 2);
                 $map[] = [
                     'purchase_order_id' => $id,
                     'product_id' => $goodsDetail['product_id'] ?? 0,
-                    'product_sku_id' => $goodsDetails['id'],
+                    'product_sku_id' => $goodsDetail['id'],
                     'product_code' => $goodsDetail['product_code'],
                     'item_number' => $goodsDetail['item_number'],
                     'sku_code' => $goodsDetail['sku_code'],
                     'unit_price' => $goodsDetail['unit_price'],
                     'tax_rate' => $goodsDetail['tax_rate'],
-                    'quantity' => $goodsDetail['number'],
+                    'quantity' => $goodsDetail['quantity'],
                     'receipt_quantity' => 0,
                     'warehousing_quantity' => 0,
                     'return_quantity' => 0,
@@ -162,8 +162,8 @@ class PurchaseOrder extends CatchController
             // 重新添加商品数据
             $map = [];
             foreach ($goodsDetails as $goodsDetail) {
-                $totalNum += $goodsDetail['number'];
-                $totalPrice += $goodsDetail['number'];
+                $totalNum += $goodsDetail['quantity'];
+                $totalPrice = bcadd($totalPrice, bcmul($goodsDetail['unit_price'], $goodsDetail['quantity'], 2), 2);;
                 $map[] = [
                     'purchase_order_id' => $params['id'],
                     'product_id' => $goodsDetail['product_id'] ?? 0,
@@ -173,7 +173,7 @@ class PurchaseOrder extends CatchController
                     'sku_code' => $goodsDetail['sku_code'],
                     'unit_price' => $goodsDetail['unit_price'],
                     'tax_rate' => $goodsDetail['tax_rate'],
-                    'quantity' => $goodsDetail['number'],
+                    'quantity' => $goodsDetail['quantity'],
                     'receipt_quantity' => 0,
                     'warehousing_quantity' => 0,
                     'return_quantity' => 0,
@@ -257,5 +257,50 @@ class PurchaseOrder extends CatchController
     public function invalid()
     {
 
+    }
+
+    /**
+     * 获取弹窗选择回款单的采购订单
+     *
+     * @param Request $request
+     * @return \think\response\Json
+     * @throws \think\db\exception\DbException
+     * @author xiejiaqing
+     */
+    public function getAlertOrder(Request $request)
+    {
+        $params = $request->param();
+        if (!isset($params['page']) || empty($params['page'])) {
+            $params['page'] = 1;
+        }
+        if (!isset($params['pageSize']) || empty($params['pageSize'])) {
+            $params['pageSize'] = 10;
+        }
+        $queryModel = $this->purchaseOrderModel;
+        if (isset($params['supplier_id']) && !empty($params['supplier_id'])) {
+            $queryModel = $this->purchaseOrderModel->where("supplier_id", $params['supplier_id']);
+        }
+        $data = $queryModel->where("status", 0)
+            ->with([
+                "hasSupplierLicense" => function ($query) {
+                    $query->field(["id", "company_name"]);
+                }
+            ])
+            ->where("audit_status", 1)
+            ->where(function ($query) {
+                $query->where([
+                    "settlement_type" => 0,
+                    "settlement_status" => 1,
+                ])->whereOr([
+                    "settlement_type" => 1,
+                    "settlement_status" => 0,
+                ]);
+            })
+            ->paginate();
+        $supple = $this->purchaseOrderModel->getSupplierLicense();
+        return CatchResponse::success([
+            "data" => $data,
+            "supple" => $supple
+        ]);
     }
 }

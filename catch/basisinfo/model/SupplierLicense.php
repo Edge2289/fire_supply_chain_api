@@ -13,7 +13,7 @@ namespace catchAdmin\basisinfo\model;
 use catcher\base\CatchModel;
 
 /**
- * Class Supplier
+ * Class SupplierLicense
  * @package catchAdmin\basisinfo\model
  */
 class SupplierLicense extends CatchModel
@@ -81,5 +81,28 @@ class SupplierLicense extends CatchModel
     {
         return $this->catchSearch()->order("id desc")
             ->paginate();
+    }
+
+    /**
+     * 获取允许选择的供应商
+     *
+     * @return array
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @author xiejiaqing
+     */
+    public function getSupplier()
+    {
+        $data = $this->where("status", 1)
+            ->where("audit_status", 1)->select();
+        $map = [];
+        foreach ($data as $datum) {
+            $map[] = [
+                'value' => (string)$datum['id'],
+                'label' => $datum['company_name'],
+            ];
+        }
+        return $map;
     }
 }

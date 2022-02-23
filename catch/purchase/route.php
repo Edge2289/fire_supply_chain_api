@@ -11,9 +11,9 @@
 
 /* @var think\Route $router */
 
-$router->group(function () use ($router){
+$router->group(function () use ($router) {
     // 采购订单 purchase
-    $router->group(function() use ($router) {
+    $router->group(function () use ($router) {
         $router->get("purchase", "catchAdmin\purchase\controller\PurchaseOrder@index"); // 采购订单列表
         $router->post("purchaseOrder", "catchAdmin\purchase\controller\PurchaseOrder@save"); // 添加采购订单
         $router->put("purchaseOrder/<id>", "catchAdmin\purchase\controller\PurchaseOrder@update"); // 更新采购订单
@@ -24,4 +24,8 @@ $router->group(function () use ($router){
 
     });
 })->middleware('auth');
+
+$router->group(function () use ($router) {
+    $router->get("receivable/purchaseOrder", "catchAdmin\purchase\controller\PurchaseOrder@getAlertOrder");
+});
 

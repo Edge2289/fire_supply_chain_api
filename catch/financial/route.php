@@ -13,10 +13,10 @@
 $router->group(function () use ($router) {
     $router->group(function () use ($router) {
         // 回款单
-        $router->get("receivable", '\catchAdmin\financial\controller\Receivable'); // 添加
-        $router->post("receivable", '\catchAdmin\financial\controller\Receivable'); // 提交
-        $router->put("receivable", '\catchAdmin\financial\controller\Receivable'); // 更新
-        $router->delete("receivable", '\catchAdmin\financial\controller\Receivable'); // 删除
+        $router->get("receivable", '\catchAdmin\financial\controller\Receivable@index'); // 添加
+        $router->post("receivable", '\catchAdmin\financial\controller\Receivable@save'); // 提交
+        $router->put("receivable", '\catchAdmin\financial\controller\Receivable@update'); // 更新
+        $router->delete("receivable", '\catchAdmin\financial\controller\Receivable@delete'); // 删除
     });
 
     $router->group(function () use ($router) {
@@ -36,3 +36,6 @@ $router->group(function () use ($router) {
     });
 })->middleware('auth');
 
+$router->group(function () use ($router) {
+
+});

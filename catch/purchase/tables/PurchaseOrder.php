@@ -31,9 +31,9 @@ class PurchaseOrder extends CatchTable
                 HeaderItem::label('采购编号')->prop('purchase_code'),
                 HeaderItem::label('供货者')->prop('supplier_name'),
                 HeaderItem::label('明细摘要')->prop('user_name'),
-                HeaderItem::label('总额')->prop('user_name'),
+                HeaderItem::label('总额')->prop('amount'),
                 HeaderItem::label('采购日期')->prop('purchase_date'),
-                HeaderItem::label('结算类型')->prop('purchase_date'),
+                HeaderItem::label('结算类型')->prop('settlement_type'),
                 HeaderItem::label('是否作废')->prop('num'),
                 HeaderItem::label('备注')->prop('put_num'),
                 HeaderItem::label('操作')->width(200)->actions([
