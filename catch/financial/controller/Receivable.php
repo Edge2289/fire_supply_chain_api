@@ -52,7 +52,16 @@ class Receivable extends CatchController
     public function save(Request $request)
     {
         $params = $request->param();
-        $b = $this->receivableModel->save($params);
+        $this->receivableModel->startTrans();
+        try {
+            $params['receivable_time'] = strtotime($params['receivable_time']);
+            $purchaseOrder = $params['purchase_order'];
+            unset($params['purchase_order']);
+            $b = $this->receivableModel->save($params);
+            $this->receivableModel->commit();
+        } catch (\Exception $exception) {
+            $this->receivableModel->rollback();
+        }
         if ($b) {
             return CatchResponse::success();
         }

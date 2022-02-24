@@ -21,10 +21,10 @@ $router->group(function () use ($router) {
 
     $router->group(function () use ($router) {
         // 收款单
-        $router->get("payment", '\catchAdmin\financial\controller\Payment'); // 添加
-        $router->post("payment", '\catchAdmin\financial\controller\Payment'); // 提交
-        $router->put("payment", '\catchAdmin\financial\controller\Payment'); // 更新
-        $router->delete("payment", '\catchAdmin\financial\controller\Payment'); // 删除
+        $router->get("payment", '\catchAdmin\financial\controller\Payment@index'); // 添加
+        $router->post("payment", '\catchAdmin\financial\controller\Payment@save'); // 提交
+        $router->put("payment", '\catchAdmin\financial\controller\Payment@update'); // 更新
+        $router->delete("payment", '\catchAdmin\financial\controller\Payment@delete'); // 删除
     });
 
     $router->group(function () use ($router) {

@@ -377,10 +377,10 @@ class Product extends CatchController
         $data = $this->productSku->leftJoin("product_basic_info pbi", "pbi.id = f_product_sku.product_id")
             ->where("pbi.audit_status", 1) // 已审核的
             ->when(!empty($data), function ($query) use ($data) {
-                if ($data['product_name']) {
+                if (!empty($data['product_name'])) {
                     $query->where("pbi.product_name", "like", "%" . $data['product_name'] . "%");
                 }
-                if ($data['sku_code']) {
+                if (!empty($data['sku_code'])) {
                     $query->where("f_product_sku.sku_code", "like", "%" . $data['sku_code'] . "%");
                 }
             })

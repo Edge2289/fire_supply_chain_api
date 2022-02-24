@@ -16,7 +16,7 @@ use catcher\base\CatchModel;
  * Class Receivable
  * @package catchAdmin\financial\model
  */
-class Receivable extends CatchModel
+class ReceivableMany extends CatchModel
 {
     // 这个根据登陆的账号去获取链接
     protected $connection = 'business';
@@ -28,23 +28,6 @@ class Receivable extends CatchModel
     public function getReceivableTimeAttr($value)
     {
         return $this->toDate($value);
-    }
-
-    /**
-     * 关联发货单表
-     *
-     * @return \think\model\relation\HasMany
-     * @author xiejiaqing
-     */
-    public function manyDeliveryOrder()
-    {
-//        return $this->hasMany(PaymentSheet::class, "payment_sheet_id", "id");
-    }
-
-    public function getList()
-    {
-        return $this->catchSearch()->order("id desc")
-            ->paginate();
     }
 
 }

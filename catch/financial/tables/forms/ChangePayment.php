@@ -16,15 +16,15 @@ use catcher\library\form\Form;
  * Class ChangeReceivable
  * @package catchAdmin\financial\tables\forms
  */
-class ChangeReceivable extends Form
+class ChangePayment extends Form
 {
     public function fields(): array
     {
         return [
-            self::date("receivable_time", "付款时间")->required(),
+            self::date("payment_time", "付款时间")->required(),
 //            self::input("receivable_code", "付款单号")->disabled(true)->col(12),
-            self::input("amount", "回款金额")->col(12)->required(),
-            self::select("payment_type", "回款类型")->col(12)->clearable(true)
+            self::input("amount", "付款金额")->col(12)->required(),
+            self::select("payment_type", "付款类型")->col(12)->clearable(true)
                 ->options(
                     self::options()->add('常规', "1")
                         ->add('现金', "2")

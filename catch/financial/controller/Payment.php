@@ -10,7 +10,7 @@
 namespace catchAdmin\financial\controller;
 
 
-use catchAdmin\financial\model\Receivable as ReceivableModel;
+use catchAdmin\financial\model\PaymentSheet;
 use catcher\base\CatchController;
 use catchAdmin\financial\model\Payment as PaymentModel;
 use catcher\CatchResponse;
@@ -24,12 +24,15 @@ use think\Request;
 class Payment extends CatchController
 {
     protected $paymentModel;
+    protected $paymentSheetModel;
 
     public function __construct(
-        PaymentModel $paymentModel
+        PaymentModel $paymentModel,
+        PaymentSheet $paymentSheetModel
     )
     {
         $this->paymentModel = $paymentModel;
+        $this->paymentSheetModel = $paymentSheetModel;
     }
 
     /**
@@ -40,7 +43,22 @@ class Payment extends CatchController
      */
     public function index()
     {
-        return CatchResponse::paginate($this->paymentModel->getList());
+        $data = $this->paymentModel->getList();
+        foreach ($data as &$datum) {
+            $map = [];
+            foreach ($datum['manyPurchaserOrder'] ?: [] as $value) {
+                $hasSupplierLicense = [
+                    'id' => $value['hasPurchaseOrder']['hasSupplierLicense']['id'],
+                    'company_name' => $value['hasPurchaseOrder']['hasSupplierLicense']['company_name'],
+                ];
+                unset($value['hasPurchaseOrder']['hasSupplierLicense']);
+                $value['hasPurchaseOrder']['hasSupplierLicense'] = $hasSupplierLicense;
+                $map[] = $value['hasPurchaseOrder'];
+            }
+            unset($datum['manyPurchaserOrder']);
+            $datum['hasPurchaseOrder'] = $map;
+        }
+        return CatchResponse::paginate($data);
     }
 
     /**
@@ -53,11 +71,27 @@ class Payment extends CatchController
     public function save(Request $request)
     {
         $params = $request->param();
-        $b = $this->paymentModel->save($params);
-        if ($b) {
-            return CatchResponse::success();
+        $this->paymentModel->startTrans();
+        try {
+            $params['payment_time'] = strtotime($params['payment_time']);
+            $purchaseOrder = $params['purchase_order'];
+            $params['payment_code'] = getCode("PS");
+            unset($params['purchase_order']);
+            $pk = $this->paymentModel->createBy($params);
+            $purchaseMap = [];
+            foreach ($purchaseOrder as $value) {
+                $purchaseMap[] = [
+                    "payment_sheet_id" => $pk,
+                    "purchase_order_id" => $value['id'],
+                ];
+            }
+            $this->paymentSheetModel->insertAll($purchaseMap);
+            $this->paymentModel->commit();
+            return CatchResponse::success(['id' => $pk]);
+        } catch (\Exception $exception) {
+            $this->paymentModel->rollback();
+            return CatchResponse::fail($exception->getMessage());
         }
-        return CatchResponse::fail();
     }
 
     /**
