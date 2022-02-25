@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/11
  * Time: 15:06
@@ -53,21 +53,22 @@ class Factory extends CatchModel
 
     public function getBusinessStartDateAttr($value)
     {
-        return $value? date("Y-m-d", $value): $value;
+        return $value ? date("Y-m-d", $value) : $value;
     }
+
     public function getBusinessEndDateAttr($value)
     {
-        return $value? date("Y-m-d", $value): $value;
+        return $value ? date("Y-m-d", $value) : $value;
     }
 
     public function getRegistrationDateAttr($value)
     {
-        return $value? date("Y-m-d", $value): $value;
+        return $value ? date("Y-m-d", $value) : $value;
     }
 
     public function getEstablishDateAttr($value)
     {
-        return $value? date("Y-m-d", $value): $value;
+        return $value ? date("Y-m-d", $value) : $value;
     }
 
     /**
@@ -75,8 +76,8 @@ class Factory extends CatchModel
      *
      * @time 2020年01月09日
      * @param $params
-     * @throws \think\db\exception\DbException
      * @return \think\Paginator
+     * @throws \think\db\exception\DbException
      */
     public function getList()
     {

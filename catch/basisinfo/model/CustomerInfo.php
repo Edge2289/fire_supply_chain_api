@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/2/13
  * Time: 20:48
@@ -24,7 +24,7 @@ class CustomerInfo extends CatchModel
 
     /**
      * @return \think\model\relation\HasOne
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function hasCustomerLicense()
     {
@@ -34,7 +34,7 @@ class CustomerInfo extends CatchModel
     /**
      * @return mixed|\think\Paginator
      * @throws \think\db\exception\DbException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function getList()
     {

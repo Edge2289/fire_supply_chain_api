@@ -64,7 +64,7 @@ abstract class CatchModel extends \think\Model
      *
      * @param $value
      * @return false|string
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     protected function toDate($value)
     {

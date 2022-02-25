@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/11
  * Time: 11:49
@@ -91,7 +91,7 @@ class Customer extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function save(Request $request)
     {
@@ -139,7 +139,7 @@ class Customer extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function update($id, Request $request)
     {
@@ -206,7 +206,7 @@ class Customer extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function businessLicenseCall(array $params)
     {
@@ -248,7 +248,7 @@ class Customer extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function operatingLicenseCall(array $params)
     {
@@ -275,7 +275,7 @@ class Customer extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function registrationLicenseCall(array $params)
     {
@@ -298,7 +298,7 @@ class Customer extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function suppleInfoCall(array $params)
     {
@@ -325,7 +325,7 @@ class Customer extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function businessAttachmentCall(array $params)
     {
@@ -358,7 +358,7 @@ class Customer extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function changeCustomerSetting(Request $request)
     {
@@ -402,7 +402,7 @@ class Customer extends CatchController
      *
      * @param $dataMaintenance
      * @return array
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     private function getComponentData($dataMaintenance): array
     {
@@ -443,7 +443,7 @@ class Customer extends CatchController
      * @param int $customer_info_id
      * @param array $businessData
      * @param array $ids
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     private function getBusinessLicenseData(int $customer_info_id, array &$businessData, array $ids): void
     {
@@ -520,7 +520,7 @@ class Customer extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function getBusinessScope(): array
     {

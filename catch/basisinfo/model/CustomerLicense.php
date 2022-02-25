@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/12
  * Time: 16:56
@@ -21,7 +21,7 @@ class CustomerLicense extends CatchModel
     protected $name = "customer_license";
 
     protected $pk = 'id';
-    
+
     public function getEstablishDateAttr($value)
     {
         return $this->toDate($value);

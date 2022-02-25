@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/27
  * Time: 16:39
@@ -11,6 +11,7 @@ namespace catchAdmin\purchase\controller;
 
 
 use app\Request;
+use catchAdmin\basisinfo\model\SupplierLicense;
 use catchAdmin\purchase\model\PurchaseOrderDetails;
 use catchAdmin\purchase\request\PurchaseOrderRequest;
 use catcher\base\CatchController;
@@ -40,7 +41,7 @@ class PurchaseOrder extends CatchController
      * 列表
      *
      * @return \think\response\Json
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function index()
     {
@@ -52,7 +53,7 @@ class PurchaseOrder extends CatchController
      *
      * @param Request $request
      * @return \think\response\Json
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function save(Request $request)
     {
@@ -118,7 +119,7 @@ class PurchaseOrder extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function update(Request $request)
     {
@@ -205,7 +206,7 @@ class PurchaseOrder extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function audit(Request $request)
     {
@@ -265,7 +266,7 @@ class PurchaseOrder extends CatchController
      * @param Request $request
      * @return \think\response\Json
      * @throws \think\db\exception\DbException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function getAlertOrder(Request $request)
     {
@@ -302,5 +303,38 @@ class PurchaseOrder extends CatchController
             "data" => $data,
             "supple" => $supple
         ]);
+    }
+
+    /**
+     * 获取采购订单的详情
+     *
+     * @return \think\response\Json
+     * @throws \think\db\exception\DbException
+     * @author 1131191695@qq.com
+     */
+    public function getPurchaseOrderDetails()
+    {
+        $data = $this->purchaseOrderDetailsModel->alias("pod")
+            ->join("purchase_order po", "po.id = pod.purchase_order_id")
+            ->field(["pod.id", "po.purchase_code", "po.supplier_id", "pod.purchase_order_id", "pod.product_sku_id", "pod.product_code", "pod.sku_code", "pod.item_number"])
+            ->addFields("(pod.quantity - pod.warehousing_quantity - pod.return_quantity) as quantity")
+            ->where("po.audit_status", 1) // 已审核
+            ->where("po.status", 0) // 未完成
+            ->where(function ($query) {
+                $query->where([
+                    "po.settlement_type" => 0,
+                    "po.settlement_status" => 1,
+                ])->whereOr([
+                    "po.settlement_type" => 1,
+                    "po.settlement_status" => 0,
+                ]);
+            })->whereRaw("(pod.quantity - pod.warehousing_quantity - pod.return_quantity) > 0")
+            ->order("po.id", "desc")
+            ->paginate();
+        foreach ($data as &$datum) {
+            $company = app(SupplierLicense::class)->where("id", $datum['supplier_id'])->field("company_name")->find();
+            $datum['company_name'] = $company['company_name'] ?? "";
+        }
+        return CatchResponse::success($data);
     }
 }

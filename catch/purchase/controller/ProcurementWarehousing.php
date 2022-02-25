@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/2/17
  * Time: 22:17
@@ -18,7 +18,7 @@ use catcher\CatchResponse;
 use catchAdmin\purchase\model\ProcurementWarehousing as ProcurementWarehousingModel;
 
 /**
- * 采购入库
+ * 入库订单
  * Class ProcurementWarehousing
  * @package catchAdmin\purchase\controller
  */
@@ -39,6 +39,11 @@ class ProcurementWarehousing extends CatchController
         $this->procurementWarehousingDetails = $procurementWarehousingDetails;
     }
 
+    /**
+     * @return \think\response\Json
+     * @throws \think\db\exception\DbException
+     * @author 1131191695@qq.com
+     */
     public function index()
     {
         return CatchResponse::paginate($this->procurementWarehousing->getList());
@@ -65,7 +70,7 @@ class ProcurementWarehousing extends CatchController
      * 更新
      *
      * @param Request $request
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function fnUpdate(Request $request)
     {

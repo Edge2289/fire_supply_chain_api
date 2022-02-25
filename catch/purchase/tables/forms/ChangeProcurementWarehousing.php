@@ -11,45 +11,44 @@ namespace catchAdmin\purchase\tables\forms;
 
 
 use catchAdmin\basisinfo\model\SupplierLicense;
+use catchAdmin\inventory\model\Warehouse;
 use catchAdmin\permissions\model\Users;
 use catcher\library\form\Form;
 
 /**
- * Class ChangePurchase
+ * Class ChangeProcurementWarehousing
  * @package catchAdmin\purchase\tables\forms
  */
-class ChangePurchase extends Form
+class ChangeProcurementWarehousing extends Form
 {
     private $users;
-    private $supplier;
+    private $warehouse;
 
     public function __construct(
-        Users           $users,
-        SupplierLicense $supplier
+        Users     $users,
+        Warehouse $warehouse
     )
     {
         $this->users = $users;
-        $this->supplier = $supplier;
+        $this->warehouse = $warehouse;
     }
 
     public function fields(): array
     {
         return [
-            self::date("purchase_date", "采购日期")->col(12)->required(),
-            self::select("user_id", "采购人员")
+            self::date("purchase_date", "入库日期")->col(12)->required(),
+            self::select("user_id", "入库人员")
                 ->options(
                 // 获取自身公司下的员工
                     $this->getUser()
                 )->col(12)->required(),
-            self::select("supplier_id", "供应商")
+            self::select("supplier_id", "仓库")
                 ->options(
-                    $this->supplier->getSupplier()
-                )->col(12)->required(),
-            self::select("settlement_status", "结算类型")
-                ->options(
-                    self::options()->add('现结', "0")
-                        ->add('月结', "1")->render()
-                )->col(12)->required(),
+                    $this->warehouse->tableGetWarehouse()
+                )->
+                col(12)->required(),
+            self::input("delivery_code", "收货单号")->col(12)->required(),
+            self::textarea("remark", "备注")->col(12)->required(),
         ];
     }
 

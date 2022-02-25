@@ -3,8 +3,8 @@
  * Created by PhpStorm.
  * author: 1131191695@qq.com
  * Note: Tired as a dog
- * Date: 2022/2/6
- * Time: 21:04
+ * Date: 2022/2/25
+ * Time: 10:07
  */
 
 namespace catchAdmin\purchase\tables;
@@ -14,21 +14,21 @@ use catchAdmin\purchase\tables\forms\Factory;
 use catcher\CatchTable;
 
 /**
- * Class changePurchase
+ * Class ChangeProcurementWarehousing
  * @package catchAdmin\purchase\tables
  */
-class changePurchase extends CatchTable
+class ChangeProcurementWarehousing extends CatchTable
 {
     protected function table()
     {
-        return $this->getTable('changePurchase')
-            ->withApiRoute('purchase')
+        return $this->getTable('changeProcurementWarehousing')
+            ->withApiRoute('procurementWarehousing')
             ->selectionChange()
             ->render();
     }
 
     protected function form()
     {
-        return Factory::create('changePurchase');
+        return Factory::create('changeProcurementWarehousing');
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/15
  * Time: 22:32
@@ -38,13 +38,13 @@ class ProductBasicInfo extends CatchModel
     public function getList()
     {
         return $this->with([
-            "withRegistered" => function($rQuery) {
+            "withRegistered" => function ($rQuery) {
                 $rQuery->field(['product_id', 'registered_code', 'end_time']);
             },
-            "withRecord" => function($eQuery) {
+            "withRecord" => function ($eQuery) {
                 $eQuery->field(['product_id', 'record_code']);
             },
-            "withFactory" => function($fQuery) {
+            "withFactory" => function ($fQuery) {
                 $fQuery->field(['id', 'company_name']);
             }
         ])->catchSearch()->order("id desc")

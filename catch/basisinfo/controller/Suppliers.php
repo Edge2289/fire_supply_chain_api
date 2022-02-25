@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/5
  * Time: 22:46
@@ -61,7 +61,7 @@ class Suppliers extends CatchController
 
     /**
      * @return \think\response\Json
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function index()
     {
@@ -85,7 +85,7 @@ class Suppliers extends CatchController
      *
      * @param Request $request
      * @return \think\response\Json
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function save(Request $request)
     {
@@ -111,7 +111,7 @@ class Suppliers extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function update($id, Request $request)
     {
@@ -128,7 +128,7 @@ class Suppliers extends CatchController
 
     /**
      * @return \think\response\Json
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function delete()
     {
@@ -143,7 +143,7 @@ class Suppliers extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function businessLicenseCall(array $params)
     {
@@ -185,7 +185,7 @@ class Suppliers extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function operatingLicenseCall(array $params)
     {
@@ -212,7 +212,7 @@ class Suppliers extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function registrationLicenseCall(array $params)
     {
@@ -235,7 +235,7 @@ class Suppliers extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function suppleInfoCall(array $params)
     {
@@ -260,7 +260,7 @@ class Suppliers extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function businessAttachmentCall(array $params)
     {
@@ -288,7 +288,7 @@ class Suppliers extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function changeSuppliersSetting(Request $request)
     {
@@ -326,7 +326,7 @@ class Suppliers extends CatchController
      *
      * @param $dataMaintenance
      * @return array[]
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     private function getComponentData($dataMaintenance): array
     {
@@ -368,7 +368,7 @@ class Suppliers extends CatchController
      * @param array $businessData
      * @param array $ids
      * @return void
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     private function getBusinessLicenseData(int $business_license_id, array &$businessData, array $ids): void
     {
@@ -445,7 +445,7 @@ class Suppliers extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function getBusinessScope(): array
     {
@@ -460,7 +460,7 @@ class Suppliers extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function auditSuppliers(AuditSuppliersRequest $auditSuppliers)
     {
@@ -486,7 +486,7 @@ class Suppliers extends CatchController
      *
      * @param Request $request
      * @return \think\response\Json
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function openSuppliers(Request $request)
     {
@@ -521,7 +521,7 @@ class Suppliers extends CatchController
      *
      * @param Request $request
      * @return \think\response\Json
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function disabledSuppliers(Request $request)
     {

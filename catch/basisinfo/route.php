@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/5
  * Time: 22:47
@@ -9,7 +9,7 @@
 
 /* @var think\Route $router */
 
-$router->group(function () use ($router){
+$router->group(function () use ($router) {
     // 供应商的路由
     $router->group(function () use ($router) {
         $router->get('suppliers', '\catchAdmin\basisinfo\controller\Suppliers@index'); // 列表
@@ -48,7 +48,7 @@ $router->group(function () use ($router){
 
 })->middleware('auth');
 
-$router->group(function () use ($router){
+$router->group(function () use ($router) {
     $router->get('suppliers/changeSuppliersSetting', '\catchAdmin\basisinfo\controller\Suppliers@changeSuppliersSetting');
     $router->get('factory/changeFactorySetting', '\catchAdmin\basisinfo\controller\Factory@changeFactorySetting');
     $router->get('product/changeProductSetting', '\catchAdmin\basisinfo\controller\Product@changeProductSetting');

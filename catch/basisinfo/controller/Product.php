@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/11
  * Time: 11:38
@@ -80,7 +80,7 @@ class Product extends CatchController
      *
      * @param Request $request
      * @return \think\response\Json
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function save(Request $request)
     {
@@ -102,7 +102,7 @@ class Product extends CatchController
      *
      * @param Request $request
      * @return \think\response\Json
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function update(Request $request)
     {
@@ -124,7 +124,7 @@ class Product extends CatchController
      *
      * @param array $map
      * @return bool|int
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     protected function BasicInfoCall(array $map)
     {
@@ -202,7 +202,7 @@ class Product extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     protected function registeredCall(array $map)
     {
@@ -230,7 +230,7 @@ class Product extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     protected function recordCall(array $map)
     {
@@ -255,7 +255,7 @@ class Product extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     protected function distributionInfoCall(array $map)
     {
@@ -283,7 +283,7 @@ class Product extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function changeProductSetting(Request $request)
     {
@@ -341,7 +341,7 @@ class Product extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function audio(Request $request)
     {
@@ -368,7 +368,7 @@ class Product extends CatchController
      * @param Request $request
      * @return \think\response\Json
      * @throws \think\db\exception\DbException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function skuList(Request $request)
     {

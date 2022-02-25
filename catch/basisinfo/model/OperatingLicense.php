@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/8
  * Time: 17:47
@@ -43,7 +43,7 @@ class OperatingLicense extends CatchModel
     {
         return date("Y-m-d", $value);
     }
-    
+
     public function getBusinessEndDateAttr($value)
     {
         return date("Y-m-d", $value);

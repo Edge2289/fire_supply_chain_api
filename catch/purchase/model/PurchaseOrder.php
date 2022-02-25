@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/30
  * Time: 23:17
@@ -56,7 +56,7 @@ class PurchaseOrder extends CatchModel
      * 关联供货者
      *
      * @return \think\model\relation\HasOne
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function hasSupplierLicense()
     {
@@ -67,7 +67,7 @@ class PurchaseOrder extends CatchModel
      * 获取符合条件的供应商
      *
      * @return mixed
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function getSupplierLicense()
     {

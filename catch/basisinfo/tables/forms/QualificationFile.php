@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/9
  * Time: 20:59
@@ -43,11 +43,11 @@ class QualificationFile extends Form
             if ($i < 5) {
                 $that = $that->required();
             }
-            $i ++;
+            $i++;
             $assemblyImageData[] = $that;
             $spilt = explode("_", $k);
             unset($spilt[count($spilt) - 1]);
-            $assemblyCheckboxData[] = self::checkbox("check_".implode("_", $spilt), '')
+            $assemblyCheckboxData[] = self::checkbox("check_" . implode("_", $spilt), '')
                 ->options(function () use ($k, $v) {
                     return [Elm::option(1, $v . "（复印件 / 原件）已核对，验收合格")];
                 })

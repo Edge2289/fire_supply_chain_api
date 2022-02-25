@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/28
  * Time: 19:39
@@ -63,7 +63,7 @@ class PurchaseOrder extends CatchTable
             ->withApiRoute('purchase')
             ->withActions([
                 Actions::normal("新增", 'primary', "addPurchaseOrder")->icon('el-icon-plus'),
-//                Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu'),
+                Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu'),
                 Actions::normal("结单", 'primary', "audit"),
                 Actions::normal("取消结单", 'primary', "audit"),
                 Actions::normal("作废", 'primary', "cancel"),

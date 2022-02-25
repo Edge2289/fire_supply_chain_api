@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/2/13
  * Time: 21:20
@@ -39,7 +39,7 @@ class Payment extends CatchController
      * 列表
      *
      * @return \think\response\Json
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function index()
     {
@@ -66,7 +66,7 @@ class Payment extends CatchController
      *
      * @param Request $request
      * @return \think\response\Json
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function save(Request $request)
     {
@@ -102,7 +102,7 @@ class Payment extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function update(Request $request)
     {
@@ -128,7 +128,7 @@ class Payment extends CatchController
      *
      * @param Request $request
      * @return \think\response\Json|void
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function audio(Request $request)
     {

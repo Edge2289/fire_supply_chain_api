@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/2/20
  * Time: 20:02
@@ -34,7 +34,7 @@ class Payment extends CatchModel
      * 关联采购订单表
      *
      * @return \think\model\relation\HasMany
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function manyPurchaserOrder()
     {

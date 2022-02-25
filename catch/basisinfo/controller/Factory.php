@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/11
  * Time: 11:49
@@ -47,7 +47,7 @@ class Factory extends CatchController
      *
      * @return \think\response\Json
      * @throws \think\db\exception\DbException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function index()
     {
@@ -63,7 +63,7 @@ class Factory extends CatchController
             } elseif (!empty($datum['business_end_date'])) {
                 $datum['business_end_date_z'] = $datum['business_end_date'];
             }
-            $datum['factory_type_name'] = $datum['factory_type'] == 1? "国内厂家": "国外厂家";
+            $datum['factory_type_name'] = $datum['factory_type'] == 1 ? "国内厂家" : "国外厂家";
             $datum['audit_status_i'] = $auditStatusI[$datum['audit_status']];
         }
         return CatchResponse::paginate($data);
@@ -72,9 +72,9 @@ class Factory extends CatchController
     /**
      * 获取设置
      *
-     * @author xiejiaqing
      * @param Request $request
      * @return \think\response\Json
+     * @author 1131191695@qq.com
      */
     public function changeFactorySetting(Request $request)
     {
@@ -128,12 +128,12 @@ class Factory extends CatchController
     /**
      * 自定义
      *
-     * @author xiejiaqing
      * @param $id
      * @param $factoryData
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
+     * @author 1131191695@qq.com
      */
     private function factoryAuxiliary($id, &$factoryData)
     {
@@ -144,9 +144,9 @@ class Factory extends CatchController
     /**
      * 保存
      *
-     * @author xiejiaqing
      * @param Request $request
      * @return \think\response\Json
+     * @author 1131191695@qq.com
      */
     public function save(Request $request)
     {
@@ -166,12 +166,12 @@ class Factory extends CatchController
     /**
      * 更新
      *
-     * @author xiejiaqing
      * @param Request $request
      * @return \think\response\Json
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
+     * @author 1131191695@qq.com
      */
     public function update(Request $request)
     {
@@ -191,12 +191,12 @@ class Factory extends CatchController
     /**
      * 厂家信息
      *
-     * @author xiejiaqing
      * @param array $data
      * @return bool|int
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
+     * @author 1131191695@qq.com
      */
     protected function factoryCall(array $data)
     {
@@ -236,12 +236,12 @@ class Factory extends CatchController
     /**
      * 生产许可证
      *
-     * @author xiejiaqing
      * @param array $data
      * @return bool|int
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
+     * @author 1131191695@qq.com
      */
     protected function productionLicenseCall(array $data)
     {
@@ -255,12 +255,12 @@ class Factory extends CatchController
     /**
      * 备案
      *
-     * @author xiejiaqing
      * @param array $data
      * @return bool|int
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException\
+     * @author 1131191695@qq.com
      */
     protected function recordCall(array $data)
     {
