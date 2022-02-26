@@ -343,7 +343,7 @@ class Product extends CatchController
      * @throws \think\db\exception\ModelNotFoundException
      * @author 1131191695@qq.com
      */
-    public function audio(Request $request)
+    public function audit(Request $request)
     {
         $data = $request->param();
         $productData = $this->productBasicInfoModel->findBy($data['id']);

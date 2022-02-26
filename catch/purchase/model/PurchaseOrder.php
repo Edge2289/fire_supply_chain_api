@@ -76,10 +76,40 @@ class PurchaseOrder extends CatchModel
 
     public function getList()
     {
-        $data = $this->catchSearch()->with("hasPurchaseOrderDetails")->order("id desc")
+        $data = $this->catchSearch()->with(
+            [
+                "hasPurchaseOrderDetails", "hasPurchaseOrderDetails.hasProductData", "hasPurchaseOrderDetails.hasProductSkuData", "hasSupplierLicense"
+            ]
+        )->order("id desc")
             ->paginate();
         foreach ($data as &$datum) {
-            $datum['goods_details'] = $datum['hasPurchaseOrderDetails'];
+            $detail = "";
+            $goodsDetails = [];
+            foreach ($datum['hasPurchaseOrderDetails'] as $hasPurchaseOrderDetail) {
+                $goodsDetails[] = [
+                    'id' => $hasPurchaseOrderDetail['hasProductSkuData']['id'],
+                    'product_id' => $hasPurchaseOrderDetail['hasProductSkuData']['product_id'],
+                    'product_code' => $hasPurchaseOrderDetail['hasProductSkuData']['product_code'],
+                    'sku_code' => $hasPurchaseOrderDetail['hasProductSkuData']['sku_code'],
+                    'item_number' => $hasPurchaseOrderDetail['hasProductSkuData']['item_number'],
+                    'unit_price' => $hasPurchaseOrderDetail['hasProductSkuData']['unit_price'],
+                    'tax_rate' => $hasPurchaseOrderDetail['hasProductSkuData']['tax_rate'],
+                    'n_tax_price' => $hasPurchaseOrderDetail['hasProductSkuData']['n_tax_price'],
+                    'packing_size' => $hasPurchaseOrderDetail['hasProductSkuData']['packing_size'],
+                    'packing_specification' => $hasPurchaseOrderDetail['hasProductSkuData']['packing_specification'],
+                    'product_name' => $hasPurchaseOrderDetail['hasProductData']['product_name'],
+                    'udi' => $hasPurchaseOrderDetail['hasProductSkuData']['udi'],
+                    'entity' => $hasPurchaseOrderDetail['hasProductSkuData']['entity'],
+                    "quantity" => $hasPurchaseOrderDetail["quantity"],
+                    "note" => $hasPurchaseOrderDetail["note"],
+                ];
+                $detail .= sprintf("%s: %s\n", $hasPurchaseOrderDetail['hasProductData']['product_name'], $hasPurchaseOrderDetail["quantity"]);
+            }
+            $datum['supplier_name'] = $datum["hasSupplierLicense"]["company_name"];
+
+            $datum['goods_details'] = $goodsDetails;
+            $datum['detail'] = $detail;
+            unset($datum['hasPurchaseOrderDetails'], $datum["hasSupplierLicense"]);
         }
         return $data;
     }

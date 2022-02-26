@@ -45,7 +45,16 @@ class PurchaseOrder extends CatchController
      */
     public function index()
     {
-        return CatchResponse::paginate($this->purchaseOrderModel->getList());
+        $status = [
+            "未完成", "已完成", "作废"
+        ];
+        $data = $this->purchaseOrderModel->getList();
+        foreach ($data as &$datum) {
+            $datum['status_i'] = $status[$datum['status']];
+//            $datum['detail'] = $status[$datum['status']];
+            $datum['settlement_type_i'] = $datum['settlement_type'] == 0 ? "现结" : "月结";
+        }
+        return CatchResponse::paginate($data);
     }
 
     /**
@@ -336,5 +345,36 @@ class PurchaseOrder extends CatchController
             $datum['company_name'] = $company['company_name'] ?? "";
         }
         return CatchResponse::success($data);
+    }
+
+
+    /**
+     * 获取采购订单数据
+     *
+     * @return array
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @author 1131191695@qq.com
+     */
+    public function tableGetPurchaseOrderLists()
+    {
+        return $this->purchaseOrderDetailsModel->alias("pod")
+            ->join("purchase_order po", "po.id = pod.purchase_order_id")
+            ->field(["po.id", "po.purchase_code"])
+            ->where("po.audit_status", 1) // 已审核
+            ->where("po.status", 0) // 未完成
+            ->where(function ($query) {
+                $query->where([
+                    "po.settlement_type" => 0,
+                    "po.settlement_status" => 1,
+                ])->whereOr([
+                    "po.settlement_type" => 1,
+                    "po.settlement_status" => 0,
+                ]);
+            })->whereRaw("(pod.quantity - pod.warehousing_quantity - pod.return_quantity) > 0")
+            ->order("po.id", "desc")
+            ->group("po.id")
+            ->select()->toArray();
     }
 }

@@ -10,9 +10,9 @@
 namespace catchAdmin\purchase\tables\forms;
 
 
-use catchAdmin\basisinfo\model\SupplierLicense;
 use catchAdmin\inventory\model\Warehouse;
 use catchAdmin\permissions\model\Users;
+use catchAdmin\purchase\controller\PurchaseOrder;
 use catcher\library\form\Form;
 
 /**
@@ -23,14 +23,17 @@ class ChangeProcurementWarehousing extends Form
 {
     private $users;
     private $warehouse;
+    private $purchaseOrder;
 
     public function __construct(
-        Users     $users,
-        Warehouse $warehouse
+        Users         $users,
+        Warehouse     $warehouse,
+        PurchaseOrder $purchaseOrder
     )
     {
         $this->users = $users;
         $this->warehouse = $warehouse;
+        $this->purchaseOrder = $purchaseOrder;
     }
 
     public function fields(): array
@@ -47,11 +50,23 @@ class ChangeProcurementWarehousing extends Form
                     $this->warehouse->tableGetWarehouse()
                 )->
                 col(12)->required(),
+            self::select("purchase_order_id", "采购订单")
+                ->options(
+                    $this->purchaseOrder->tableGetPurchaseOrderLists()
+                )->
+                col(12)->required(),
             self::input("delivery_code", "收货单号")->col(12)->required(),
             self::textarea("remark", "备注")->col(12)->required(),
         ];
     }
 
+    /**
+     * @return array
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @author 1131191695@qq.com
+     */
     public function getUser()
     {
         $userId = request()->user()->id;

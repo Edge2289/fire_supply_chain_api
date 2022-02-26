@@ -10,7 +10,10 @@
 namespace catchAdmin\purchase\model;
 
 
+use catchAdmin\basisinfo\model\ProductBasicInfo;
+use catchAdmin\basisinfo\model\ProductSku;
 use catcher\base\CatchModel;
+use think\model\relation\HasOne;
 
 /**
  * Class PurchaseOrderDetails
@@ -22,4 +25,15 @@ class PurchaseOrderDetails extends CatchModel
     protected $connection = 'business';
 
     protected $name = "purchase_order_details";
+
+    public function hasProductData(): HasOne
+    {
+        return $this->hasOne(ProductBasicInfo::class, "id", "product_id");
+    }
+
+    public function hasProductSkuData(): HasOne
+    {
+        return $this->hasOne(ProductSku::class, "id", "product_sku_id");
+    }
+
 }

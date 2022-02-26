@@ -19,8 +19,10 @@ class ProcurementWarehousingDetails extends Migrator
     {
         $table = $this->table('procurement_warehousing_details', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '入库详情单', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('procurement_warehousing_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '入库单id',])
+            ->addColumn('purchase_order_details_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '采购订单详情id',])
             ->addColumn('product_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '产品id',])
             ->addColumn('batch_number', 'string', ['limit' => 100, 'null' => false, 'default' => "", 'signed' => false, 'comment' => '批号',])
+            ->addColumn('number', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '数量',])
             ->addColumn('remark', 'string', ['limit' => 100, 'null' => false, 'default' => "", 'signed' => false, 'comment' => '备注',])
             ->addColumn('created_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '创建时间',])
             ->addColumn('updated_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '更新时间',])

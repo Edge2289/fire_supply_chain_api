@@ -40,6 +40,15 @@ class ProcurementWarehousing extends CatchModel
     }
 
     /**
+     * @return \think\model\relation\HasMany
+     * @author 1131191695@qq.com
+     */
+    public function hasPurchaseOrder(): \think\model\relation\HasMany
+    {
+        return $this->hasMany(PurchaseOrder::class, "id", "purchase_order_id");
+    }
+
+    /**
      * @return mixed|\think\Paginator
      * @throws \think\db\exception\DbException
      * @author 1131191695@qq.com

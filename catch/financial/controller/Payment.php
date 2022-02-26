@@ -130,7 +130,7 @@ class Payment extends CatchController
      * @return \think\response\Json|void
      * @author 1131191695@qq.com
      */
-    public function audio(Request $request)
+    public function audit(Request $request)
     {
         $params = $request->param();
         $data = $this->paymentModel->findBy($params['id']);

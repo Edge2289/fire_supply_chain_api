@@ -274,9 +274,14 @@ class Factory extends CatchController
     }
 
     /**
-     * 缺少审核
-     * 审核成功不可以再次审核
-     * 审核失败允许再次审核
+     * 审核
+     *
+     * @param Request $request
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @author 1131191695@qq.com
      */
     public function audit(Request $request)
     {
@@ -286,6 +291,9 @@ class Factory extends CatchController
         $factoryData = $this->factory->findBy($data['id']);
         if (empty($factoryData)) {
             throw new BusinessException("不存在产品");
+        }
+        if ($factoryData['audit'] == 1) {
+            return CatchResponse::fail("已审核");
         }
         $b = $this->factory->updateBy($data['id'], [
             'audit_status' => $data['audit_status'],
