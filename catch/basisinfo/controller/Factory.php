@@ -100,7 +100,7 @@ class Factory extends CatchController
             $factoryData['factory'] = $data;
             if ($data['factory_type'] != 2) {
                 // 如果是国外公司，直接返回
-                foreach ($data['data_maintenance'] as $value) {
+                foreach ($data['data_maintenance'] ?: [] as $value) {
                     if ($value == 1) {
                         $map[] = [
                             "id" => 2,
@@ -218,8 +218,9 @@ class Factory extends CatchController
             $map['business_start_date'] = strtotime($map['business_start_date']);
             $map['business_end_date'] = strtotime($map['business_end_date']);
             $map['establish_date'] = strtotime($map['establish_date']);
-            $map['registration_date'] = strtotime($map['registration_date']);
+            $map['registration_date'] = isset($map['registration_date']) ? strtotime($map['registration_date']) : 0;
             unset($map['form_factory_type']);
+            $map['data_maintenance'] = implode(",", $map['data_maintenance']);
         }
         if (isset($map['id']) && !empty($map['id'])) {
             $data = $this->factory->where('id', $map['id'])->find();

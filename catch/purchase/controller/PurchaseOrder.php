@@ -321,30 +321,42 @@ class PurchaseOrder extends CatchController
      * @throws \think\db\exception\DbException
      * @author 1131191695@qq.com
      */
-    public function getPurchaseOrderDetails()
+    public function getPurchaseOrderDetails(request $request)
     {
-        $data = $this->purchaseOrderDetailsModel->alias("pod")
-            ->join("purchase_order po", "po.id = pod.purchase_order_id")
-            ->field(["pod.id", "po.purchase_code", "po.supplier_id", "pod.purchase_order_id", "pod.product_sku_id", "pod.product_code", "pod.sku_code", "pod.item_number"])
-            ->addFields("(pod.quantity - pod.warehousing_quantity - pod.return_quantity) as quantity")
-            ->where("po.audit_status", 1) // 已审核
-            ->where("po.status", 0) // 未完成
-            ->where(function ($query) {
-                $query->where([
-                    "po.settlement_type" => 0,
-                    "po.settlement_status" => 1,
-                ])->whereOr([
-                    "po.settlement_type" => 1,
-                    "po.settlement_status" => 0,
-                ]);
-            })->whereRaw("(pod.quantity - pod.warehousing_quantity - pod.return_quantity) > 0")
-            ->order("po.id", "desc")
-            ->paginate();
-        foreach ($data as &$datum) {
-            $company = app(SupplierLicense::class)->where("id", $datum['supplier_id'])->field("company_name")->find();
-            $datum['company_name'] = $company['company_name'] ?? "";
+        $purchaseOrderId = $request->param("purchaser_order_id");
+        if (!$purchaseOrderId) {
+            return CatchResponse::fail("请选择采购订单");
         }
-        return CatchResponse::success($data);
+        $data = $this->purchaseOrderDetailsModel->with(
+            [
+                "hasProductData", "hasProductSkuData"
+            ]
+        )->field([
+            "quantity", "note", "id", "product_id", "product_sku_id", "warehousing_quantity"
+        ])->whereRaw("(quantity - warehousing_quantity - return_quantity) > 0")
+            ->where("purchase_order_id", $purchaseOrderId)->select()->toArray();
+        $skuMap = [];
+        foreach ($data as $datum) {
+            $skuMap[] = [
+                'id' => $datum['hasProductSkuData']['id'],
+                'product_id' => $datum['hasProductSkuData']['product_id'],
+                'product_code' => $datum['hasProductSkuData']['product_code'],
+                'sku_code' => $datum['hasProductSkuData']['sku_code'],
+                'item_number' => $datum['hasProductSkuData']['item_number'],
+                'unit_price' => $datum['hasProductSkuData']['unit_price'],
+                'tax_rate' => $datum['hasProductSkuData']['tax_rate'],
+                'n_tax_price' => $datum['hasProductSkuData']['n_tax_price'],
+                'packing_size' => $datum['hasProductSkuData']['packing_size'],
+                'packing_specification' => $datum['hasProductSkuData']['packing_specification'],
+                'product_name' => $datum['hasProductData']['product_name'],
+                'udi' => $datum['hasProductSkuData']['udi'],
+                'entity' => $datum['hasProductSkuData']['entity'],
+                "quantity" => $datum["quantity"],
+                "warehousing_quantity" => $datum["warehousing_quantity"],
+                "note" => $datum["note"],
+            ];
+        }
+        return CatchResponse::success($skuMap);
     }
 
 
@@ -359,7 +371,7 @@ class PurchaseOrder extends CatchController
      */
     public function tableGetPurchaseOrderLists()
     {
-        return $this->purchaseOrderDetailsModel->alias("pod")
+        $data = $this->purchaseOrderDetailsModel->alias("pod")
             ->join("purchase_order po", "po.id = pod.purchase_order_id")
             ->field(["po.id", "po.purchase_code"])
             ->where("po.audit_status", 1) // 已审核
@@ -376,5 +388,13 @@ class PurchaseOrder extends CatchController
             ->order("po.id", "desc")
             ->group("po.id")
             ->select()->toArray();
+        $map = [];
+        foreach ($data as $datum) {
+            $map[] = [
+                "label" => $datum['purchase_code'],
+                "value" => (string)$datum['id'],
+            ];
+        }
+        return $map;
     }
 }

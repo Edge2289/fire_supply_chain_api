@@ -40,6 +40,7 @@ class Factory extends CatchModel
         'business_date_long',
         'establish_date',
         'data_maintenance',
+        'business_scope',
         'other',
         'audit_status',
         'audit_info',
