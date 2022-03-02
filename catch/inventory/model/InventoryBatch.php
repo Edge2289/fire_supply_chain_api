@@ -13,14 +13,14 @@ namespace catchAdmin\inventory\model;
 use catcher\base\CatchModel;
 
 /**
- * Class Inventory
+ * Class InventoryBatch
  * @package catchAdmin\inventory\model
  */
-class Inventory extends CatchModel
+class InventoryBatch extends CatchModel
 {
     protected $connection = 'business';
 
-    protected $name = 'inventory';
+    protected $name = 'inventory_batch';
 
     protected $pk = 'id';
 

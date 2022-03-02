@@ -26,7 +26,7 @@ $router->group(function () use ($router) {
     $router->group(function () use ($router) {
         $router->get("procurementWare", "catchAdmin\purchase\controller\ProcurementWarehousing@index"); // 入库订单列表
         $router->post("procurementWare", "catchAdmin\purchase\controller\ProcurementWarehousing@save"); // 添加入库订单
-        $router->put("procurementWare/<id>", "catchAdmin\purchase\controller\ProcurementWarehousing@update"); // 更新入库订单
+        $router->put("procurementWare/<id>", "catchAdmin\purchase\controller\ProcurementWarehousing@save"); // 更新入库订单
         $router->post("procurementWare/audit/<id>", "catchAdmin\purchase\controller\ProcurementWarehousing@audit"); // 更新入库订单
         $router->post("procurementWare/invalid/<id>", "catchAdmin\purchase\controller\ProcurementWarehousing@invalid"); // 作废
     });

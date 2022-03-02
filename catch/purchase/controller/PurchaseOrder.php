@@ -338,7 +338,8 @@ class PurchaseOrder extends CatchController
         $skuMap = [];
         foreach ($data as $datum) {
             $skuMap[] = [
-                'id' => $datum['hasProductSkuData']['id'],
+                'id' => $datum['id'],
+                'product_sku_id' => $datum['hasProductSkuData']['id'],
                 'product_id' => $datum['hasProductSkuData']['product_id'],
                 'product_code' => $datum['hasProductSkuData']['product_code'],
                 'sku_code' => $datum['hasProductSkuData']['sku_code'],

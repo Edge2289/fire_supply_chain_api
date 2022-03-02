@@ -27,7 +27,7 @@ class ProcurementWarehousing extends CatchModel
 
     public function getPutDateAttr($value)
     {
-        return (string)$value;
+        return $this->toDate($value);
     }
 
     /**
@@ -55,11 +55,7 @@ class ProcurementWarehousing extends CatchModel
      */
     public function getList()
     {
-        $data = $this->catchSearch()->with("hasProcurementWarehousingDetails")->order("id desc")
+        return $this->catchSearch()->with("hasProcurementWarehousingDetails")->order("id desc")
             ->paginate();
-//        foreach ($data as &$datum) {
-//            $datum['goods_details'] = $datum['hasProcurementWarehousingDetails'];
-//        }
-        return $data;
     }
 }

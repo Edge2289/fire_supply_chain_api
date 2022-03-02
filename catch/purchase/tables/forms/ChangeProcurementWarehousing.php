@@ -39,13 +39,13 @@ class ChangeProcurementWarehousing extends Form
     public function fields(): array
     {
         return [
-            self::date("purchase_date", "入库日期")->col(12)->required(),
-            self::select("user_id", "入库人员")
+            self::date("put_date", "入库日期")->col(12)->required(),
+            self::select("put_user_id", "入库人员")
                 ->options(
                 // 获取自身公司下的员工
                     $this->getUser()
                 )->col(12)->required(),
-            self::select("supplier_id", "仓库")
+            self::select("warehouse_id", "仓库")
                 ->options(
                     $this->warehouse->tableGetWarehouse()
                 )->

@@ -56,8 +56,8 @@ class Warehouse extends CatchModel
         $map = [];
         foreach ($this->getWarehouse() as $value) {
             $map[] = [
-                "key" => $value['id'],
-                "value" => $value['warehouse_name'],
+                "value" => (string)$value['id'],
+                "label" => $value['warehouse_name'],
             ];
         }
         return $map;

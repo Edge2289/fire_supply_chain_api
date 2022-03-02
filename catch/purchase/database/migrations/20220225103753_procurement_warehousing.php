@@ -19,7 +19,7 @@ class ProcurementWarehousing extends Migrator
     {
         $table = $this->table('procurement_warehousing', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '入库单', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('purchase_order_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '采购id',])
-            ->addColumn('warehouse_entry_code', 'string', ['limit' => 30, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '入库编号',])
+            ->addColumn('warehouse_entry_code', 'string', ['limit' => 30, 'null' => false, 'default' => "", 'signed' => true, 'comment' => '入库编号',])
             ->addColumn('put_user_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '入库人员',])
             ->addColumn('put_date', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => false, 'comment' => '入库时间',])
             ->addColumn('warehouse_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '仓库id',])

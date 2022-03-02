@@ -26,16 +26,16 @@ class ProcurementWarehousing extends CatchTable
         return $this->getTable('procurementWare')
             ->header([
                 HeaderItem::label()->selection(),
-                HeaderItem::label('入库编号')->prop('purchase_code'),
-                HeaderItem::label('入库日期')->prop('purchase_date'),
-                HeaderItem::label('仓库')->prop('settlement_type'),
-                HeaderItem::label('入库数量')->prop('put_num'),
                 HeaderItem::label('状态')->prop('status_i'),
+                HeaderItem::label('入库编号')->prop('warehouse_entry_code'),
+                HeaderItem::label('入库日期')->prop('put_date'),
+                HeaderItem::label('仓库')->prop('warehouse_name'),
+                HeaderItem::label('入库数量')->prop('put_num'),
                 HeaderItem::label('审核状态')->prop('audit_status_i'),
+                HeaderItem::label('审核信息')->prop('audit_info'),
                 HeaderItem::label('备注')->prop('remark'),
                 HeaderItem::label('操作')->width(200)->actions([
                     Actions::update("编辑", "editPurchaseOrder"),
-                    Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu'),
                     Actions::normal("作废", 'primary', "cancel"),
                 ])
             ])
@@ -59,6 +59,7 @@ class ProcurementWarehousing extends CatchTable
             ->withApiRoute('procurementWare')
             ->withActions([
                 Actions::normal("新增", 'primary', "addPurchaseOrder")->icon('el-icon-plus'),
+                Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu'),
             ])
             ->selectionChange()
             ->render();
