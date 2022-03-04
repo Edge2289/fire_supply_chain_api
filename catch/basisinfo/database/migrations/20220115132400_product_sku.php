@@ -20,7 +20,7 @@ class ProductSku extends Migrator
      */
     public function change()
     {
-        $table = $this->table('product_sku', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '产品sku', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table = $this->table('product_sku', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '产品sku', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('product_id', 'integer', ['limit' => MysqlAdapter::INT_MEDIUM, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '产品id',])
             ->addColumn('product_code', 'string', ['limit' => 200, 'null' => false, 'default' => "", 'signed' => true, 'comment' => '产品编号',])
             ->addColumn('sku_code', 'string', ['limit' => 100, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '规格型号',])

@@ -44,7 +44,7 @@ class Warehouse extends CatchModel
 
     public function getWarehouse()
     {
-        return $this->where("company_id", request()->user()->company_id)->select()->toArray();
+        return $this->where("company_id", request()->user()->department_id)->select()->toArray();
     }
 
     /**

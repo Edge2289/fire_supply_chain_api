@@ -17,7 +17,7 @@ class CustomerLicense extends Migrator
 {
     public function change()
     {
-        $table = $this->table('customer_license', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '客户表', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table = $this->table('customer_license', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '客户表', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('customer_info_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '客户信息id',])
             ->addColumn('company_name', 'string', ['limit' => 300, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '企业名称',])
             ->addColumn('foreign_company', 'string', ['limit' => 300, 'default' => "", 'signed' => false, 'comment' => '国外注册公司',])

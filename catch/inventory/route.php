@@ -12,4 +12,10 @@
 $router->group(function () use ($router) {
     // 仓库管理
     $router->resource("warehouse", '\catchAdmin\inventory\controller\Warehouse'); // 仓库
+
+    $router->get("inventory", '\catchAdmin\inventory\controller\Inventory@list'); // 仓库
 })->middleware('auth');
+
+$router->group(function () use ($router) {
+    $router->get("inventoryBatch", '\catchAdmin\inventory\controller\Inventory@inventoryBatchList');
+});

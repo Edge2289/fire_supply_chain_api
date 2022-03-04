@@ -17,7 +17,7 @@ class Inventory extends Migrator
 {
     public function change()
     {
-        $table = $this->table('inventory', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '库存明细', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table = $this->table('inventory', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '库存明细', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('product_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '产品id',])
             ->addColumn('product_sku_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '产品sku_id',])
             ->addColumn('warehouse_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '仓库id',])

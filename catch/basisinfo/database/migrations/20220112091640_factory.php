@@ -21,7 +21,7 @@ class Factory extends Migrator
      */
     public function change()
     {
-        $table = $this->table('factory', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '厂家营业执照信息', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table = $this->table('factory', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '厂家营业执照信息', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('factory_code', 'string', ['limit' => 20, 'null' => false, 'default' => '', 'signed' => true, 'comment' => '厂家编号',])
             ->addColumn('factory_type', 'integer', ['limit' => MysqlAdapter::INT_TINY, 'null' => false, 'default' => 1, 'signed' => false, 'comment' => '厂家类型{1:国内公司,2:国外公司}',])
             ->addColumn('company_name', 'string', ['limit' => 300, 'default' => '', 'signed' => true, 'comment' => '企业名称',])

@@ -17,7 +17,7 @@ class FactoryRecord extends Migrator
 {
     public function change()
     {
-        $table = $this->table('factory_record', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '厂家生产许可证', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table = $this->table('factory_record', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '厂家生产许可证', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('factory_id', 'integer', ['limit' => MysqlAdapter::INT_MEDIUM, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '厂家id',])
             ->addColumn('record_license_url', 'string', ['limit' => 200, 'null' => false, 'default' => "", 'signed' => true, 'comment' => '备案凭证',])
             ->addColumn('record_code', 'string', ['limit' => 100, 'null' => false, 'default' => '', 'signed' => false, 'comment' => '备案号',])

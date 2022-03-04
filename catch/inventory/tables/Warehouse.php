@@ -27,7 +27,7 @@ class Warehouse extends CatchTable
         return $this->getTable('warehouse')
             ->header([
                 HeaderItem::label()->selection(),
-                HeaderItem::label('编号')->prop('id'),
+                HeaderItem::label('id')->prop('id'),
                 HeaderItem::label('仓库编码')->prop('warehouse_code'),
                 HeaderItem::label('仓库名称')->prop('warehouse_name'),
                 HeaderItem::label('仓库类别')->prop('warehouse_type_name'),

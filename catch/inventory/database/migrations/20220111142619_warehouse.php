@@ -17,7 +17,7 @@ class Warehouse extends Migrator
 {
     public function change()
     {
-        $table = $this->table('warehouse', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '仓库', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table = $this->table('warehouse', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '仓库', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('company_id', 'integer', ['limit' => MysqlAdapter::INT_MEDIUM, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '公司id',])
             ->addColumn('warehouse_name', 'string', ['limit' => 200, 'null' => false, 'default' => '', 'signed' => true, 'comment' => '仓库名称',])
             ->addColumn('warehouse_code', 'string', ['limit' => 100, 'null' => false, 'default' => '', 'signed' => false, 'comment' => '仓库编号',])

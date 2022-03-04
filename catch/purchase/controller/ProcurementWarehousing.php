@@ -196,7 +196,7 @@ class ProcurementWarehousing extends CatchController
             return CatchResponse::fail("数据不存在");
         }
         if ($data['audit_status'] == 1) {
-            return CatchResponse::fail("单据已审核,无法修改");
+//            return CatchResponse::fail("单据已审核,无法修改");
         }
 
         $updateMap = [
@@ -258,7 +258,7 @@ class ProcurementWarehousing extends CatchController
                             'warehouse_id' => $data['warehouse_id'],
                             'supplier_id' => $purchaseData["supplier_id"],
                             'factory_id' => $productData['factory_id'],
-                            'company_id' => request()->user()->company_id,
+                            'company_id' => request()->user()->department_id,
                             'number' => $proWareDetail['number'], // 数量
                             'use_number' => 0, // 批号
                             'lock_number' => 0, // 批号
@@ -302,7 +302,7 @@ class ProcurementWarehousing extends CatchController
                         'warehouse_id' => $inventoryM['warehouse_id'],
                         'supplier_id' => $inventoryM["supplier_id"],
                         'factory_id' => $inventoryM['factory_id'],
-                        'company_id' => $inventoryM['product_id'],
+                        'company_id' => request()->user()->department_id,
                     ])->find();
                     if ($inventoryP) {
                         // 更新

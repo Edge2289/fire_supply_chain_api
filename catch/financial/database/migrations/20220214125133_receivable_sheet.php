@@ -16,7 +16,7 @@ class ReceivableSheet extends Migrator
 {
     public function change()
     {
-        $table = $this->table('receivable_sheet', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '回款单', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table = $this->table('receivable_sheet', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '回款单', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('receivable_code', 'string', ['limit' => 60, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '回款单号',])
             ->addColumn('receivable_time', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '回款时间',])
             ->addColumn('amount', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'signed' => true, 'comment' => '回款金额',])

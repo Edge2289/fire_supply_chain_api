@@ -17,7 +17,7 @@ class RegistrationLicense extends Migrator
 {
     public function change()
     {
-        $table = $this->table('registration_license', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '备案凭证', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table = $this->table('registration_license', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '备案凭证', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('business_license_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '营业执照id',])
             ->addColumn('registration_license_code', 'string', ['limit' => 100, 'null' => false, 'default' => "", 'signed' => true, 'comment' => '备案号',])
             ->addColumn('registration_date', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '备案日期',])
@@ -29,8 +29,6 @@ class RegistrationLicense extends Migrator
             ->addColumn('residence', 'string', ['limit' => 300, 'null' => false, 'default' => '', 'signed' => false, 'comment' => '经营场所',])
             ->addColumn('warehouse_address', 'string', ['limit' => 300, 'null' => false, 'default' => '', 'signed' => false, 'comment' => '库房地址',])
             ->addColumn('equipment_class', 'string', ['limit' => 300, 'null' => false, 'default' => '', 'signed' => false, 'comment' => '医疗分类 逗号分割',])
-
-
             ->addColumn('created_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '创建时间',])
             ->addColumn('updated_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '更新时间',])
             ->addColumn('deleted_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '软删除',])

@@ -17,7 +17,7 @@ class ProcurementWarehousingDetails extends Migrator
 {
     public function change()
     {
-        $table = $this->table('procurement_warehousing_details', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '入库详情单', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table = $this->table('procurement_warehousing_details', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '入库详情单', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('procurement_warehousing_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '入库单id',])
             ->addColumn('purchase_order_details_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '采购订单详情id',])
             ->addColumn('product_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '产品id',])

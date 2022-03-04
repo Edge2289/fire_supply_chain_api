@@ -17,7 +17,7 @@ class InventoryBatch extends Migrator
 {
     public function change()
     {
-        $table = $this->table('inventory_batch', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '库存批次', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table = $this->table('inventory_batch', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '库存批次', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('inventory_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '入库单id',])
             ->addColumn('product_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '产品id',])
             ->addColumn('product_sku_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '产品sku_id',])

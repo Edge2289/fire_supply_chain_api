@@ -17,7 +17,7 @@ class CustomerRegistrationLicense extends Migrator
 {
     public function change()
     {
-        $table = $this->table('customer_registration_license', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '备案凭证', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table = $this->table('customer_registration_license', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '备案凭证', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('customer_info_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '客户信息id',])
             ->addColumn('registration_license_code', 'string', ['limit' => 100, 'null' => false, 'default' => "", 'signed' => true, 'comment' => '备案号',])
             ->addColumn('registration_date', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '备案日期',])

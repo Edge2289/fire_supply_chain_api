@@ -17,7 +17,7 @@ class CustomerAttachment extends Migrator
 {
     public function change()
     {
-        $table = $this->table('customer_attachment', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '资质与附件', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table = $this->table('customer_attachment', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '资质与附件', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('customer_info_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '客户信息id',])
             ->addColumn('business_license_url', 'string', ['limit' => 300, 'default' => '', 'signed' => true, 'comment' => '营业执照url',])
             ->addColumn('check_business_license', 'integer', ['limit' => MysqlAdapter::INT_TINY, 'default' => 0, 'signed' => true, 'comment' => '核对营业执照',])
@@ -39,7 +39,6 @@ class CustomerAttachment extends Migrator
             ->addColumn('check_system_survey_form', 'integer', ['limit' => MysqlAdapter::INT_TINY, 'default' => 0, 'signed' => false, 'comment' => '核对质量体系调查表',])
             ->addColumn('annual_report_url', 'string', ['limit' => 300, 'default' => '', 'signed' => false, 'comment' => '年度报告',])
             ->addColumn('check_annual_report', 'integer', ['limit' => MysqlAdapter::INT_TINY, 'default' => 0, 'signed' => false, 'comment' => '核对年度报告',])
-
             ->addColumn('created_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '创建时间',])
             ->addColumn('updated_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '更新时间',])
             ->addColumn('deleted_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '软删除',])
