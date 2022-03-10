@@ -6,3 +6,6 @@
 .env
 composer.lock
 /public/images
+/public/static
+/public/tinymce
+/dist

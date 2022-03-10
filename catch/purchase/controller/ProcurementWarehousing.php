@@ -196,7 +196,10 @@ class ProcurementWarehousing extends CatchController
             return CatchResponse::fail("数据不存在");
         }
         if ($data['audit_status'] == 1) {
-//            return CatchResponse::fail("单据已审核,无法修改");
+            return CatchResponse::fail("单据已审核,无法修改");
+        }
+        if ($data['status'] == 2) {
+            return CatchResponse::fail("单据已作废,无法修改");
         }
 
         $updateMap = [

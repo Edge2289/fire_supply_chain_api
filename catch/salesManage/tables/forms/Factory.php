@@ -1,5 +1,6 @@
 <?php
-namespace catchAdmin\salesmanage\tables\forms;
+
+namespace catchAdmin\salesManage\tables\forms;
 
 use catcher\library\form\FormFactory;
 

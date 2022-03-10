@@ -10,17 +10,17 @@ use think\Paginator;
 
 class CatchQuery extends Query
 {
-  /**
-   *
-   * @time 2020年01月13日
-   * @param mixed $model
-   * @param string $joinField
-   * @param string $currentJoinField
-   * @param array $field
-   * @param string $type
-   * @param array $bind
-   * @return CatchQuery
-   */
+    /**
+     *
+     * @time 2020年01月13日
+     * @param mixed $model
+     * @param string $joinField
+     * @param string $currentJoinField
+     * @param array $field
+     * @param string $type
+     * @param array $bind
+     * @return CatchQuery
+     */
     public function catchJoin($model, string $joinField, string $currentJoinField, array $field = [], string $type = 'INNER', array $bind = []): CatchQuery
     {
         $tableAlias = null;
@@ -34,7 +34,7 @@ class CatchQuery extends Query
 
         // 合并字段
         $this->options['field'] = array_merge($this->options['field'] ?? [], array_map(function ($value) use ($table, $tableAlias) {
-          return ($tableAlias ? : $table) . '.' . $value;
+            return ($tableAlias ?: $table) . '.' . $value;
         }, $field));
 
         return $this->join($tableAlias ? sprintf('%s %s', $table, $tableAlias) : $table
@@ -42,75 +42,75 @@ class CatchQuery extends Query
             , sprintf('%s.%s=%s.%s', $tableAlias ? $tableAlias : $table, $joinField, $this->getAlias(), $currentJoinField), $type, $bind);
     }
 
-  /**
-   *
-   * @time 2020年01月13日
-   * @param mixed $model
-   * @param string $joinField
-   * @param string $currentJoinField
-   * @param array $field
-   * @param array $bind
-   * @return CatchQuery
-   */
+    /**
+     *
+     * @time 2020年01月13日
+     * @param mixed $model
+     * @param string $joinField
+     * @param string $currentJoinField
+     * @param array $field
+     * @param array $bind
+     * @return CatchQuery
+     */
     public function catchLeftJoin($model, string $joinField, string $currentJoinField, array $field = [], array $bind = []): CatchQuery
     {
-        return $this->catchJoin($model, $joinField,  $currentJoinField,  $field,'LEFT', $bind);
+        return $this->catchJoin($model, $joinField, $currentJoinField, $field, 'LEFT', $bind);
     }
 
-  /**
-   *
-   * @time 2020年01月13日
-   * @param mixed $model
-   * @param string $joinField
-   * @param string $currentJoinField
-   * @param array $field
-   * @param array $bind
-   * @return CatchQuery
-   */
+    /**
+     *
+     * @time 2020年01月13日
+     * @param mixed $model
+     * @param string $joinField
+     * @param string $currentJoinField
+     * @param array $field
+     * @param array $bind
+     * @return CatchQuery
+     */
     public function catchRightJoin($model, string $joinField, string $currentJoinField, array $field = [], array $bind = []): CatchQuery
     {
-        return $this->catchJoin($model, $joinField,  $currentJoinField, $field,'RIGHT', $bind);
+        return $this->catchJoin($model, $joinField, $currentJoinField, $field, 'RIGHT', $bind);
     }
 
-  /**
-   * rewrite
-   *
-   * @time 2020年01月13日
-   * @param array|string $field
-   * @param bool $needAlias
-   * @return $this|Query
-   */
+    /**
+     * rewrite
+     *
+     * @time 2020年01月13日
+     * @param array|string $field
+     * @param bool $needAlias
+     * @return $this|Query
+     */
     public function withoutField($field, bool $needAlias = false)
     {
-      if (empty($field)) {
-          return $this;
-      }
+        if (empty($field)) {
+            return $this;
+        }
 
-      if (is_string($field)) {
-          $field = array_map('trim', explode(',', $field));
-      }
+        if (is_string($field)) {
+            $field = array_map('trim', explode(',', $field));
+        }
 
-      // 过滤软删除字段
-      $field[] = $this->model->getDeleteAtField();
+        // 过滤软删除字段
+        $field[] = $this->model->getDeleteAtField();
 
-      // 字段排除
-      $fields = $this->getTableFields();
-      $field  = $fields ? array_diff($fields, $field) : $field;
+        // 字段排除
+        $fields = $this->getTableFields();
+        $field = $fields ? array_diff($fields, $field) : $field;
 
-      if (isset($this->options['field'])) {
-          $field = array_merge((array) $this->options['field'], $field);
-      }
+        if (isset($this->options['field'])) {
+            $field = array_merge((array)$this->options['field'], $field);
+        }
 
-      $this->options['field'] = array_unique($field);
+        $this->options['field'] = array_unique($field);
 
-      if ($needAlias) {
-          $alias = $this->getAlias();
-          $this->options['field'] = array_map(function ($field) use ($alias) {
-          return $alias . '.' . $field;
-        }, $this->options['field']);
-      }
+        if ($needAlias) {
+            $alias = $this->getAlias();
+            $this->options['field'] = array_map(function ($field) use ($alias) {
+                return $alias . '.' . $field;
+            }, $this->options['field']);
+        }
 
-      return $this;
+        return $this;
     }
 
     /**
@@ -123,6 +123,10 @@ class CatchQuery extends Query
     {
         $params = empty($params) ? \request()->param() : $params;
 
+        // 如果查询表存在公司id的话，那么则自动添加公司id上去
+        if (in_array("company_id", $this->getTableFields()) && !empty(request()->user()->department_id)) {
+            $params["company_id"] = request()->user()->department_id;
+        }
         if (empty($params)) {
             return $this;
         }
@@ -169,7 +173,7 @@ class CatchQuery extends Query
                 // 区间范围 start_数据库字段 & end_数据库字段
                 $startPos = strpos($field, 'start_');
                 if ($startPos === 0) {
-                    $this->where(str_replace('start_','', $field), '>=', strtotime($value));
+                    $this->where(str_replace('start_', '', $field), '>=', strtotime($value));
                 }
                 $endPos = strpos($field, 'end_');
                 if ($endPos === 0) {
@@ -199,37 +203,37 @@ class CatchQuery extends Query
         return $this;
     }
 
-  /**
-   *
-   * @time 2020年01月13日
-   * @return mixed
-   */
+    /**
+     *
+     * @time 2020年01月13日
+     * @return mixed
+     */
     public function getAlias()
     {
-      return isset($this->options['alias']) ? $this->options['alias'][$this->getTable()] : $this->getTable();
+        return isset($this->options['alias']) ? $this->options['alias'][$this->getTable()] : $this->getTable();
     }
 
-  /**
-   * rewrite
-   *
-   * @time 2020年01月13日
-   * @param string $field
-   * @param mixed $condition
-   * @param string $option
-   * @param string $logic
-   * @return Query
-   */
+    /**
+     * rewrite
+     *
+     * @time 2020年01月13日
+     * @param string $field
+     * @param mixed $condition
+     * @param string $option
+     * @param string $logic
+     * @return Query
+     */
     public function whereLike(string $field, $condition, string $logic = 'AND', string $option = 'both'): Query
     {
         switch ($option) {
-          case 'both':
-              $condition = '%' . $condition . '%';
-              break;
-          case 'left':
-              $condition = '%' . $condition;
-              break;
-          default:
-              $condition .= '%';
+            case 'both':
+                $condition = '%' . $condition . '%';
+                break;
+            case 'left':
+                $condition = '%' . $condition;
+                break;
+            default:
+                $condition .= '%';
         }
 
         if (strpos($field, '.') === false) {
@@ -261,13 +265,13 @@ class CatchQuery extends Query
         return $this->where($field, $condition, $logic, 'right');
     }
 
-  /**
-   * 额外的字段
-   *
-   * @time 2020年01月13日
-   * @param $fields
-   * @return CatchQuery
-   */
+    /**
+     * 额外的字段
+     *
+     * @time 2020年01月13日
+     * @param $fields
+     * @return CatchQuery
+     */
     public function addFields($fields): CatchQuery
     {
         if (is_string($fields)) {
@@ -284,9 +288,9 @@ class CatchQuery extends Query
     public function paginate($listRows = null, $simple = false): Paginator
     {
         if (!$listRows) {
-           $limit = \request()->param('limit');
+            $limit = \request()->param('limit');
 
-           $listRows = $limit ? : CatchModel::LIMIT;
+            $listRows = $limit ?: CatchModel::LIMIT;
         }
 
         return parent::paginate($listRows, $simple); // TODO: Change the autogenerated stub
@@ -323,7 +327,7 @@ class CatchQuery extends Query
      * @param string $as
      * @return $this
      */
-    public function  addSelectSub(callable $callable, string $as): CatchQuery
+    public function addSelectSub(callable $callable, string $as): CatchQuery
     {
         $this->field(sprintf('%s as %s', $callable()->buildSql(), $as));
 
@@ -337,7 +341,7 @@ class CatchQuery extends Query
      * @param $field
      * @param int $amount
      * @return int
-     *@throws \think\db\exception\DbException
+     * @throws \think\db\exception\DbException
      */
     public function increment($field, int $amount = 1): int
     {
@@ -351,7 +355,7 @@ class CatchQuery extends Query
      * @param $field
      * @param int $amount
      * @return int
-     *@throws \think\db\exception\DbException
+     * @throws \think\db\exception\DbException
      */
     public function decrement($field, int $amount = 1): int
     {

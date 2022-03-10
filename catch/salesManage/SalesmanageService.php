@@ -9,11 +9,11 @@
 // | Author: JaguarJack [ njphper@gmail.com ]
 // +----------------------------------------------------------------------
 
-namespace catchAdmin\salesmanage;
+namespace catchAdmin\salesManage;
 
 use catcher\ModuleService;
 
-class SalesmanageService extends ModuleService
+class SalesManageService extends ModuleService
 {
     public function loadRouteFrom()
     {
