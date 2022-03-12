@@ -57,4 +57,18 @@ class CustomerInfo extends CatchModel
         return $this->toDate($value);
     }
 
+    public function getFormLier()
+    {
+        $data = $this->where("status", 1)
+            ->where("audit_status", 1)->select();
+        $map = [];
+        foreach ($data as $datum) {
+            $map[] = [
+                'value' => (string)$datum['id'],
+                'label' => $datum['company_name'],
+            ];
+        }
+        return $map;
+    }
+
 }

@@ -1,11 +1,9 @@
 {
-  "name": "salesmanage",
-  "alias": "销售管理",
-  "description": "",
+  "name": "销售管理",
+  "alias": "salesManage",
+  "description": "销售管理",
   "version": "1.0.0",
-  "keywords": [
-    ""
-  ],
+  "keywords": [],
   "order": 0,
   "services": [
     "\\catchAdmin\\salesManage\\SalesManageService"

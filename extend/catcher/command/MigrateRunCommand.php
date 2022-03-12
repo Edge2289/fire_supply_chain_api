@@ -1,4 +1,5 @@
 <?php
+
 namespace catcher\command;
 
 use catcher\CatchAdmin;
@@ -33,9 +34,9 @@ EOT
 
     protected function execute(Input $input, Output $output)
     {
-        $this->module = strtolower($input->getArgument('module'));
+        $this->module = $input->getArgument('module');
         $version = $input->getOption('target');
-        $date    = $input->getOption('date');
+        $date = $input->getOption('date');
 
         // run the migrations
         $start = microtime(true);

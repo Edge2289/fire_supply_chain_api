@@ -35,15 +35,81 @@ class SalesOrder extends CatchController
         $this->salesOrderDetailsModel = $salesOrderDetailsModel;
     }
 
-    public function getList()
+    public function index()
     {
-        return CatchResponse::paginate($this->salesOrderModel->getList());
+        $status = [
+            "未完成", "已完成", "作废"
+        ];
+        $data = $this->salesOrderModel->getList();
+        foreach ($data as &$datum) {
+            $datum['status_i'] = $status[$datum['status']];
+//            $datum['detail'] = $status[$datum['status']];
+            $datum['settlement_type_i'] = $datum['settlement_type'] == 0 ? "现结" : "月结";
+        }
+        return CatchResponse::paginate($data);
     }
 
-    // 保存或者更新
+    /**
+     * 保存或者更新
+     *
+     * @param Request $request
+     * @return \think\response\Json
+     * @author 1131191695@qq.com
+     */
     public function save(Request $request)
     {
+        // 保存基础信息
         $params = $request->param();
+//        $this->validator(SalesOrderRequest::class, $params);
+        // 保存商品
+        $goodsDetails = $params['goods_details'];
+        unset($params['goods_details'], $params['id']);
+        $params['order_code'] = getCode("SO");
+        $this->salesOrderModel->startTrans();
+        try {
+            $params['sales_time'] = strtotime($params['sales_time']);
+            $id = $this->salesOrderModel->createBy($params);
+            if (empty($id)) {
+                throw new \Exception("销售订单添加失败");
+            }
+            $totalNum = 0;
+            $totalPrice = 0;
+            // 重新添加商品数据
+            foreach ($goodsDetails as $goodsDetail) {
+                $totalNum += $goodsDetail['quantity'];
+                $totalPrice = bcadd($totalPrice, bcmul($goodsDetail['unit_price'], $goodsDetail['quantity'], 2), 2);
+                $map[] = [
+                    'purchase_order_id' => $id,
+                    'product_id' => $goodsDetail['product_id'] ?? 0,
+                    'product_sku_id' => $goodsDetail['id'],
+                    'product_code' => $goodsDetail['product_code'],
+                    'item_number' => $goodsDetail['item_number'],
+                    'sku_code' => $goodsDetail['sku_code'],
+                    'unit_price' => $goodsDetail['unit_price'],
+                    'tax_rate' => $goodsDetail['tax_rate'],
+                    'quantity' => $goodsDetail['quantity'],
+                    'receipt_quantity' => 0,
+                    'warehousing_quantity' => 0,
+                    'return_quantity' => 0,
+                    'note' => $goodsDetail['note'] ?? "",
+                ];
+            }
+            $gId = $this->salesOrderDetailsModel->insertAll($map);
+            if (empty($gId)) {
+                throw new \Exception("销售订单商品添加失败");
+            }
+            $this->salesOrderModel->updateBy($id, [
+                'num' => $totalNum,
+                'amount' => (string)$totalPrice,
+            ]);
+            // 提交事务
+            $this->salesOrderModel->commit();
+        } catch (\Exception $exception) {
+            // 回滚事务
+            $this->salesOrderModel->rollback();
+            return CatchResponse::fail($exception->getMessage());
+        }
+        return CatchResponse::success(['id' => $id]);
     }
 
     /**

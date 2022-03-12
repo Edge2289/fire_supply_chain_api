@@ -17,7 +17,7 @@ class CustomerInfo extends Migrator
 {
     public function change()
     {
-        $table = $this->table('customer_info', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '补充信息', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table = $this->table('customer_info', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '客户表', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('customer_type', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '客户类型{1:经销商,2:医院}',])
             ->addColumn('company_name', 'string', ['limit' => 100, 'null' => true, 'default' => '', 'signed' => false, 'comment' => '企业名称',])
             ->addColumn('operating_license_code', 'string', ['limit' => 300, 'default' => '', 'signed' => true, 'comment' => '营业执照url',])

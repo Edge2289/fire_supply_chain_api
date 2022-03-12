@@ -3,11 +3,11 @@
  * Created by PhpStorm.
  * author: 1131191695@qq.com
  * Note: Tired as a dog
- * Date: 2022/1/28
- * Time: 19:39
+ * Date: 2022/3/12
+ * Time: 09:49
  */
 
-namespace catchAdmin\purchase\tables;
+namespace catchAdmin\salesManage\tables;
 
 
 use catcher\CatchTable;
@@ -16,34 +16,34 @@ use catcher\library\table\HeaderItem;
 use catcher\library\table\Search;
 
 /**
- * Class PurchaseOrder
- * @package catchAdmin\purchase\tables
+ * Class SalesOrder
+ * @package catchAdmin\salesManage\tables
  */
-class PurchaseOrder extends CatchTable
+class SalesOrder extends CatchTable
 {
     protected function table()
     {
-        return $this->getTable('purchase')
+        return $this->getTable('salesOrder')
             ->header([
                 HeaderItem::label()->selection(),
 //                HeaderItem::label('id')->prop('id'),
                 HeaderItem::label('状态')->prop('status_i'),
-                HeaderItem::label('采购编号')->prop('purchase_code'),
+                HeaderItem::label('订单编号')->prop('order_code'),
                 HeaderItem::label('供货者')->prop('supplier_name'),
+                HeaderItem::label('客户')->prop('supplier_name'),
                 HeaderItem::label('明细摘要')->prop('detail'),
                 HeaderItem::label('总额')->prop('amount'),
-                HeaderItem::label('采购日期')->prop('purchase_date'),
+                HeaderItem::label('销售日期')->prop('sales_time'),
                 HeaderItem::label('结算类型')->prop('settlement_type_i'),
                 HeaderItem::label('备注')->prop('remark'),
                 HeaderItem::label('操作')->width(200)->actions([
                     Actions::update("编辑", "editPurchaseOrder"),
-                    Actions::normal("复制", 'primary', "copy")->icon('el-icon-document-copy'),
-                    Actions::normal("一键入库", 'success', "putStorage"),
-//                    Actions::normal("导出信息", 'success', "facePrint")->icon('el-icon-printer'),
+//                    Actions::normal("复制", 'primary', "copy")->icon('el-icon-document-copy'),
+                    Actions::normal("出库/发货", 'success', "outbound"),
                 ])
             ])
             ->withSearch([
-                Search::label('采购编号')->text('purchase_code', '采购编号'),
+                Search::label('订单编号')->text('order_code', '订单编号'),
                 Search::label('结算类型')->text('invoice_status', '结算类型'),
                 Search::label('订单状态')->select('audit_status', '请选择状态',
                     Search::options()->add('全部', '')
@@ -59,12 +59,10 @@ class PurchaseOrder extends CatchTable
                 ),
                 Search::hidden('id', '')
             ])
-            ->withApiRoute('purchase')
+            ->withApiRoute('salesOrder')
             ->withActions([
                 Actions::normal("新增", 'primary', "addPurchaseOrder")->icon('el-icon-plus'),
                 Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu'),
-                Actions::normal("结单", 'primary', "audit"),
-                Actions::normal("取消结单", 'primary', "audit"),
                 Actions::normal("作废", 'primary', "cancel"),
                 Actions::normal("导出", 'primary', "export"),
             ])

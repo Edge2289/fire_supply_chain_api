@@ -12,6 +12,9 @@
 // you should use `$router`
 /* @var think\Route $router */
 
-$router->group(function () use ($router){
+$router->group(function () use ($router) {
+    $router->get("salesOrder", "catchAdmin\salesManage\controller\SalesOrder@index");
+    $router->post("salesOrder", "catchAdmin\salesManage\controller\SalesOrder@save");
+    $router->put("salesOrder", "catchAdmin\salesManage\controller\SalesOrder@save");
 })->middleware('auth');
 
