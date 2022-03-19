@@ -30,7 +30,7 @@ class SalesOrder extends CatchTable
                 HeaderItem::label('状态')->prop('status_i'),
                 HeaderItem::label('订单编号')->prop('order_code'),
                 HeaderItem::label('供货者')->prop('supplier_name'),
-                HeaderItem::label('客户')->prop('supplier_name'),
+                HeaderItem::label('客户')->prop('customer_name'),
                 HeaderItem::label('明细摘要')->prop('detail'),
                 HeaderItem::label('总额')->prop('amount'),
                 HeaderItem::label('销售日期')->prop('sales_time'),

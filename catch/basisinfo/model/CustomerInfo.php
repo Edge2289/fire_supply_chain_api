@@ -22,6 +22,8 @@ class CustomerInfo extends CatchModel
 
     protected $pk = 'id';
 
+    protected $fieldToTime = ['effective_start_date', 'effective_end_date', 'certification_date'];
+
     /**
      * @return \think\model\relation\HasOne
      * @author 1131191695@qq.com
@@ -38,23 +40,8 @@ class CustomerInfo extends CatchModel
      */
     public function getList()
     {
-        return $this->with(["hasCustomerLicense"])->catchSearch()->order("id desc")
-            ->paginate();
-    }
-
-    public function getEffectiveStartDateAttr($value)
-    {
-        return $this->toDate($value);
-    }
-
-    public function getEffectiveEndDateAttr($value)
-    {
-        return $this->toDate($value);
-    }
-
-    public function getCertificationDateAttr($value)
-    {
-        return $this->toDate($value);
+        return $this->fieldToFormat($this->with(["hasCustomerLicense"])->catchSearch()->order("id desc")
+            ->paginate());
     }
 
     public function getFormLier()

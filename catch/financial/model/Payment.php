@@ -25,10 +25,7 @@ class Payment extends CatchModel
 
     protected $pk = 'id';
 
-    public function getPaymentTimeAttr($value)
-    {
-        return $this->toDate($value);
-    }
+    protected $fieldToTime = ['payment_time'];
 
     /**
      * 关联采购订单表
@@ -43,11 +40,11 @@ class Payment extends CatchModel
 
     public function getList()
     {
-        return $this->with([
+        return $this->fieldToFormat($this->with([
             "manyPurchaserOrder",
             "manyPurchaserOrder.hasPurchaseOrder",
             "manyPurchaserOrder.hasPurchaseOrder.hasSupplierLicense"
         ])->catchSearch()->order("id desc")
-            ->paginate();
+            ->paginate());
     }
 }

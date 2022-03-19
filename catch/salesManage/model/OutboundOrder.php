@@ -3,38 +3,35 @@
  * Created by PhpStorm.
  * author: 1131191695@qq.com
  * Note: Tired as a dog
- * Date: 2022/3/6
- * Time: 22:54
+ * Date: 2022/3/14
+ * Time: 20:48
  */
 
 namespace catchAdmin\salesManage\model;
 
 
 use catchAdmin\basisinfo\model\CustomerInfo;
-use catchAdmin\basisinfo\model\CustomerLicense;
 use catchAdmin\basisinfo\model\SupplierLicense;
 use catcher\base\CatchModel;
 use think\model\relation\HasMany;
 use think\model\relation\HasOne;
 
 /**
- * Class SalesOrderModel
+ * Class OutboundOrder
  * @package catchAdmin\salesManage\model
  */
-class SalesOrderModel extends CatchModel
+class OutboundOrder extends CatchModel
 {
     protected $connection = 'business';
 
-    protected $name = 'sales_order';
+    protected $name = 'outbound_order';
 
     protected $pk = 'id';
 
-    protected $fieldToString = [
-        'company_id', 'salesman_id', 'supplier_id', 'customer_info_id', 'settlement_type',
-        'settlement_status', 'invoice_status', 'sales_type'
-    ];
-
-    protected $fieldToTime = ['sales_time'];
+    public function getSalesOrderTimeAttr($value)
+    {
+        return $this->toDate($value);
+    }
 
     /**
      * 关联订单详情
@@ -114,6 +111,6 @@ class SalesOrderModel extends CatchModel
             $datum['detail'] = $detail;
             unset($datum['hasSalesOrderDetails'], $datum["hasSupplierLicense"]);
         }
-        return $this->fieldToFormat($data);
+        return $data;
     }
 }

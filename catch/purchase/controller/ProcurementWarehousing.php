@@ -111,6 +111,13 @@ class ProcurementWarehousing extends CatchController
 
             if (isset($params["id"]) && !empty($params["id"])) {
                 // 存在id 更新操作
+                $data = $this->procurementWarehousing->findBy($params['id']);
+                if ($data['audit_status'] == 1) {
+                    return CatchResponse::fail("单据已审核,无法修改");
+                }
+                if ($data['status'] != 0) {
+                    return CatchResponse::fail("单据不为未完成,无法修改");
+                }
                 $this->procurementWarehousing->updateBy($params['id'], $params);
                 $id = $params['id'];
                 // 删除

@@ -30,6 +30,10 @@ abstract class CatchModel extends \think\Model
 
     protected $autoWriteTimestamp = true;
 
+    protected $fieldToString = [];
+
+    protected $fieldToTime = [];
+
     // 分页 Limit
     public const LIMIT = 10;
     // 开启
@@ -75,5 +79,37 @@ abstract class CatchModel extends \think\Model
             return $value;
         }
         return date("Y-m-d", $value);
+    }
+
+    /**
+     * 字段数据转string
+     *
+     * @param $data
+     * @return array
+     * @author 1131191695@qq.com
+     */
+    protected function fieldToFormat($data)
+    {
+        if (!$this->fieldToString) {
+            return $data;
+        }
+        foreach ($data as &$datum) {
+            // to string
+            foreach ($this->fieldToString as $field) {
+                if (isset($datum[$field])) {
+                    $datum[$field] = (string)$datum[$field];
+                }
+            }
+            // to time
+            foreach ($this->fieldToTime as $field) {
+                if (isset($datum[$field])) {
+                    if (is_string($datum[$field])) {
+                        continue;
+                    }
+                    $datum[$field] = date("Y-m-d", (int)$datum[$field]);
+                }
+            }
+        }
+        return $data;
     }
 }

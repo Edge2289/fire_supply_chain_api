@@ -43,7 +43,6 @@ class SalesOrder extends CatchController
         $data = $this->salesOrderModel->getList();
         foreach ($data as &$datum) {
             $datum['status_i'] = $status[$datum['status']];
-//            $datum['detail'] = $status[$datum['status']];
             $datum['settlement_type_i'] = $datum['settlement_type'] == 0 ? "现结" : "月结";
         }
         return CatchResponse::paginate($data);
@@ -63,23 +62,46 @@ class SalesOrder extends CatchController
 //        $this->validator(SalesOrderRequest::class, $params);
         // 保存商品
         $goodsDetails = $params['goods_details'];
-        unset($params['goods_details'], $params['id']);
-        $params['order_code'] = getCode("SO");
+        unset($params['goods_details']);
         $this->salesOrderModel->startTrans();
         try {
-            $params['sales_time'] = strtotime($params['sales_time']);
-            $id = $this->salesOrderModel->createBy($params);
-            if (empty($id)) {
-                throw new \Exception("销售订单添加失败");
+            if (isset($params["id"]) && !empty($params["id"])) {
+                // 存在id 更新操作
+                $data = $this->salesOrderModel->findBy($params['id']);
+                if ($data['audit_status'] == 1) {
+                    return CatchResponse::fail("单据已审核,无法修改");
+                }
+                if ($data['status'] != 0) {
+                    return CatchResponse::fail("单据不为未完成,无法修改");
+                }
+                $this->salesOrderModel->updateBy($params['id'], $params);
+                $id = $params['id'];
+                // 删除
+                $this->salesOrderModel->where("procurement_warehousing_id", $params['id'])->delete();
+            } else {
+                $params['order_code'] = getCode("SO");
+                $params['sales_time'] = strtotime($params['sales_time']);
+                $params['company_id'] = request()->user()->department_id;
+                unset($params['id']);
+                $id = $this->salesOrderModel->createBy($params);
+                if (!$id) {
+                    throw new BusinessException("销售订单添加失败");
+                }
             }
             $totalNum = 0;
             $totalPrice = 0;
             // 重新添加商品数据
+            $skuIds = [];
+            $map = [];
             foreach ($goodsDetails as $goodsDetail) {
+                if (in_array($goodsDetail['id'], $skuIds)) {
+                    throw new BusinessException("商品数据重复");
+                }
+                $skuIds[] = $goodsDetail['id'];
                 $totalNum += $goodsDetail['quantity'];
                 $totalPrice = bcadd($totalPrice, bcmul($goodsDetail['unit_price'], $goodsDetail['quantity'], 2), 2);
                 $map[] = [
-                    'purchase_order_id' => $id,
+                    'sales_order_id' => $id,
                     'product_id' => $goodsDetail['product_id'] ?? 0,
                     'product_sku_id' => $goodsDetail['id'],
                     'product_code' => $goodsDetail['product_code'],
@@ -88,11 +110,12 @@ class SalesOrder extends CatchController
                     'unit_price' => $goodsDetail['unit_price'],
                     'tax_rate' => $goodsDetail['tax_rate'],
                     'quantity' => $goodsDetail['quantity'],
-                    'receipt_quantity' => 0,
-                    'warehousing_quantity' => 0,
-                    'return_quantity' => 0,
+                    'delivery_number' => 0,
                     'note' => $goodsDetail['note'] ?? "",
                 ];
+            }
+            if (empty($map)) {
+                throw new BusinessException("商品数据为空");
             }
             $gId = $this->salesOrderDetailsModel->insertAll($map);
             if (empty($gId)) {

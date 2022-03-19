@@ -182,9 +182,36 @@ class Customer extends CatchController
         return CatchResponse::fail();
     }
 
-    public function audit()
+    /**
+     * @param Request $request
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @author 1131191695@qq.com
+     */
+    public function audit(Request $request)
     {
-
+        // 审核
+        // 审核id、审核状态、审核信息
+        $data = $request->param();
+        $customerData = $this->customerInfoModel->findBy($data['id']);
+        if (empty($customerData)) {
+            throw new BusinessException("不存在客户");
+        }
+        if ($customerData['audit'] == 1) {
+            return CatchResponse::fail("已审核");
+        }
+        $b = $this->customerInfoModel->updateBy($data['id'], [
+            'audit_status' => $data['audit_status'],
+            'audit_info' => $data['audit_info'],
+            'audit_user_id' => request()->user()->id,
+            'audit_user_name' => request()->user()->username,
+        ]);
+        if ($b) {
+            return CatchResponse::success();
+        }
+        return CatchResponse::fail("操作失败");
     }
 
     public function open()

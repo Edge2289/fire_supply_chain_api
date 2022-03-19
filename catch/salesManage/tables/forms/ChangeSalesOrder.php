@@ -39,8 +39,8 @@ class ChangeSalesOrder extends Form
     public function fields(): array
     {
         return [
-            self::date("purchase_date", "销售日期")->col(12)->required(),
-            self::select("user_id", "销售人员")
+            self::date("sales_time", "销售日期")->col(12)->required(),
+            self::select("salesman_id", "销售人员")
                 ->options(
                 // 获取自身公司下的员工
                     $this->getUser()
@@ -73,6 +73,7 @@ class ChangeSalesOrder extends Form
                     self::options()->add('现结', "0")
                         ->add('月结', "1")->render()
                 )->col(12)->required(),
+            self::textarea("remark", "备注")
         ];
     }
 

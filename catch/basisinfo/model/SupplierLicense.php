@@ -22,25 +22,9 @@ class SupplierLicense extends CatchModel
 
     protected $pk = 'id';
 
-    public function getEstablishDateAttr($value)
-    {
-        return $this->toDate($value);
-    }
-
-    public function getBusinessEndDateAttr($value)
-    {
-        return $this->toDate($value);
-    }
-
-    public function getBusinessStartDateAttr($value)
-    {
-        return $this->toDate($value);
-    }
-
-    public function getRegistrationDateAttr($value)
-    {
-        return $this->toDate($value);
-    }
+    protected $fieldToTime = [
+        'registration_date', 'business_start_date', 'business_end_date', 'establish_date'
+    ];
 
     // 字段
     protected $field = [
@@ -72,15 +56,14 @@ class SupplierLicense extends CatchModel
     /**
      * 列表
      *
-     * @time 2020年01月09日
-     * @param $params
-     * @return \think\Paginator
+     * @return array|mixed
      * @throws \think\db\exception\DbException
+     * @author 1131191695@qq.com
      */
     public function getList()
     {
-        return $this->catchSearch()->order("id desc")
-            ->paginate();
+        return $this->fieldToFormat($this->catchSearch()->order("id desc")
+            ->paginate());
     }
 
     /**
