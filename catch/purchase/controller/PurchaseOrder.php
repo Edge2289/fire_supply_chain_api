@@ -360,7 +360,6 @@ class PurchaseOrder extends CatchController
         return CatchResponse::success($skuMap);
     }
 
-
     /**
      * 获取采购订单数据
      *

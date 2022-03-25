@@ -13,8 +13,23 @@
 /* @var think\Route $router */
 
 $router->group(function () use ($router) {
+
+    // 销售订单
     $router->get("salesOrder", "catchAdmin\salesManage\controller\SalesOrder@index");
     $router->post("salesOrder", "catchAdmin\salesManage\controller\SalesOrder@save");
     $router->put("salesOrder", "catchAdmin\salesManage\controller\SalesOrder@save");
+    $router->post("salesManage/audit/<id>", "catchAdmin\salesManage\controller\SalesOrder@audit");
+
+    // 出库单
+    $router->get("outboundOrder", "catchAdmin\salesManage\controller\OutboundOrder@index");
+    $router->post("outboundOrder", "catchAdmin\salesManage\controller\OutboundOrder@save");
+    $router->put("outboundOrder", "catchAdmin\salesManage\controller\OutboundOrder@save");
+    $router->post("outboundOrder/invalid/<id>", "catchAdmin\salesManage\controller\OutboundOrder@invalid");
+    $router->post("outboundOrder/audit/<id>", "catchAdmin\salesManage\controller\OutboundOrder@audit");
+
 })->middleware('auth');
+
+$router->group(function () use ($router) {
+    $router->get("salesOrder/outboundOrder", "catchAdmin\salesManage\controller\SalesOrder@outboundOrder");
+});
 

@@ -112,4 +112,19 @@ abstract class CatchModel extends \think\Model
         }
         return $data;
     }
+
+    /**
+     * 添加排它锁
+     *
+     * @param $id
+     * @return array|CatchModel|mixed|\think\Model|null
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @author 1131191695@qq.com
+     */
+    public function getFindByKey($id)
+    {
+        return $this->where("id", $id)->lock(true)->find();
+    }
 }

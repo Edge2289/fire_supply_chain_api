@@ -3,8 +3,8 @@
  * Created by PhpStorm.
  * author: 1131191695@qq.com
  * Note: Tired as a dog
- * Date: 2022/3/12
- * Time: 09:49
+ * Date: 2022/3/20
+ * Time: 19:30
  */
 
 namespace catchAdmin\salesManage\tables;
@@ -16,17 +16,16 @@ use catcher\library\table\HeaderItem;
 use catcher\library\table\Search;
 
 /**
- * Class SalesOrder
+ * Class OutboundOrder
  * @package catchAdmin\salesManage\tables
  */
-class SalesOrder extends CatchTable
+class OutboundOrder extends CatchTable
 {
     protected function table()
     {
-        return $this->getTable('salesOrder')
+        return $this->getTable('outboundOrder')
             ->header([
                 HeaderItem::label()->selection(),
-//                HeaderItem::label('id')->prop('id'),
                 HeaderItem::label('状态')->prop('status_i'),
                 HeaderItem::label('订单编号')->prop('order_code'),
                 HeaderItem::label('供货者')->prop('supplier_name'),
@@ -38,7 +37,7 @@ class SalesOrder extends CatchTable
                 HeaderItem::label('审核状态')->prop('audit_status_i'),
                 HeaderItem::label('备注')->prop('remark'),
                 HeaderItem::label('操作')->width(200)->actions([
-                    Actions::update("编辑", "editPurchaseOrder"),
+                    Actions::update("编辑", "edit"),
 //                    Actions::normal("复制", 'primary', "copy")->icon('el-icon-document-copy'),
                     Actions::normal("出库/发货", 'success', "outbound"),
                 ])
@@ -60,9 +59,9 @@ class SalesOrder extends CatchTable
                 ),
                 Search::hidden('id', '')
             ])
-            ->withApiRoute('salesOrder')
+            ->withApiRoute('outboundOrder')
             ->withActions([
-                Actions::normal("新增", 'primary', "addPurchaseOrder")->icon('el-icon-plus'),
+                Actions::normal("新增", 'primary', "add")->icon('el-icon-plus'),
                 Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu'),
                 Actions::normal("作废", 'primary', "cancel"),
                 Actions::normal("导出", 'primary', "export"),

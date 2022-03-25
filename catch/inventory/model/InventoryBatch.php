@@ -51,6 +51,7 @@ class InventoryBatch extends CatchModel
             ])
             ->paginate();
         foreach ($data as &$datum) {
+            $datum['out_number'] = 0;
             $datum["product_name"] = $datum["hasProduct"]["product_name"] ?? '';
             $datum["product_sku_name"] = $datum["hasProductSku"]["sku_code"] ?? '';
             unset($datum["hasProduct"], $datum["hasProductSku"]);

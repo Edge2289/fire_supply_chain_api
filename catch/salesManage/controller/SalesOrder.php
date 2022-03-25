@@ -40,9 +40,14 @@ class SalesOrder extends CatchController
         $status = [
             "未完成", "已完成", "作废"
         ];
+        //审核状态 {0:未审核,1:已审核,2:审核失败}
+        $auditStatusI = [
+            "未审核", "已审核", "审核失败"
+        ];
         $data = $this->salesOrderModel->getList();
         foreach ($data as &$datum) {
             $datum['status_i'] = $status[$datum['status']];
+            $datum['audit_status_i'] = $auditStatusI[$datum['audit_status']];
             $datum['settlement_type_i'] = $datum['settlement_type'] == 0 ? "现结" : "月结";
         }
         return CatchResponse::paginate($data);
@@ -152,6 +157,9 @@ class SalesOrder extends CatchController
         if (empty($salesOrderData)) {
             throw new BusinessException("不存在销售订单");
         }
+        if ($salesOrderData['audit_status'] == 1) {
+            throw new BusinessException("已审核");
+        }
         $b = $this->salesOrderModel->updateBy($data['id'], [
             'audit_status' => $data['audit_status'],
             'audit_info' => $data['audit_info'],
@@ -201,5 +209,105 @@ class SalesOrder extends CatchController
     public function invalid()
     {
 
+    }
+
+    /**
+     * 获取满足条件的订单数据
+     *
+     * @return array
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @author 1131191695@qq.com
+     */
+    public function getOutOrder()
+    {
+        $data = $this->salesOrderModel->alias("so")
+            ->join("sales_order_details sod", "so.id = sod.sales_order_id")
+            ->field(["so.id", "so.order_code"])
+            ->where("so.audit_status", 1) // 已审核
+            ->where("so.status", 0) // 未完成
+            ->where(function ($query) {
+                $query->where([
+                    "so.settlement_type" => 0,
+                    "so.settlement_status" => 1,
+                ])->whereOr([
+                    "so.settlement_type" => 1,
+                    "so.settlement_status" => 0,
+                ]);
+            })->whereRaw("(sod.quantity - sod.delivery_number) > 0")
+            ->order("so.id", "desc")
+            ->group("so.id")
+            ->select()->toArray();
+        $map = [];
+        foreach ($data as $datum) {
+            $map[] = [
+                "label" => $datum['order_code'],
+                "value" => (string)$datum['id'],
+            ];
+        }
+        return $map;
+    }
+
+    /**
+     * 出库的商品数据
+     *
+     * @param Request $request
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @author 1131191695@qq.com
+     */
+    public function outboundOrder(Request $request)
+    {
+        $data = $this->salesOrderModel->with([
+            "hasSalesOrderDetails" => function ($query) {
+                $query->whereRaw("(quantity - delivery_number) > 0");
+            }
+        ])
+            ->where("audit_status", 1) // 已审核
+            ->where("status", 0) // 未完成
+            ->where(function ($query) {
+                $query->where([
+                    "settlement_type" => 0,
+                    "settlement_status" => 1,
+                ])->whereOr([
+                    "settlement_type" => 1,
+                    "settlement_status" => 0,
+                ]);
+            })->find();
+        if (empty($data->toArray())) {
+            throw new BusinessException("当前订单无法出库");
+        }
+        $goodsDetails = [];
+        foreach ($data['hasSalesOrderDetails'] as $hasSalesOrderDetail) {
+            $goodsDetails[] = [
+                'sales_order_details_id' => $hasSalesOrderDetail['id'],
+                'product_id' => $hasSalesOrderDetail->hasProductSkuData['product_id'],
+                'product_code' => $hasSalesOrderDetail->hasProductSkuData['product_code'],
+                'product_sku_id' => $hasSalesOrderDetail->hasProductSkuData['id'],
+                'sku_code' => $hasSalesOrderDetail->hasProductSkuData['sku_code'],
+                'item_number' => $hasSalesOrderDetail->hasProductSkuData['item_number'],
+                'unit_price' => $hasSalesOrderDetail->hasProductSkuData['unit_price'],
+                'tax_rate' => $hasSalesOrderDetail->hasProductSkuData['tax_rate'],
+                'n_tax_price' => $hasSalesOrderDetail->hasProductSkuData['n_tax_price'],
+                'packing_size' => $hasSalesOrderDetail->hasProductSkuData['packing_size'],
+                'packing_specification' => $hasSalesOrderDetail->hasProductSkuData['packing_specification'],
+                'product_name' => $hasSalesOrderDetail->hasProductData['product_name'],
+                'udi' => $hasSalesOrderDetail->hasProductSkuData['udi'],
+                'entity' => $hasSalesOrderDetail->hasProductSkuData['entity'],
+                "quantity" => $hasSalesOrderDetail["quantity"],
+                "outbound_quantity" => bcsub($hasSalesOrderDetail["quantity"], $hasSalesOrderDetail["delivery_number"]),
+                "selectedNumber" => 0,
+                "selectedBatchNumber" => 0,
+            ];
+        }
+        return CatchResponse::success([
+            'sales_order_id' => $data['id'],
+            'customer_info_id' => $data['customer_info_id'],
+            'company_id' => $data['company_id'],
+            'goodsDetails' => $goodsDetails
+        ]);
     }
 }

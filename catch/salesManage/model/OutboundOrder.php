@@ -28,10 +28,7 @@ class OutboundOrder extends CatchModel
 
     protected $pk = 'id';
 
-    public function getSalesOrderTimeAttr($value)
-    {
-        return $this->toDate($value);
-    }
+    protected $fieldToTime = ['sales_order_time'];
 
     /**
      * 关联订单详情
@@ -111,6 +108,6 @@ class OutboundOrder extends CatchModel
             $datum['detail'] = $detail;
             unset($datum['hasSalesOrderDetails'], $datum["hasSupplierLicense"]);
         }
-        return $data;
+        return $this->fieldToFormat($data);
     }
 }

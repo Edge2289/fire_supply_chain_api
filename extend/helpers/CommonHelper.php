@@ -14,6 +14,6 @@
 if (!function_exists('getCode')) {
     function getCode(string $prefix): string
     {
-        return $prefix . date("ymdHi") . substr(time(), -1) . rand(100, 999) . rand(100, 999);
+        return $prefix . date("ymdH") . substr(time(), -1) . rand(10, 99);
     }
 }

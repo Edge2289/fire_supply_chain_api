@@ -10,6 +10,7 @@ class OutboundOrderDetails extends Migrator
     {
         $table = $this->table('outbound_order_details', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '出库订单详情', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('outbound_order_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '出库订单id',])
+            ->addColumn('sales_order_details_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '销售订单详情id',])
             ->addColumn('inventory_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '库存id',])
             ->addColumn('inventory_batch_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '库存批次id',])
             ->addColumn('product_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '产品id',])
