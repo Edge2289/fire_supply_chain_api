@@ -18,6 +18,7 @@ use catcher\base\CatchController;
 use catcher\CatchResponse;
 use \catchAdmin\basisinfo\model\Factory as FactoryModel;
 use catcher\exceptions\BusinessException;
+use fire\data\ChangeStatus;
 
 /**
  * 厂家管理
@@ -51,10 +52,6 @@ class Factory extends CatchController
      */
     public function index()
     {
-        // 审核状态 {0:未审核,1:已审核,2:审核失败}
-        $auditStatusI = [
-            "未审核", "已审核", "审核失败"
-        ];
         $data = $this->factory->getList();
         foreach ($data as &$datum) {
             $datum['business_end_date_z'] = "";
@@ -64,8 +61,9 @@ class Factory extends CatchController
                 $datum['business_end_date_z'] = $datum['business_end_date'];
             }
             $datum['factory_type_name'] = $datum['factory_type'] == 1 ? "国内厂家" : "国外厂家";
-            $datum['audit_status_i'] = $auditStatusI[$datum['audit_status']];
         }
+
+        ChangeStatus::getInstance()->audit()->handle($data);
         return CatchResponse::paginate($data);
     }
 

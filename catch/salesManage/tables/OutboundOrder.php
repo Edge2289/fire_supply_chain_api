@@ -27,7 +27,7 @@ class OutboundOrder extends CatchTable
             ->header([
                 HeaderItem::label()->selection(),
                 HeaderItem::label('状态')->prop('status_i'),
-                HeaderItem::label('订单编号')->prop('order_code'),
+                HeaderItem::label('订单编号')->prop('outbound_order_code'),
                 HeaderItem::label('供货者')->prop('supplier_name'),
                 HeaderItem::label('客户')->prop('customer_name'),
                 HeaderItem::label('明细摘要')->prop('detail'),

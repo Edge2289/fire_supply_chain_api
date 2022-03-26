@@ -25,6 +25,7 @@ use catcher\base\CatchController;
 use catchAdmin\basisinfo\model\SupplierLicense;
 use catcher\CatchResponse;
 use catcher\exceptions\BusinessException;
+use fire\data\ChangeStatus;
 
 /**
  * 供应商管理
@@ -65,18 +66,10 @@ class Suppliers extends CatchController
      */
     public function index()
     {
-        // 审核状态 {0:未审核,1:已审核,2:审核失败}
-        $auditStatusI = [
-            "未审核", "已审核", "审核失败"
-        ];
-        $statusI = [
-            "未开启", "使用中"
-        ];
         $data = $this->supplier->getList();
-        foreach ($data as &$datum) {
-            $datum['audit_status_i'] = $auditStatusI[$datum['audit_status'] ?: 0];
-            $datum['status_i'] = $statusI[$datum['status']];
-        }
+        ChangeStatus::getInstance()->audit()->status([
+            "未开启", "使用中"
+        ])->handle($data);
         return CatchResponse::paginate($data);
     }
 

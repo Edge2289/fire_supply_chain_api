@@ -22,6 +22,7 @@ use app\Request;
 use catcher\CatchResponse;
 use catchAdmin\purchase\model\ProcurementWarehousing as ProcurementWarehousingModel;
 use catcher\exceptions\BusinessException;
+use fire\data\ChangeStatus;
 
 /**
  * 入库订单
@@ -73,20 +74,13 @@ class ProcurementWarehousing extends CatchController
      */
     public function index()
     {
-        $auditStatusI = [
-            "未审核", "已审核", "审核失败"
-        ];
-        $statusI = [
-            "未完成", "已完成", "作废"
-        ];
         $data = $this->procurementWarehousing->getList();
         foreach ($data as &$datum) {
             $warehouseData = $this->warehouse->where("id", $datum["warehouse_id"])->find();
             $datum['warehouse_name'] = $warehouseData['warehouse_name'];
-            $datum['audit_status_i'] = $auditStatusI[$datum['audit_status'] ?: 0];
-            $datum['status_i'] = $statusI[$datum['status']];
-
         }
+
+        ChangeStatus::getInstance()->audit()->status()->handle($data);
         return CatchResponse::paginate($data);
     }
 

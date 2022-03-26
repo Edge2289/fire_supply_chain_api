@@ -20,6 +20,8 @@ use catcher\base\CatchController;
 use catchAdmin\salesManage\model\OutboundOrder as OutboundOrderModel;
 use catcher\CatchResponse;
 use catcher\exceptions\BusinessException;
+use fire\data\ChangeStatus;
+use think\facade\Cache;
 use think\Request;
 
 /**
@@ -68,14 +70,12 @@ class OutboundOrder extends CatchController
      */
     public function index()
     {
-        $status = [
-            "未完成", "已完成", "作废"
-        ];
         $data = $this->outboundOrderModel->getList();
         foreach ($data as &$datum) {
-            $datum['status_i'] = $status[$datum['status']];
             $datum['settlement_type_i'] = $datum['settlement_type'] == 0 ? "现结" : "月结";
         }
+
+        ChangeStatus::getInstance()->audit()->status()->handle($data);
         return CatchResponse::paginate($data);
     }
 
@@ -83,15 +83,23 @@ class OutboundOrder extends CatchController
      * 保存
      *
      * @param Request $request
+     * @return \think\response\Json
      * @author 1131191695@qq.com
      */
     public function save(Request $request)
     {
         // 保存基础信息
         $params = $request->param();
+        if (!is_concurrent(self::class)) {
+            return CatchResponse::fail("请重新操作");
+        }
+        Cache::set(self::class, 1);
         $this->salesOrderModel->startTrans();
         try {
             $params['outbound_time'] = strtotime($params['outbound_time']);
+            if (isset($params['id']) && !empty($params['id'])) {
+                $this->restoreOutBoundOrder($params['id']);
+            }
             $salesOrderData = $this->salesOrderModel->getFindByKey($params['sales_order_id']);
             if ($salesOrderData['customer_info_id'] != $params['customer_info_id']) {
                 throw new BusinessException("订单客户归属有误");
@@ -105,12 +113,13 @@ class OutboundOrder extends CatchController
                 'supplier_id' => $salesOrderData['supplier_id'],
                 'customer_info_id' => $salesOrderData['customer_info_id'],
                 'remark' => $params['remark'],
+                'logistics_code' => $params['logistics_code'],
+                'logistics_number' => $params['logistics_number'],
             ];
 
             if (isset($params['id']) && !empty($params['id'])) {
                 // 恢复数据
                 $outboundOrderId = $params['id'];
-                $this->restoreOutBoundOrder($params['id']);
                 unset($outboundOrderMap['outbound_order_code']);
                 $this->outboundOrderModel->updateBy($outboundOrderId, $outboundOrderMap);
             } else {
@@ -176,8 +185,12 @@ class OutboundOrder extends CatchController
             $this->salesOrderModel->where("id", $params['sales_order_id'])->increment('put_num', $totalNum);
             $this->outboundOrderDetails->saveAll($outboundOrderDetails);
             $this->salesOrderModel->commit();
+
+            Cache::set(self::class, 0);
             return CatchResponse::success(['id' => $outboundOrderId]);
         } catch (\Exception $exception) {
+
+            Cache::set(self::class, 0);
             $this->salesOrderModel->rollback();
             return CatchResponse::fail($exception->getMessage());
         }

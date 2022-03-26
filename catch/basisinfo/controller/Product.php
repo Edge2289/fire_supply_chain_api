@@ -21,6 +21,7 @@ use catchAdmin\basisinfo\request\ProductRegisteredRequest;
 use catcher\base\CatchController;
 use catcher\CatchResponse;
 use catcher\exceptions\BusinessException;
+use fire\data\ChangeStatus;
 use think\Db;
 use think\Request;
 
@@ -56,22 +57,19 @@ class Product extends CatchController
 
     public function index()
     {
-        //审核状态 {0:未审核,1:已审核,2:审核失败}
-        $auditStatusI = [
-            "未审核", "已审核", "审核失败"
-        ];
         $data = $this->productBasicInfoModel->getList();
         foreach ($data as &$datum) {
             $datum['factory_company_name'] = $datum['withFactory']['company_name'] ?? "";
             $datum['registered_code'] = $datum['withRegistered']['registered_code'] ?? "";
             $datum['end_time'] = $datum['withRegistered']['end_time'] ?? "";
             $datum['record_code'] = $datum['withRecord']['record_code'] ?? "";
-            $datum['audit_status_i'] = $auditStatusI[$datum['audit_status']];
 
             unset($datum['withFactory']);
             unset($datum['withRecord']);
             unset($datum['withRegistered']);
         }
+
+        ChangeStatus::getInstance()->audit()->handle($data);
         return CatchResponse::paginate($data);
     }
 

@@ -25,6 +25,7 @@ use catcher\base\CatchController;
 use catchAdmin\basisinfo\model\CustomerLicense;
 use catcher\CatchResponse;
 use catcher\exceptions\BusinessException;
+use fire\data\ChangeStatus;
 
 /**
  * 客户管理
@@ -66,10 +67,6 @@ class Customer extends CatchController
      */
     public function index()
     {
-        //审核状态 {0:未审核,1:已审核,2:审核失败}
-        $auditStatusI = [
-            "未审核", "已审核", "审核失败"
-        ];
         $data = $this->customerInfoModel->getList();
         foreach ($data as &$datum) {
             if ($datum['customer_type'] == 1) {
@@ -78,8 +75,8 @@ class Customer extends CatchController
                 $datum['legal_person'] = $datum['hasCustomerLicense']['legal_person'];
             }
             $datum['customer_type'] = $datum['customer_type'] == 1 ? "经销商" : "医院";
-            $datum['audit_status_i'] = $auditStatusI[$datum['audit_status']];
         }
+        ChangeStatus::getInstance()->audit()->handle($data);
         return CatchResponse::paginate($data);
     }
 

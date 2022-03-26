@@ -46,7 +46,7 @@ class ChangeOutboundOrder extends Form
     {
         return [
             self::date("outbound_time", "销售日期")->col(12)->required(),
-            self::select("outbound_man_id", "销售人员")
+            self::select("outbound_man_id", "出库人员")
                 ->options(
                 // 获取自身公司下的员工
                     $this->getUser()
@@ -59,11 +59,13 @@ class ChangeOutboundOrder extends Form
             self::select("customer_info_id", "客户")
                 ->options(
                     $this->customerInfo->getFormLier()
-                )->col(12)->required(),
+                )->col(12)->required()->clearable(true),
             self::select("sales_order_id", "销售订单")
                 ->options(
                     $this->salesOrder->getOutOrder()
-                )->col(12)->required(),
+                )->col(12)->required()->clearable(true),
+            self::input("logistics_code", "物流公司")->col(12),
+            self::input("logistics_number", "物流单号")->col(12),
             self::textarea("remark", "备注")
         ];
     }

@@ -16,6 +16,8 @@ class OutboundOrder extends Migrator
             ->addColumn('outbound_man_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '出库人员',])
             ->addColumn('supplier_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => false, 'comment' => '供应商',])
             ->addColumn('customer_info_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => false, 'comment' => '客户',])
+            ->addColumn('logistics_code', 'string', ['limit' => 60, 'default' => 0, 'signed' => true, 'comment' => '物流公司',])
+            ->addColumn('logistics_number', 'string', ['limit' => 60, 'default' => 0, 'signed' => true, 'comment' => '物流单号',])
             ->addColumn('outbound_num', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '出库总数量',])
             ->addColumn('amount', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'signed' => true, 'comment' => '价格总额',])
             ->addColumn('status', 'integer', ['limit' => MysqlAdapter::INT_TINY, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '状态{0:未完成,1:已完成,2:作废}',])

@@ -15,6 +15,7 @@ use catchAdmin\salesManage\model\SalesOrderModel;
 use catcher\base\CatchController;
 use catcher\CatchResponse;
 use catcher\exceptions\BusinessException;
+use fire\data\ChangeStatus;
 use think\Request;
 
 /**
@@ -35,21 +36,18 @@ class SalesOrder extends CatchController
         $this->salesOrderDetailsModel = $salesOrderDetailsModel;
     }
 
+    /**
+     * @return \think\response\Json
+     * @throws \think\db\exception\DbException
+     * @author 1131191695@qq.com
+     */
     public function index()
     {
-        $status = [
-            "未完成", "已完成", "作废"
-        ];
-        //审核状态 {0:未审核,1:已审核,2:审核失败}
-        $auditStatusI = [
-            "未审核", "已审核", "审核失败"
-        ];
         $data = $this->salesOrderModel->getList();
         foreach ($data as &$datum) {
-            $datum['status_i'] = $status[$datum['status']];
-            $datum['audit_status_i'] = $auditStatusI[$datum['audit_status']];
             $datum['settlement_type_i'] = $datum['settlement_type'] == 0 ? "现结" : "月结";
         }
+        ChangeStatus::getInstance()->audit()->status()->handle($data);
         return CatchResponse::paginate($data);
     }
 
@@ -261,6 +259,7 @@ class SalesOrder extends CatchController
      */
     public function outboundOrder(Request $request)
     {
+        $params = $request->param();
         $data = $this->salesOrderModel->with([
             "hasSalesOrderDetails" => function ($query) {
                 $query->whereRaw("(quantity - delivery_number) > 0");
@@ -268,6 +267,14 @@ class SalesOrder extends CatchController
         ])
             ->where("audit_status", 1) // 已审核
             ->where("status", 0) // 未完成
+            ->when(!empty($params), function ($query) use ($params) {
+                if (!empty($params['customer_id'])) {
+                    $query->where('customer_info_id', $params['customer_id']);
+                }
+                if (!empty($params['sales_order_id'])) {
+                    $query->where('id', $params['sales_order_id']);
+                }
+            })
             ->where(function ($query) {
                 $query->where([
                     "settlement_type" => 0,
@@ -277,7 +284,7 @@ class SalesOrder extends CatchController
                     "settlement_status" => 0,
                 ]);
             })->find();
-        if (empty($data->toArray())) {
+        if (empty($data)) {
             throw new BusinessException("当前订单无法出库");
         }
         $goodsDetails = [];
