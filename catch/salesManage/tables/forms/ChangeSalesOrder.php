@@ -21,17 +21,14 @@ use catcher\library\form\Form;
  */
 class ChangeSalesOrder extends Form
 {
-    private $users;
     private $supplier;
     private $customerInfo;
 
     public function __construct(
-        Users           $users,
         SupplierLicense $supplier,
         CustomerInfo    $customerInfo
     )
     {
-        $this->users = $users;
         $this->supplier = $supplier;
         $this->customerInfo = $customerInfo;
     }
@@ -43,7 +40,7 @@ class ChangeSalesOrder extends Form
             self::select("salesman_id", "销售人员")
                 ->options(
                 // 获取自身公司下的员工
-                    $this->getUser()
+                    get_company_employees()
                 )->col(12)->required(),
             self::select("supplier_id", "供应商")
                 ->options(
@@ -75,23 +72,5 @@ class ChangeSalesOrder extends Form
                 )->col(12)->required(),
             self::textarea("remark", "备注")
         ];
-    }
-
-    public function getUser()
-    {
-        $userId = request()->user()->id;
-        $data = $this->users->where("id", $userId)->find();
-        if (!$data['department_id']) {
-            return [];
-        }
-        $data = $this->users->where("department_id", $data['department_id'])->select();
-        $map = [];
-        foreach ($data as $datum) {
-            $map[] = [
-                'value' => (string)$datum['id'],
-                'label' => $datum['username'],
-            ];
-        }
-        return $map;
     }
 }

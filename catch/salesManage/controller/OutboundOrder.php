@@ -71,10 +71,6 @@ class OutboundOrder extends CatchController
     public function index()
     {
         $data = $this->outboundOrderModel->getList();
-        foreach ($data as &$datum) {
-            $datum['settlement_type_i'] = $datum['settlement_type'] == 0 ? "现结" : "月结";
-        }
-
         ChangeStatus::getInstance()->audit()->status()->handle($data);
         return CatchResponse::paginate($data);
     }
@@ -105,17 +101,22 @@ class OutboundOrder extends CatchController
                 throw new BusinessException("订单客户归属有误");
             }
             $outboundOrderMap = [
-                'outbound_order_code' => getCode('SO'),
+                'outbound_order_code' => getCode('DO'),
                 'sales_order_id' => $params['sales_order_id'],
                 'company_id' => request()->user()->department_id,
                 'outbound_time' => $params['outbound_time'],
                 'outbound_man_id' => request()->user()->id,
                 'supplier_id' => $salesOrderData['supplier_id'],
                 'customer_info_id' => $salesOrderData['customer_info_id'],
+                'warehouse_id' => $params['warehouse_id'],
                 'remark' => $params['remark'],
                 'logistics_code' => $params['logistics_code'],
                 'logistics_number' => $params['logistics_number'],
             ];
+            $warehouseData = $this->warehouse->getFindByKey($params['warehouse_id']);
+            if (!$warehouseData) {
+                throw new BusinessException("仓库不存在");
+            }
 
             if (isset($params['id']) && !empty($params['id'])) {
                 // 恢复数据
@@ -212,6 +213,12 @@ class OutboundOrder extends CatchController
         if (empty($outboundOrderData)) {
             throw new BusinessException("不存在当前出库单");
         }
+        if ($outboundOrderData['status'] != 0) {
+            throw new BusinessException("当前出库单状态不为未完成");
+        }
+        if ($outboundOrderData['audit_status'] == 1) {
+            throw new BusinessException("当前出库单已审核，无法修改");
+        }
         // 恢复零售订单的数据
         $this->salesOrderModel->where("id", $outboundOrderData['sales_order_id'])->decrement('put_num', $outboundOrderData['outbound_num']);
         $outboundOrderDetailsData = $this->outboundOrderDetails->where('outbound_order_id', $id)->select();
@@ -239,7 +246,10 @@ class OutboundOrder extends CatchController
         $data = $request->param();
         $outboundOrderData = $this->outboundOrderModel->findBy($data['id']);
         if (empty($outboundOrderData)) {
-            throw new BusinessException("不存在销售订单");
+            throw new BusinessException("不存在出库订单");
+        }
+        if ($outboundOrderData['audit_status'] == 1) {
+            throw new BusinessException("已审核");
         }
         $b = $this->outboundOrderModel->updateBy($data['id'], [
             'audit_status' => $data['audit_status'],
@@ -251,12 +261,72 @@ class OutboundOrder extends CatchController
             return CatchResponse::success();
         }
         return CatchResponse::fail("操作失败");
-
     }
 
-    // 作废返回销售订单的出货数
-    public function invalid()
+    /**
+     * 作废返回销售订单的出货数
+     *
+     * @param Request $request
+     * @return \think\response\Json
+     * @author 1131191695@qq.com
+     */
+    public function invalid(Request $request)
     {
+        $data = $request->param();
+        $this->outboundOrderModel->startTrans();
+        try {
+            $outboundOrderData = $this->outboundOrderModel->getFindByKey($data['id']);
+            if (empty($outboundOrderData)) {
+                throw new BusinessException("不存在销售订单");
+            }
+            if ($outboundOrderData['audit_status'] == 1) {
+                throw new BusinessException("已审核，无法作废");
+            }
+            // 恢复数据
+            $this->restoreOutBoundOrder($data['id']);
+            $b = $this->outboundOrderModel->updateBy($data['id'], [
+                'status' => 2, // 作废
+            ]);
+            if (!$b) {
+                throw new BusinessException("作废失败");
+            }
+            $this->outboundOrderModel->commit();
+        } catch (\Exception $exception) {
+            $this->outboundOrderModel->rollback();
+            throw new BusinessException($exception->getMessage());
+        }
+        return CatchResponse::success();
+    }
 
+    /**
+     * @param $skuId
+     * @return array
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @author 1131191695@qq.com
+     */
+    public function getSelectOutboundOrder($outboundOrderId, $skuId)
+    {
+        $data = $this->outboundOrderDetails
+            ->with([
+                "hasProductData", "hasProductSkuData", "hasInventoryBatch"
+            ])->where('outbound_order_id', $outboundOrderId)->where("product_sku_id", $skuId)->select()->toArray();
+        $map = [];
+        $selectedNumber = 0;
+        $batchId = [];
+        foreach ($data as $datum) {
+            $iMap = $datum['hasInventoryBatch'];
+            $datum['out_number'] = 0;
+            $iMap["product_name"] = $datum["hasProductData"]["product_name"] ?? '';
+            $iMap["product_sku_name"] = $datum["hasProductSkuData"]["sku_code"] ?? '';
+            $iMap['out_number'] = $datum['quantity'];
+            $map[] = $iMap;
+            $selectedNumber += $datum['quantity'];
+            if (!in_array($iMap['id'], $batchId)) {
+                $batchId[] = $iMap['id'];
+            }
+        }
+        return [$map, $selectedNumber, count($batchId)];
     }
 }

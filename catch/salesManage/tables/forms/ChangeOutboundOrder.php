@@ -24,19 +24,16 @@ use catcher\library\form\Form;
  */
 class ChangeOutboundOrder extends Form
 {
-    private $users;
     private $salesOrder;
     private $customerInfo;
     private $warehouse;
 
     public function __construct(
-        Users        $users,
         SalesOrder   $salesOrder,
         Warehouse    $warehouse,
         CustomerInfo $customerInfo
     )
     {
-        $this->users = $users;
         $this->salesOrder = $salesOrder;
         $this->customerInfo = $customerInfo;
         $this->warehouse = $warehouse;
@@ -49,7 +46,7 @@ class ChangeOutboundOrder extends Form
             self::select("outbound_man_id", "出库人员")
                 ->options(
                 // 获取自身公司下的员工
-                    $this->getUser()
+                    get_company_employees()
                 )->col(12)->required(),
             self::select("warehouse_id", "仓库")
                 ->options(
@@ -68,23 +65,5 @@ class ChangeOutboundOrder extends Form
             self::input("logistics_number", "物流单号")->col(12),
             self::textarea("remark", "备注")
         ];
-    }
-
-    public function getUser()
-    {
-        $userId = request()->user()->id;
-        $data = $this->users->where("id", $userId)->find();
-        if (!$data['department_id']) {
-            return [];
-        }
-        $data = $this->users->where("department_id", $data['department_id'])->select();
-        $map = [];
-        foreach ($data as $datum) {
-            $map[] = [
-                'value' => (string)$datum['id'],
-                'label' => $datum['username'],
-            ];
-        }
-        return $map;
     }
 }

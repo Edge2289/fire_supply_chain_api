@@ -45,6 +45,7 @@ class SalesOrder extends CatchController
     {
         $data = $this->salesOrderModel->getList();
         foreach ($data as &$datum) {
+            $datum['settlement_status_i'] = $datum['settlement_status'] == 0 ? "未结" : "已结";
             $datum['settlement_type_i'] = $datum['settlement_type'] == 0 ? "现结" : "月结";
         }
         ChangeStatus::getInstance()->audit()->status()->handle($data);
@@ -221,7 +222,6 @@ class SalesOrder extends CatchController
     public function getOutOrder()
     {
         $data = $this->salesOrderModel->alias("so")
-            ->join("sales_order_details sod", "so.id = sod.sales_order_id")
             ->field(["so.id", "so.order_code"])
             ->where("so.audit_status", 1) // 已审核
             ->where("so.status", 0) // 未完成
@@ -233,7 +233,8 @@ class SalesOrder extends CatchController
                     "so.settlement_type" => 1,
                     "so.settlement_status" => 0,
                 ]);
-            })->whereRaw("(sod.quantity - sod.delivery_number) > 0")
+            })
+            ->whereRaw("(so.num - so.put_num) > 0")
             ->order("so.id", "desc")
             ->group("so.id")
             ->select()->toArray();
@@ -260,13 +261,13 @@ class SalesOrder extends CatchController
     public function outboundOrder(Request $request)
     {
         $params = $request->param();
-        $data = $this->salesOrderModel->with([
-            "hasSalesOrderDetails" => function ($query) {
-                $query->whereRaw("(quantity - delivery_number) > 0");
-            }
-        ])
+        if (empty($params)) {
+            throw new BusinessException("参数缺失");
+        }
+        $data = $this->salesOrderModel->with(["hasSalesOrderDetails"])
             ->where("audit_status", 1) // 已审核
             ->where("status", 0) // 未完成
+            ->whereRaw("(num - put_num) > 0")
             ->when(!empty($params), function ($query) use ($params) {
                 if (!empty($params['customer_id'])) {
                     $query->where('customer_info_id', $params['customer_id']);
@@ -288,8 +289,10 @@ class SalesOrder extends CatchController
             throw new BusinessException("当前订单无法出库");
         }
         $goodsDetails = [];
+        // 获取出库订单控制器
+        $outboundOrderController = app(OutboundOrder::class);
         foreach ($data['hasSalesOrderDetails'] as $hasSalesOrderDetail) {
-            $goodsDetails[] = [
+            $details = [
                 'sales_order_details_id' => $hasSalesOrderDetail['id'],
                 'product_id' => $hasSalesOrderDetail->hasProductSkuData['product_id'],
                 'product_code' => $hasSalesOrderDetail->hasProductSkuData['product_code'],
@@ -309,6 +312,16 @@ class SalesOrder extends CatchController
                 "selectedNumber" => 0,
                 "selectedBatchNumber" => 0,
             ];
+            // 存在销售数据
+            if (isset($params['outbound_order_id'])) {
+                // selectOutboundItem
+                list($map, $selectedNumber, $selectedBatchNumber) = $outboundOrderController->getSelectOutboundOrder($params['outbound_order_id'], $hasSalesOrderDetail->hasProductSkuData['id']);
+                $details['selectOutboundItem'] = $map;
+                $details['selectedNumber'] = $selectedNumber;
+                $details['selectedBatchNumber'] = $selectedBatchNumber;
+                $details['outbound_quantity'] = ($hasSalesOrderDetail["quantity"] - ($hasSalesOrderDetail["delivery_number"] - $selectedNumber));
+            }
+            $goodsDetails[] = $details;
         }
         return CatchResponse::success([
             'sales_order_id' => $data['id'],

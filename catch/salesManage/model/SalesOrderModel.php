@@ -85,33 +85,18 @@ class SalesOrderModel extends CatchModel
         )->order("id desc")
             ->paginate();
         foreach ($data as &$datum) {
-            $detail = "";
+            $details = "";
             $goodsDetails = [];
             foreach ($datum['hasSalesOrderDetails'] as $hasPurchaseOrderDetail) {
-                $goodsDetails[] = [
-                    'id' => $hasPurchaseOrderDetail['hasProductSkuData']['id'],
-                    'product_id' => $hasPurchaseOrderDetail['hasProductSkuData']['product_id'],
-                    'product_code' => $hasPurchaseOrderDetail['hasProductSkuData']['product_code'],
-                    'sku_code' => $hasPurchaseOrderDetail['hasProductSkuData']['sku_code'],
-                    'item_number' => $hasPurchaseOrderDetail['hasProductSkuData']['item_number'],
-                    'unit_price' => $hasPurchaseOrderDetail['hasProductSkuData']['unit_price'],
-                    'tax_rate' => $hasPurchaseOrderDetail['hasProductSkuData']['tax_rate'],
-                    'n_tax_price' => $hasPurchaseOrderDetail['hasProductSkuData']['n_tax_price'],
-                    'packing_size' => $hasPurchaseOrderDetail['hasProductSkuData']['packing_size'],
-                    'packing_specification' => $hasPurchaseOrderDetail['hasProductSkuData']['packing_specification'],
-                    'product_name' => $hasPurchaseOrderDetail['hasProductData']['product_name'],
-                    'udi' => $hasPurchaseOrderDetail['hasProductSkuData']['udi'],
-                    'entity' => $hasPurchaseOrderDetail['hasProductSkuData']['entity'],
-                    "quantity" => $hasPurchaseOrderDetail["quantity"],
-                    "note" => $hasPurchaseOrderDetail["note"],
-                ];
-                $detail .= sprintf("%s: %s\n", $hasPurchaseOrderDetail['hasProductData']['product_name'], $hasPurchaseOrderDetail["quantity"]);
+                list($dataMap, $detail) = $this->assemblyDetailsData($hasPurchaseOrderDetail);
+                $goodsDetails[] = $dataMap;
+                $details .= $detail;
             }
             $datum['supplier_name'] = $datum["hasSupplierLicense"]["company_name"];
             $datum['customer_name'] = $datum["hasCustomerInfo"]["company_name"];
 
             $datum['goods_details'] = $goodsDetails;
-            $datum['detail'] = $detail;
+            $datum['detail'] = $details;
             unset($datum['hasSalesOrderDetails'], $datum["hasSupplierLicense"]);
         }
         return $this->fieldToFormat($data);

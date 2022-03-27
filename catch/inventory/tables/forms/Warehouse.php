@@ -25,10 +25,10 @@ class Warehouse extends Form
             self::input("warehouse_code", "仓库编号")->required(),
             self::select("warehouse_type", "仓库类型")
                 ->options(
-                    self::options()->add('待检库', 1)
-                        ->add('合格库', 2)
-                        ->add('不合格库', 3)
-                        ->add('非医疗器械库', 4)->render()
+                    self::options()->add('待检库', "1")
+                        ->add('合格库', "2")
+                        ->add('不合格库', "3")
+                        ->add('非医疗器械库', "4")->render()
                 )
                 ->required()
                 ->style(['width' => '100%'])

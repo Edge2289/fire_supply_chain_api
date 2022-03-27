@@ -28,16 +28,16 @@ class OutboundOrder extends CatchModel
 
     protected $pk = 'id';
 
-    protected $fieldToTime = ['sales_order_time'];
+    protected $fieldToTime = ['outbound_time'];
 
     /**
-     * 关联订单详情
+     * 关联出库订单详情
      * @return HasMany
      * @author 1131191695@qq.com
      */
-    public function hasSalesOrderDetails(): hasMany
+    public function hasOutboundOrderDetails(): hasMany
     {
-        return $this->hasMany(SalesOrderDetailsModel::class, "sales_order_id", "id");
+        return $this->hasMany(OutboundOrderDetails::class, "outbound_order_id", "id");
     }
 
     /**
@@ -73,40 +73,25 @@ class OutboundOrder extends CatchModel
     {
         $data = $this->catchSearch()->with(
             [
-                "hasSalesOrderDetails", "hasSalesOrderDetails.hasProductData", "hasSalesOrderDetails.hasProductSkuData",
+                "hasOutboundOrderDetails", "hasOutboundOrderDetails.hasProductData", "hasOutboundOrderDetails.hasProductSkuData",
                 "hasSupplierLicense", "hasCustomerInfo"
             ]
         )->order("id desc")
             ->paginate();
         foreach ($data as &$datum) {
-            $detail = "";
+            $details = "";
             $goodsDetails = [];
-            foreach ($datum['hasSalesOrderDetails'] as $hasPurchaseOrderDetail) {
-                $goodsDetails[] = [
-                    'id' => $hasPurchaseOrderDetail['hasProductSkuData']['id'],
-                    'product_id' => $hasPurchaseOrderDetail['hasProductSkuData']['product_id'],
-                    'product_code' => $hasPurchaseOrderDetail['hasProductSkuData']['product_code'],
-                    'sku_code' => $hasPurchaseOrderDetail['hasProductSkuData']['sku_code'],
-                    'item_number' => $hasPurchaseOrderDetail['hasProductSkuData']['item_number'],
-                    'unit_price' => $hasPurchaseOrderDetail['hasProductSkuData']['unit_price'],
-                    'tax_rate' => $hasPurchaseOrderDetail['hasProductSkuData']['tax_rate'],
-                    'n_tax_price' => $hasPurchaseOrderDetail['hasProductSkuData']['n_tax_price'],
-                    'packing_size' => $hasPurchaseOrderDetail['hasProductSkuData']['packing_size'],
-                    'packing_specification' => $hasPurchaseOrderDetail['hasProductSkuData']['packing_specification'],
-                    'product_name' => $hasPurchaseOrderDetail['hasProductData']['product_name'],
-                    'udi' => $hasPurchaseOrderDetail['hasProductSkuData']['udi'],
-                    'entity' => $hasPurchaseOrderDetail['hasProductSkuData']['entity'],
-                    "quantity" => $hasPurchaseOrderDetail["quantity"],
-                    "note" => $hasPurchaseOrderDetail["note"],
-                ];
-                $detail .= sprintf("%s: %s\n", $hasPurchaseOrderDetail['hasProductData']['product_name'], $hasPurchaseOrderDetail["quantity"]);
+            foreach ($datum['hasOutboundOrderDetails'] as $hasPurchaseOrderDetail) {
+                list($dataMap, $detail) = $this->assemblyDetailsData($hasPurchaseOrderDetail);
+                $goodsDetails[] = $dataMap;
+                $details .= $detail;
             }
             $datum['supplier_name'] = $datum["hasSupplierLicense"]["company_name"];
             $datum['customer_name'] = $datum["hasCustomerInfo"]["company_name"];
 
             $datum['goods_details'] = $goodsDetails;
-            $datum['detail'] = $detail;
-            unset($datum['hasSalesOrderDetails'], $datum["hasSupplierLicense"]);
+            $datum['detail'] = $details;
+            unset($datum['hasOutboundOrderDetails'], $datum["hasSupplierLicense"]);
         }
         return $this->fieldToFormat($data);
     }

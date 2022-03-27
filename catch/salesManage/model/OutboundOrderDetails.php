@@ -12,6 +12,7 @@ namespace catchAdmin\salesManage\model;
 
 use catchAdmin\basisinfo\model\ProductBasicInfo;
 use catchAdmin\basisinfo\model\ProductSku;
+use catchAdmin\inventory\model\InventoryBatch;
 use catcher\base\CatchModel;
 use think\model\relation\HasOne;
 
@@ -30,6 +31,11 @@ class OutboundOrderDetails extends CatchModel
     public function hasProductData(): HasOne
     {
         return $this->hasOne(ProductBasicInfo::class, "id", "product_id");
+    }
+
+    public function hasInventoryBatch(): HasOne
+    {
+        return $this->hasOne(InventoryBatch::class, "id", "inventory_batch_id");
     }
 
     public function hasProductSkuData(): HasOne

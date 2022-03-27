@@ -13,6 +13,7 @@
  */
 
 use think\facade\Cache;
+use catchAdmin\permissions\model\Users;
 
 if (!function_exists('getCode')) {
     function getCode(string $prefix): string
@@ -39,5 +40,31 @@ if (!function_exists('is_concurrent')) {
             sleep(1);
         }
         return true;
+    }
+}
+
+if (!function_exists("get_company_employees")) {
+    /**
+     * 获取公司下的员工
+     *
+     * @return array
+     * @author 1131191695@qq.com
+     */
+    function get_company_employees(): array
+    {
+        $userId = request()->user()->id;
+        $data = app(Users::class)->where("id", $userId)->find();
+        if (!$data['department_id']) {
+            return [];
+        }
+        $data = app(Users::class)->where("department_id", $data['department_id'])->select();
+        $map = [];
+        foreach ($data as $datum) {
+            $map[] = [
+                'value' => (string)$datum['id'],
+                'label' => $datum['username'],
+            ];
+        }
+        return $map;
     }
 }

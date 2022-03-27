@@ -23,7 +23,7 @@ $router->group(function () use ($router) {
     // 出库单
     $router->get("outboundOrder", "catchAdmin\salesManage\controller\OutboundOrder@index");
     $router->post("outboundOrder", "catchAdmin\salesManage\controller\OutboundOrder@save");
-    $router->put("outboundOrder", "catchAdmin\salesManage\controller\OutboundOrder@save");
+    $router->put("outboundOrder/<id>", "catchAdmin\salesManage\controller\OutboundOrder@save");
     $router->post("outboundOrder/invalid/<id>", "catchAdmin\salesManage\controller\OutboundOrder@invalid");
     $router->post("outboundOrder/audit/<id>", "catchAdmin\salesManage\controller\OutboundOrder@audit");
 

@@ -21,17 +21,14 @@ use catcher\library\form\Form;
  */
 class ChangeProcurementWarehousing extends Form
 {
-    private $users;
     private $warehouse;
     private $purchaseOrder;
 
     public function __construct(
-        Users         $users,
         Warehouse     $warehouse,
         PurchaseOrder $purchaseOrder
     )
     {
-        $this->users = $users;
         $this->warehouse = $warehouse;
         $this->purchaseOrder = $purchaseOrder;
     }
@@ -42,8 +39,7 @@ class ChangeProcurementWarehousing extends Form
             self::date("put_date", "入库日期")->col(12)->required(),
             self::select("put_user_id", "入库人员")
                 ->options(
-                // 获取自身公司下的员工
-                    $this->getUser()
+                    get_company_employees()
                 )->col(12)->required(),
             self::select("warehouse_id", "仓库")
                 ->options(
@@ -58,30 +54,5 @@ class ChangeProcurementWarehousing extends Form
             self::input("delivery_code", "收货单号")->col(12)->required(),
             self::textarea("remark", "备注")->col(12)->required(),
         ];
-    }
-
-    /**
-     * @return array
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @author 1131191695@qq.com
-     */
-    public function getUser()
-    {
-        $userId = request()->user()->id;
-        $data = $this->users->where("id", $userId)->find();
-        if (!$data['department_id']) {
-            return [];
-        }
-        $data = $this->users->where("department_id", $data['department_id'])->select();
-        $map = [];
-        foreach ($data as $datum) {
-            $map[] = [
-                'value' => (string)$datum['id'],
-                'label' => $datum['username'],
-            ];
-        }
-        return $map;
     }
 }

@@ -90,7 +90,7 @@ abstract class CatchModel extends \think\Model
      */
     protected function fieldToFormat($data)
     {
-        if (!$this->fieldToString) {
+        if (!$this->fieldToString && !$this->fieldToTime) {
             return $data;
         }
         foreach ($data as &$datum) {
@@ -126,5 +126,34 @@ abstract class CatchModel extends \think\Model
     public function getFindByKey($id)
     {
         return $this->where("id", $id)->lock(true)->find();
+    }
+
+    /**
+     * 组装
+     *
+     * @param $hasPurchaseOrderDetail
+     * @author 1131191695@qq.com
+     */
+    protected function assemblyDetailsData($hasPurchaseOrderDetail)
+    {
+        $data = [
+            'id' => $hasPurchaseOrderDetail['hasProductSkuData']['id'],
+            'product_id' => $hasPurchaseOrderDetail['hasProductSkuData']['product_id'],
+            'product_code' => $hasPurchaseOrderDetail['hasProductSkuData']['product_code'],
+            'sku_code' => $hasPurchaseOrderDetail['hasProductSkuData']['sku_code'],
+            'item_number' => $hasPurchaseOrderDetail['hasProductSkuData']['item_number'],
+            'unit_price' => $hasPurchaseOrderDetail['hasProductSkuData']['unit_price'],
+            'tax_rate' => $hasPurchaseOrderDetail['hasProductSkuData']['tax_rate'],
+            'n_tax_price' => $hasPurchaseOrderDetail['hasProductSkuData']['n_tax_price'],
+            'packing_size' => $hasPurchaseOrderDetail['hasProductSkuData']['packing_size'],
+            'packing_specification' => $hasPurchaseOrderDetail['hasProductSkuData']['packing_specification'],
+            'product_name' => $hasPurchaseOrderDetail['hasProductData']['product_name'],
+            'udi' => $hasPurchaseOrderDetail['hasProductSkuData']['udi'],
+            'entity' => $hasPurchaseOrderDetail['hasProductSkuData']['entity'],
+            "quantity" => $hasPurchaseOrderDetail["quantity"],
+            "note" => $hasPurchaseOrderDetail["note"],
+        ];
+        $detail = sprintf("商品: %s, 数量:%s\n", $hasPurchaseOrderDetail['hasProductData']['product_name'], $hasPurchaseOrderDetail["quantity"]);
+        return [$data, $detail];
     }
 }

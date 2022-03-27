@@ -20,15 +20,12 @@ use catcher\library\form\Form;
  */
 class ChangePurchase extends Form
 {
-    private $users;
     private $supplier;
 
     public function __construct(
-        Users           $users,
         SupplierLicense $supplier
     )
     {
-        $this->users = $users;
         $this->supplier = $supplier;
     }
 
@@ -38,8 +35,7 @@ class ChangePurchase extends Form
             self::date("purchase_date", "采购日期")->col(12)->required(),
             self::select("user_id", "采购人员")
                 ->options(
-                // 获取自身公司下的员工
-                    $this->getUser()
+                    get_company_employees()
                 )->col(12)->required(),
             self::select("supplier_id", "供应商")
                 ->options(
@@ -51,23 +47,5 @@ class ChangePurchase extends Form
                         ->add('月结', "1")->render()
                 )->col(12)->required(),
         ];
-    }
-
-    public function getUser()
-    {
-        $userId = request()->user()->id;
-        $data = $this->users->where("id", $userId)->find();
-        if (!$data['department_id']) {
-            return [];
-        }
-        $data = $this->users->where("department_id", $data['department_id'])->select();
-        $map = [];
-        foreach ($data as $datum) {
-            $map[] = [
-                'value' => (string)$datum['id'],
-                'label' => $datum['username'],
-            ];
-        }
-        return $map;
     }
 }

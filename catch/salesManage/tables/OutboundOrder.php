@@ -14,6 +14,7 @@ use catcher\CatchTable;
 use catcher\library\table\Actions;
 use catcher\library\table\HeaderItem;
 use catcher\library\table\Search;
+use fire\enums\action\NormalEnums;
 
 /**
  * Class OutboundOrder
@@ -27,28 +28,29 @@ class OutboundOrder extends CatchTable
             ->header([
                 HeaderItem::label()->selection(),
                 HeaderItem::label('状态')->prop('status_i'),
-                HeaderItem::label('订单编号')->prop('outbound_order_code'),
+                HeaderItem::label('出库编号')->prop('outbound_order_code')->width(130),
                 HeaderItem::label('供货者')->prop('supplier_name'),
                 HeaderItem::label('客户')->prop('customer_name'),
                 HeaderItem::label('明细摘要')->prop('detail'),
                 HeaderItem::label('总额')->prop('amount'),
-                HeaderItem::label('销售日期')->prop('sales_time'),
-                HeaderItem::label('结算类型')->prop('settlement_type_i'),
+                HeaderItem::label('出库日期')->prop('outbound_time'),
+                HeaderItem::label('物流公司')->prop('logistics_code'),
+                HeaderItem::label('物流单号')->prop('logistics_number'),
                 HeaderItem::label('审核状态')->prop('audit_status_i'),
                 HeaderItem::label('备注')->prop('remark'),
-                HeaderItem::label('操作')->width(200)->actions([
+                HeaderItem::label('操作')->width(180)->actions([
                     Actions::update("编辑", "edit"),
-//                    Actions::normal("复制", 'primary', "copy")->icon('el-icon-document-copy'),
-                    Actions::normal("出库/发货", 'success', "outbound"),
+                    Actions::normal("物流", NormalEnums::$warning, "logistics")->icon('el-icon-document-copy'),
                 ])
             ])
             ->withSearch([
                 Search::label('订单编号')->text('order_code', '订单编号'),
                 Search::label('结算类型')->text('invoice_status', '结算类型'),
-                Search::label('订单状态')->select('audit_status', '请选择状态',
+                Search::label('订单状态')->select('status', '请选择状态',
                     Search::options()->add('全部', '')
                         ->add('未完成', 0)
                         ->add('已完成', 1)
+                        ->add('作废', 2)
                         ->render()
                 ), Search::label('审核状态')->select('audit_status', '请选择审核状态',
                     Search::options()->add('全部', '')
