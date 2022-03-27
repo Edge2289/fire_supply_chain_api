@@ -65,6 +65,7 @@ class OutboundOrder extends CatchTable
             ->withActions([
                 Actions::normal("新增", 'primary', "add")->icon('el-icon-plus'),
                 Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu'),
+                Actions::normal("发票", 'primary', "invoice"),
                 Actions::normal("作废", 'primary', "cancel"),
                 Actions::normal("导出", 'primary', "export"),
             ])
