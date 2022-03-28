@@ -1,7 +1,7 @@
 #!/usr/bin/env
 
 php think catch-migrate:run basisinfo
-php think catch-migrate:run finacial
+php think catch-migrate:run financial
 php think catch-migrate:run inventory
 php think catch-migrate:run login
 php think catch-migrate:run monitor
