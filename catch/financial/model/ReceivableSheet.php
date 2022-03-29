@@ -25,9 +25,5 @@ class ReceivableSheet extends CatchModel
 
     protected $pk = 'id';
 
-    public function getReceivableTimeAttr($value)
-    {
-        return $this->toDate($value);
-    }
-
+    protected $fieldToTime = ['receivable_time'];
 }

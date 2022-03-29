@@ -57,7 +57,6 @@ abstract class CatchModel extends \think\Model
     {
         parent::__construct($data);
 
-
         if (method_exists($this, 'autoWithRelation')) {
             $this->autoWithRelation();
         }
@@ -79,24 +78,6 @@ abstract class CatchModel extends \think\Model
         };
         $this->maker($changeTime);
         $this->filter($changeTime);
-    }
-
-    /**
-     * 数据库转换日期
-     *
-     * @param $value
-     * @return false|string
-     * @author 1131191695@qq.com
-     */
-    protected function toDate($value)
-    {
-        if (empty($value)) {
-            return "";
-        }
-        if (is_string($value)) {
-            return $value;
-        }
-        return date("Y-m-d", $value);
     }
 
     /**

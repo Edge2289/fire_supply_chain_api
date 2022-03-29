@@ -13,7 +13,18 @@ $router->group(function () use ($router) {
     // 仓库管理
     $router->resource("warehouse", '\catchAdmin\inventory\controller\Warehouse'); // 仓库
 
-    $router->get("inventory", '\catchAdmin\inventory\controller\Inventory@list'); // 仓库
+    $router->get("inventory", '\catchAdmin\inventory\controller\Inventory@list'); // 库存
+
+    $router->group(function () use ($router) {
+        // 寄售出库
+        $router->resource('consignmentOutbound', '\catchAdmin\inventory\controller\ConsignmentOutbound');
+    });
+
+    $router->group(function () use ($router) {
+        // 备货出库
+        $router->resource('readyOutbound', '\catchAdmin\inventory\controller\ReadyOutbound');
+    });
+
 })->middleware('auth');
 
 $router->group(function () use ($router) {

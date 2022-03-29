@@ -25,10 +25,7 @@ class ProcurementWarehousing extends CatchModel
 
     protected $pk = 'id';
 
-    public function getPutDateAttr($value)
-    {
-        return $this->toDate($value);
-    }
+    protected $fieldToTime = ['put_date'];
 
     /**
      * @return \think\model\relation\HasMany

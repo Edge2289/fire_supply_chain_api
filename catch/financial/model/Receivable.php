@@ -26,10 +26,7 @@ class Receivable extends CatchModel
 
     protected $pk = 'id';
 
-    public function getReceivableTimeAttr($value)
-    {
-        return $this->toDate($value);
-    }
+    protected $fieldToTime = ['receivable_time'];
 
     /**
      * 关联发货单表

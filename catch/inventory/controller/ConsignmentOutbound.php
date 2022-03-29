@@ -10,7 +10,10 @@
 namespace catchAdmin\inventory\controller;
 
 
+use catchAdmin\inventory\model\ConsignmentOutboundDetails;
 use catcher\base\CatchController;
+use catchAdmin\inventory\model\ConsignmentOutbound as ConsignmentOutboundModel;
+use catcher\CatchResponse;
 
 /**
  * 寄售出库
@@ -19,13 +22,36 @@ use catcher\base\CatchController;
  */
 class ConsignmentOutbound extends CatchController
 {
-    public function __construct()
-    {
+    protected $consignmentOutboundModel;
+    protected $consignmentOutboundDetails;
 
+    public function __construct(
+        ConsignmentOutboundModel   $consignmentOutboundModel,
+        ConsignmentOutboundDetails $consignmentOutboundDetails
+    )
+    {
+        $this->consignmentOutboundModel = $consignmentOutboundModel;
+        $this->consignmentOutboundDetails = $consignmentOutboundDetails;
     }
 
     public function index()
     {
+        return CatchResponse::paginate($this->consignmentOutboundModel->getList());
+    }
+
+    public function save()
+    {
 
     }
+
+    public function audit()
+    {
+
+    }
+
+    public function turnSales()
+    {
+
+    }
+
 }
