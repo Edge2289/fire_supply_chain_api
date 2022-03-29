@@ -3,8 +3,8 @@
  * Created by PhpStorm.
  * author: 1131191695@qq.com
  * Note: Tired as a dog
- * Date: 2022/3/27
- * Time: 21:38
+ * Date: 2022/3/28
+ * Time: 16:20
  */
 
 namespace catchAdmin\inventory\controller;
@@ -13,12 +13,12 @@ namespace catchAdmin\inventory\controller;
 use catcher\base\CatchController;
 
 /**
- * 备货出库
+ * 其他出库
  *
- * Class ReadyOutbound
+ * Class OtherPutInventory
  * @package catchAdmin\inventory\controller
  */
-class ReadyOutbound extends CatchController
+class OtherPutInventory extends CatchController
 {
     public function __construct()
     {

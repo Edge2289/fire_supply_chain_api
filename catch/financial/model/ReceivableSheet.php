@@ -16,7 +16,7 @@ use catcher\base\CatchModel;
  * Class Receivable
  * @package catchAdmin\financial\model
  */
-class ReceivableMany extends CatchModel
+class ReceivableSheet extends CatchModel
 {
     // 这个根据登陆的账号去获取链接
     protected $connection = 'business';

@@ -99,6 +99,6 @@ class SalesOrderModel extends CatchModel
             $datum['detail'] = $details;
             unset($datum['hasSalesOrderDetails'], $datum["hasSupplierLicense"]);
         }
-        return $this->fieldToFormat($data);
+        return $data;
     }
 }

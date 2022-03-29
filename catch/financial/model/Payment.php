@@ -11,6 +11,7 @@ namespace catchAdmin\financial\model;
 
 
 use catcher\base\CatchModel;
+use think\model\relation\HasMany;
 
 /**
  * Class Payment
@@ -33,18 +34,18 @@ class Payment extends CatchModel
      * @return \think\model\relation\HasMany
      * @author 1131191695@qq.com
      */
-    public function manyPurchaserOrder()
+    public function manyPaymentSheet(): HasMany
     {
         return $this->hasMany(PaymentSheet::class, "payment_sheet_id", "id");
     }
 
     public function getList()
     {
-        return $this->fieldToFormat($this->with([
+        return $this->with([
             "manyPurchaserOrder",
             "manyPurchaserOrder.hasPurchaseOrder",
             "manyPurchaserOrder.hasPurchaseOrder.hasSupplierLicense"
         ])->catchSearch()->order("id desc")
-            ->paginate());
+            ->paginate();
     }
 }

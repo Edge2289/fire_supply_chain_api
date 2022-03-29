@@ -10,13 +10,16 @@
 namespace catchAdmin\salesManage\controller;
 
 
+use catchAdmin\basisinfo\model\SupplierLicense;
 use catchAdmin\salesManage\model\SalesOrderDetailsModel;
 use catchAdmin\salesManage\model\SalesOrderModel;
 use catcher\base\CatchController;
 use catcher\CatchResponse;
 use catcher\exceptions\BusinessException;
 use fire\data\ChangeStatus;
+use think\db\exception\DbException;
 use think\Request;
+use think\response\Json;
 
 /**
  * Class SalesOrder
@@ -37,8 +40,8 @@ class SalesOrder extends CatchController
     }
 
     /**
-     * @return \think\response\Json
-     * @throws \think\db\exception\DbException
+     * @return Json
+     * @throws DbException
      * @author 1131191695@qq.com
      */
     public function index()
@@ -56,7 +59,7 @@ class SalesOrder extends CatchController
      * 保存或者更新
      *
      * @param Request $request
-     * @return \think\response\Json
+     * @return Json
      * @author 1131191695@qq.com
      */
     public function save(Request $request)
@@ -143,9 +146,9 @@ class SalesOrder extends CatchController
      * 审核
      *
      * @param Request $request
-     * @return \think\response\Json
+     * @return Json
      * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
+     * @throws DbException
      * @throws \think\db\exception\ModelNotFoundException
      * @author 1131191695@qq.com
      */
@@ -215,7 +218,7 @@ class SalesOrder extends CatchController
      *
      * @return array
      * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
+     * @throws DbException
      * @throws \think\db\exception\ModelNotFoundException
      * @author 1131191695@qq.com
      */
@@ -252,9 +255,9 @@ class SalesOrder extends CatchController
      * 出库的商品数据
      *
      * @param Request $request
-     * @return \think\response\Json
+     * @return Json
      * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
+     * @throws DbException
      * @throws \think\db\exception\ModelNotFoundException
      * @author 1131191695@qq.com
      */
@@ -328,6 +331,50 @@ class SalesOrder extends CatchController
             'customer_info_id' => $data['customer_info_id'],
             'company_id' => $data['company_id'],
             'goodsDetails' => $goodsDetails
+        ]);
+    }
+
+    /**
+     * 获取弹窗选择收款单的销售订单
+     *
+     * @param Request $request
+     * @return Json
+     * @throws DbException
+     * @author 1131191695@qq.com
+     */
+    public function getAlertOrder(Request $request)
+    {
+        $params = $request->param();
+        if (!isset($params['page']) || empty($params['page'])) {
+            $params['page'] = 1;
+        }
+        if (!isset($params['pageSize']) || empty($params['pageSize'])) {
+            $params['pageSize'] = 10;
+        }
+        $queryModel = $this->salesOrderModel;
+        if (isset($params['supplier_id']) && !empty($params['supplier_id'])) {
+            $queryModel = $this->salesOrderModel->where("supplier_id", $params['supplier_id']);
+        }
+        $data = $queryModel->where("status", 0)
+            ->with([
+                "hasSupplierLicense" => function ($query) {
+                    $query->field(["id", "company_name"]);
+                }
+            ])
+            ->where("audit_status", 1)
+            ->where(function ($query) {
+                $query->where([
+                    "settlement_type" => 0,
+                    "settlement_status" => 1,
+                ])->whereOr([
+                    "settlement_type" => 1,
+                    "settlement_status" => 0,
+                ]);
+            })
+            ->paginate();
+        return CatchResponse::success([
+            "data" => $data,
+            "supple" => app(SupplierLicense::class)->getSupplier()
         ]);
     }
 }

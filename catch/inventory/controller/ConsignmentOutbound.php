@@ -13,6 +13,7 @@ namespace catchAdmin\inventory\controller;
 use catcher\base\CatchController;
 
 /**
+ * 寄售出库
  * Class ConsignmentOutbound
  * @package catchAdmin\inventory\controller
  */

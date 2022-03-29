@@ -11,18 +11,23 @@ namespace catchAdmin\inventory\controller;
 
 
 use catcher\base\CatchController;
+use catchAdmin\inventory\model\Warehouse;
 
 /**
- * 备货出库
+ * 其他出库
  *
- * Class ReadyOutbound
+ * Class OtherOutbound
  * @package catchAdmin\inventory\controller
  */
-class ReadyOutbound extends CatchController
+class OtherOutbound extends CatchController
 {
-    public function __construct()
-    {
+    protected $warehouse;
 
+    public function __construct(
+        Warehouse $warehouse
+    )
+    {
+        $this->warehouse = $warehouse;
     }
 
     public function index()

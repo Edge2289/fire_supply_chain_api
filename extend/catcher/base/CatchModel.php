@@ -61,6 +61,24 @@ abstract class CatchModel extends \think\Model
         if (method_exists($this, 'autoWithRelation')) {
             $this->autoWithRelation();
         }
+        $changeTime = function ($result) {
+            if ($result->isEmpty()) {
+                return $result;
+            }
+            foreach ($this->fieldToString as $field) {
+                if (isset($result->{$field})) {
+                    $result->{$field} = (string)$result->{$field};
+                }
+            }
+            foreach ($this->fieldToTime as $value) {
+                if (isset($result->{$value}) && !empty($result->{$value}) && !is_string($result->{$value})) {
+                    $result->{$value} = date("Y-m-d", (int)$result->{$value});
+                }
+            }
+            return $result;
+        };
+        $this->maker($changeTime);
+        $this->filter($changeTime);
     }
 
     /**
@@ -82,38 +100,6 @@ abstract class CatchModel extends \think\Model
     }
 
     /**
-     * 字段数据转string
-     *
-     * @param $data
-     * @return array
-     * @author 1131191695@qq.com
-     */
-    protected function fieldToFormat($data)
-    {
-        if (!$this->fieldToString && !$this->fieldToTime) {
-            return $data;
-        }
-        foreach ($data as &$datum) {
-            // to string
-            foreach ($this->fieldToString as $field) {
-                if (isset($datum[$field])) {
-                    $datum[$field] = (string)$datum[$field];
-                }
-            }
-            // to time
-            foreach ($this->fieldToTime as $field) {
-                if (isset($datum[$field])) {
-                    if (is_string($datum[$field])) {
-                        continue;
-                    }
-                    $datum[$field] = date("Y-m-d", (int)$datum[$field]);
-                }
-            }
-        }
-        return $data;
-    }
-
-    /**
      * 添加排它锁
      *
      * @param $id
@@ -132,6 +118,7 @@ abstract class CatchModel extends \think\Model
      * 组装
      *
      * @param $hasPurchaseOrderDetail
+     * @return array
      * @author 1131191695@qq.com
      */
     protected function assemblyDetailsData($hasPurchaseOrderDetail)

@@ -45,7 +45,12 @@ class OutboundOrder extends CatchTable
             ])
             ->withSearch([
                 Search::label('订单编号')->text('order_code', '订单编号'),
-                Search::label('结算类型')->text('invoice_status', '结算类型'),
+                Search::label('结算类型')->select('settlement_type', '请选择结算类型',
+                    Search::options()->add('全部', '')
+                        ->add('现结', 0)
+                        ->add('月结', 1)
+                        ->render()
+                ),
                 Search::label('订单状态')->select('status', '请选择状态',
                     Search::options()->add('全部', '')
                         ->add('未完成', 0)

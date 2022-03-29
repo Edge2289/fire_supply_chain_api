@@ -10,6 +10,7 @@
 namespace catchAdmin\salesManage\controller;
 
 
+use catchAdmin\basisinfo\model\SupplierLicense;
 use catchAdmin\inventory\model\Inventory;
 use catchAdmin\inventory\model\InventoryBatch;
 use catchAdmin\inventory\model\Warehouse;
@@ -21,8 +22,10 @@ use catchAdmin\salesManage\model\OutboundOrder as OutboundOrderModel;
 use catcher\CatchResponse;
 use catcher\exceptions\BusinessException;
 use fire\data\ChangeStatus;
+use think\db\exception\DbException;
 use think\facade\Cache;
 use think\Request;
+use think\response\Json;
 
 /**
  * Class OutboundOrder
@@ -64,8 +67,8 @@ class OutboundOrder extends CatchController
     /**
      * 获取列表
      *
-     * @return \think\response\Json
-     * @throws \think\db\exception\DbException
+     * @return Json
+     * @throws DbException
      * @author 1131191695@qq.com
      */
     public function index()
@@ -79,7 +82,7 @@ class OutboundOrder extends CatchController
      * 保存
      *
      * @param Request $request
-     * @return \think\response\Json
+     * @return Json
      * @author 1131191695@qq.com
      */
     public function save(Request $request)
@@ -202,7 +205,7 @@ class OutboundOrder extends CatchController
      *
      * @param $id
      * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
+     * @throws DbException
      * @throws \think\db\exception\ModelNotFoundException
      * @author 1131191695@qq.com
      */
@@ -235,9 +238,9 @@ class OutboundOrder extends CatchController
      * 审核
      *
      * @param Request $request
-     * @return \think\response\Json
+     * @return Json
      * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
+     * @throws DbException
      * @throws \think\db\exception\ModelNotFoundException
      * @author 1131191695@qq.com
      */
@@ -253,6 +256,7 @@ class OutboundOrder extends CatchController
         }
         $b = $this->outboundOrderModel->updateBy($data['id'], [
             'audit_status' => $data['audit_status'],
+            'status' => $data['audit_status'] == 1 ? 1 : 0,
             'audit_info' => $data['audit_info'],
             'audit_user_id' => request()->user()->id,
             'audit_user_name' => request()->user()->username,
@@ -267,7 +271,7 @@ class OutboundOrder extends CatchController
      * 作废返回销售订单的出货数
      *
      * @param Request $request
-     * @return \think\response\Json
+     * @return Json
      * @author 1131191695@qq.com
      */
     public function invalid(Request $request)
@@ -302,7 +306,7 @@ class OutboundOrder extends CatchController
      * @param $skuId
      * @return array
      * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
+     * @throws DbException
      * @throws \think\db\exception\ModelNotFoundException
      * @author 1131191695@qq.com
      */
@@ -328,5 +332,40 @@ class OutboundOrder extends CatchController
             }
         }
         return [$map, $selectedNumber, count($batchId)];
+    }
+
+    /**
+     * 获取弹窗选择回款单出库订单
+     *
+     * @param Request $request
+     * @return Json
+     * @throws DbException
+     * @author 1131191695@qq.com
+     */
+    public function getAlertOrder(Request $request)
+    {
+        $params = $request->param();
+        if (!isset($params['page']) || empty($params['page'])) {
+            $params['page'] = 1;
+        }
+        if (!isset($params['pageSize']) || empty($params['pageSize'])) {
+            $params['pageSize'] = 10;
+        }
+        $queryModel = $this->outboundOrderModel;
+        if (isset($params['supplier_id']) && !empty($params['supplier_id'])) {
+            $queryModel = $this->outboundOrderModel->where("supplier_id", $params['supplier_id']);
+        }
+        $data = $queryModel->where("status", 1)
+            ->with([
+                "hasSupplierLicense" => function ($query) {
+                    $query->field(["id", "company_name"]);
+                }
+            ])
+            ->where("audit_status", 1)
+            ->paginate();
+        return CatchResponse::success([
+            "data" => $data,
+            "supple" => app(SupplierLicense::class)->getSupplier()
+        ]);
     }
 }

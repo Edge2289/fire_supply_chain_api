@@ -26,7 +26,6 @@ class SalesOrder extends CatchTable
         return $this->getTable('salesOrder')
             ->header([
                 HeaderItem::label()->selection(),
-//                HeaderItem::label('id')->prop('id'),
                 HeaderItem::label('状态')->prop('status_i'),
                 HeaderItem::label('订单编号')->prop('order_code')->width(170),
                 HeaderItem::label('供货者')->prop('supplier_name'),
@@ -40,19 +39,24 @@ class SalesOrder extends CatchTable
                 HeaderItem::label('备注')->prop('remark'),
                 HeaderItem::label('操作')->width(200)->actions([
                     Actions::update("编辑", "editPurchaseOrder"),
-//                    Actions::normal("复制", 'primary', "copy")->icon('el-icon-document-copy'),
                     Actions::normal("出库/发货", 'success', "outbound"),
                 ])
             ])
             ->withSearch([
                 Search::label('订单编号')->text('order_code', '订单编号'),
-                Search::label('结算类型')->text('invoice_status', '结算类型'),
+                Search::label('结算类型')->select('settlement_type', '请选择结算类型',
+                    Search::options()->add('全部', '')
+                        ->add('现结', 0)
+                        ->add('月结', 1)
+                        ->render()
+                ),
                 Search::label('订单状态')->select('audit_status', '请选择状态',
                     Search::options()->add('全部', '')
                         ->add('未完成', 0)
                         ->add('已完成', 1)
                         ->render()
-                ), Search::label('审核状态')->select('audit_status', '请选择审核状态',
+                ),
+                Search::label('审核状态')->select('audit_status', '请选择审核状态',
                     Search::options()->add('全部', '')
                         ->add('未审核', 0)
                         ->add('已审核', 1)

@@ -40,8 +40,8 @@ class CustomerInfo extends CatchModel
      */
     public function getList()
     {
-        return $this->fieldToFormat($this->with(["hasCustomerLicense"])->catchSearch()->order("id desc")
-            ->paginate());
+        return $this->with(["hasCustomerLicense"])->catchSearch()->order("id desc")
+            ->paginate();
     }
 
     public function getFormLier()

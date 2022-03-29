@@ -59,7 +59,7 @@ class CustomerLicense extends CatchModel
      */
     public function getList()
     {
-        return $this->fieldToFormat($this->catchSearch()->order("id desc")
-            ->paginate());
+        return $this->catchSearch()->order("id desc")
+            ->paginate();
     }
 }
