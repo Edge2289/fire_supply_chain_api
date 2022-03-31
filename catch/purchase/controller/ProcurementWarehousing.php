@@ -269,6 +269,7 @@ class ProcurementWarehousing extends CatchController
                         ];
                     }
                     $inventoryBatchMap[$proWareDetail['product_sku_id']][] = [
+                        'company_id' => request()->user()->department_id,
                         'product_id' => $proWareDetail['product_id'],
                         'product_sku_id' => $proWareDetail['product_sku_id'],
                         'batch_number' => $proWareDetail['batch_number'],

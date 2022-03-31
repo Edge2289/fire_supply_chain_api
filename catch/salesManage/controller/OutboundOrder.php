@@ -204,12 +204,13 @@ class OutboundOrder extends CatchController
      * 恢复出库单原始数据
      *
      * @param $id
-     * @throws \think\db\exception\DataNotFoundException
+     * @param bool $isClear
      * @throws DbException
+     * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\ModelNotFoundException
      * @author 1131191695@qq.com
      */
-    private function restoreOutBoundOrder($id)
+    private function restoreOutBoundOrder($id, $isClear = true)
     {
         // 存在出库单并且不为空
         $outboundOrderData = $this->outboundOrderModel->getFindByKey($id);
@@ -226,7 +227,9 @@ class OutboundOrder extends CatchController
         $this->salesOrderModel->where("id", $outboundOrderData['sales_order_id'])->decrement('put_num', $outboundOrderData['outbound_num']);
         $outboundOrderDetailsData = $this->outboundOrderDetails->where('outbound_order_id', $id)->select();
         // 软删除
-        $this->outboundOrderDetails->destroy(['outbound_order_id' => $id]);
+        if ($isClear) {
+            $this->outboundOrderDetails->destroy(['outbound_order_id' => $id]);
+        }
         foreach ($outboundOrderDetailsData as $outboundOrderDetailsDatum) {
             $this->salesOrderDetailsModel->where('id', $outboundOrderDetailsDatum['sales_order_details_id'])->decrement('delivery_number', $outboundOrderDetailsDatum['quantity']);
             $this->inventoryBatch->where('id', $outboundOrderDetailsDatum['inventory_batch_id'])->decrement('use_number', $outboundOrderDetailsDatum['quantity']);

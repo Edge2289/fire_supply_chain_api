@@ -74,6 +74,12 @@ class Invoice extends CatchController
         }
         $this->invoiceModel->startTrans();
         try {
+            if ($params['order_type'] == 1 && $params['customer_info_id']) {
+                throw new BusinessException("订单类型为采购订单，客户不可选");
+            }
+            if ($params['order_type'] == 2 && empty($params['customer_info_id'])) {
+                throw new BusinessException("订单类型为出库订单，客户必选");
+            }
             $params['invoice_time'] = strtotime($params['invoice_time']);
             $outboundOrder = $params['outbound_order'];
             unset($params['purchase_order']);
@@ -86,7 +92,7 @@ class Invoice extends CatchController
                 $this->invoiceModel->updateBy($id, $params);
             } else {
                 $params['receivable_code'] = getCode("RS");
-                $id = $this->invoiceModel->createBy($params);
+                $id = $this->invoiceModel->insertGetId($params);
             }
             $invoiceSheet = [];
             foreach (array_column($outboundOrder, "id") as $value) {

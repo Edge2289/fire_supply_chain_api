@@ -76,7 +76,7 @@ class PurchaseOrder extends CatchController
         $this->purchaseOrderModel->startTrans();
         try {
             $params['purchase_date'] = strtotime($params['purchase_date']);
-            $id = $this->purchaseOrderModel->createBy($params);
+            $id = $this->purchaseOrderModel->insertGetId($params);
             if (empty($id)) {
                 throw new \Exception("采购订单添加失败");
             }

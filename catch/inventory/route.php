@@ -18,15 +18,20 @@ $router->group(function () use ($router) {
     $router->group(function () use ($router) {
         // 寄售出库
         $router->resource('consignmentOutbound', '\catchAdmin\inventory\controller\ConsignmentOutbound');
+        $router->post("consignmentOutbound/audit/<id>", '\catchAdmin\inventory\controller\ConsignmentOutbound@audit'); // 审核
+        $router->post("consignmentOutbound/invalid/<id>", '\catchAdmin\inventory\controller\ConsignmentOutbound@invalid'); // 审核
+
     });
 
     $router->group(function () use ($router) {
         // 备货出库
         $router->resource('readyOutbound', '\catchAdmin\inventory\controller\ReadyOutbound');
+        $router->post("readyOutbound/audit/<id>", '\catchAdmin\inventory\controller\ReadyOutbound@audit'); // 审核
     });
 
 })->middleware('auth');
 
 $router->group(function () use ($router) {
     $router->get("inventoryBatch", '\catchAdmin\inventory\controller\Inventory@inventoryBatchList');
+    $router->get("warehouseItem", '\catchAdmin\inventory\controller\Warehouse@tableGetWarehouse');
 });

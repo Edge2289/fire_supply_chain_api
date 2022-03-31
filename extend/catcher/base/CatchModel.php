@@ -121,7 +121,40 @@ abstract class CatchModel extends \think\Model
             "quantity" => $hasPurchaseOrderDetail["quantity"],
             "note" => $hasPurchaseOrderDetail["note"],
         ];
-        $detail = sprintf("商品: %s, 数量:%s\n", $hasPurchaseOrderDetail['hasProductData']['product_name'], $hasPurchaseOrderDetail["quantity"]);
+        $detail = sprintf("商品: %s, 数量:%s" . PHP_EOL, $hasPurchaseOrderDetail['hasProductData']['product_name'], $hasPurchaseOrderDetail["quantity"]);
         return [$data, $detail];
+    }
+
+    /**
+     * 组装库存数据
+     *
+     * @param $data
+     * @return array
+     * @author 1131191695@qq.com
+     */
+    protected function assemblyBatchItem($data)
+    {
+        $map = [
+            "id" => $data['hasInventoryBatchData']['id'],
+            "inventory_id" => $data['inventory_id'],
+            "product_id" => $data['product_id'],
+            "product_sku_id" => $data['product_sku_id'],
+            "product_code" => $data['product_code'],
+            "item_number" => $data['item_number'],
+            "sku_code" => $data['hasProductSkuData']['sku_code'],
+            "tax_rate" => $data['hasProductSkuData']['tax_rate'],
+            "unit_price" => $data['hasProductSkuData']['unit_price'],
+            "batch_number" => $data['hasInventoryBatchData']['batch_number'],
+            "serial_number" => $data['hasInventoryBatchData']['serial_number'],
+            "production_date" => $data['hasInventoryBatchData']['production_date'],
+            "valid_until" => $data['hasInventoryBatchData']['valid_until'],
+            "registration_number" => $data['hasInventoryBatchData']['registration_number'],
+            "number" => ($data['hasInventoryBatchData']['number'] - $data['hasInventoryBatchData']['use_number']),
+            "put_num" => $data['quantity'],
+            "product_name" => $data['hasProductData']['product_name'],
+            "product_sku_name" => $data['hasProductSkuData']['sku_code'],
+        ];
+        $detail = sprintf("商品: %s, 数量:%s" . PHP_EOL, $data['hasProductData']['product_name'], $data["quantity"]);
+        return [$map, $detail];
     }
 }

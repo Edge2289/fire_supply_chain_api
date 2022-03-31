@@ -10,6 +10,8 @@
 namespace catchAdmin\inventory\model;
 
 
+use catchAdmin\basisinfo\model\ProductBasicInfo;
+use catchAdmin\basisinfo\model\ProductSku;
 use catcher\base\CatchModel;
 
 /**
@@ -23,4 +25,20 @@ class ConsignmentOutboundDetails extends CatchModel
     protected $name = 'consignment_outbound_details';
 
     protected $pk = 'id';
+
+    public function hasInventoryBatchData()
+    {
+        return $this->hasOne(InventoryBatch::class, "id", "inventory_batch_id");
+    }
+
+    public function hasProductData()
+    {
+        return $this->hasOne(ProductBasicInfo::class, "id", "product_id");
+    }
+
+    public function hasProductSkuData()
+    {
+        return $this->hasOne(ProductSku::class, "id", "product_sku_id");
+    }
+
 }

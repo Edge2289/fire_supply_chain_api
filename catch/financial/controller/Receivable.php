@@ -71,7 +71,7 @@ class Receivable extends CatchController
                 $this->receivableModel->updateBy($id, $params);
             } else {
                 $params['receivable_code'] = getCode("RS");
-                $id = $this->receivableModel->createBy($params);
+                $id = $this->receivableModel->insertGetId($params);
             }
             $map = [];
             foreach ($salesOrder as $value) {

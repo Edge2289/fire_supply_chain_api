@@ -1,5 +1,5 @@
 <?php
-declare (strict_types = 1);
+declare (strict_types=1);
 
 namespace catcher\command\Tools;
 
@@ -27,26 +27,26 @@ menu: 菜单名称
 path: 前端路由地址
 component: 前端组件名称
 DES
-);
+            );
     }
 
     protected function execute(Input $input, Output $output)
     {
-        $arguments  = $input->getArguments();
+        $arguments = $input->getArguments();
 
         try {
             [$root, $module, $c, $controller] = explode('\\', $arguments['controller']);
 
             $permission = Permissions::where('module', $module)
-                                      ->where('parent_id', 0)->find();
+                ->where('parent_id', 0)->find();
 
             $permissionModel = $this->app->make(Permissions::class);
 
             // 菜单是否已经建立
             $hasMenu = Permissions::where('module', $module)
-                                  ->where('permission_mark', lcfirst($controller))->find();
+                ->where('permission_mark', lcfirst($controller))->find();
             if (!$hasMenu) {
-                $id = $permissionModel->createBy([
+                $id = $permissionModel->insertGetId([
                     'permission_name' => $arguments['menu'],
                     'module' => $module,
                     'parent_id' => $permission->id,
@@ -74,11 +74,11 @@ DES
                     $hasInit = $initMethods[$method] ?? false;
                     // 如果已经存在 直接跳过
                     if (Permissions::where('module', $module)
-                                    ->where('permission_mark', lcfirst($controller) . '@' . $method)->find()) {
+                        ->where('permission_mark', lcfirst($controller) . '@' . $method)->find()) {
                         continue;
                     }
                     $data = [
-                        'level' => $permission->id . '-' .$id,
+                        'level' => $permission->id . '-' . $id,
                         'permission_mark' => lcfirst($controller) . '@' . $method,
                         'parent_id' => $id,
                         'module' => $module,
@@ -93,7 +93,7 @@ DES
                         $data['method'] = $httpMethod;
                     }
 
-                    $permissionModel->createBy($data);
+                    $permissionModel->insertGetId($data);
                 }
             }
 
@@ -102,7 +102,7 @@ DES
             $output->error($e->getMessage());
         }
         //dd($reflectClass->getMethods());
-       // dd($this->app->make($arguments['controller'])->methods());
+        // dd($this->app->make($arguments['controller'])->methods());
 
 
     }
@@ -156,8 +156,8 @@ DES
     {
         return [
             'index' => ['列表', 'get'],
-            'save'  => ['保存', 'post'],
-            'read'  => ['读取', 'get'],
+            'save' => ['保存', 'post'],
+            'read' => ['读取', 'get'],
             'update' => ['更新', 'put'],
             'delete' => ['删除', 'delete'],
         ];

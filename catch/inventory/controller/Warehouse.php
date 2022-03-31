@@ -100,4 +100,9 @@ class Warehouse extends CatchController
         }
         return CatchResponse::success($this->warehouse->deleteBy($id));
     }
+
+    public function tableGetWarehouse()
+    {
+        return $this->warehouse->tableGetWarehouse();
+    }
 }

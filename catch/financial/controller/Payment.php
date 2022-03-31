@@ -87,7 +87,7 @@ class Payment extends CatchController
                 $this->paymentModel->updateBy($id, $params);
             } else {
                 $params['payment_code'] = getCode("PS");
-                $id = $this->paymentModel->createBy($params);
+                $id = $this->paymentModel->insertGetId($params);
             }
             $map = [];
             foreach ($purchaseOrder as $value) {

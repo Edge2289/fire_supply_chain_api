@@ -90,7 +90,7 @@ class SalesOrder extends CatchController
                 $params['sales_time'] = strtotime($params['sales_time']);
                 $params['company_id'] = request()->user()->department_id;
                 unset($params['id']);
-                $id = $this->salesOrderModel->createBy($params);
+                $id = $this->salesOrderModel->insertGetId($params);
                 if (!$id) {
                     throw new BusinessException("销售订单添加失败");
                 }
