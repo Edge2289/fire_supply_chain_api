@@ -13,6 +13,7 @@ namespace catchAdmin\inventory\controller;
 use app\Request;
 use catchAdmin\inventory\model\ConsignmentOutboundDetails;
 use catchAdmin\inventory\model\InventoryBatch;
+use catchAdmin\salesManage\controller\SalesOrder;
 use catcher\base\CatchController;
 use catchAdmin\inventory\model\ConsignmentOutbound as ConsignmentOutboundModel;
 use catcher\base\CatchModel;
@@ -118,7 +119,7 @@ class ConsignmentOutbound extends CatchController
                     'product_sku_id' => $goods_detail['product_sku_id'],
                     'product_code' => $goods_detail['product_code'],
                     'item_number' => $goods_detail['item_number'],
-                    'sku_code' => $goods_detail['sku_code'],
+                    'sku_code' => $goods_detail['product_sku_name'],
                     'tax_rate' => $goods_detail['tax_rate'],
                     'unit_price' => $goods_detail['unit_price'],
                     'amount' => bcmul($goods_detail['unit_price'], $goods_detail['put_num'], 2),
@@ -251,15 +252,75 @@ class ConsignmentOutbound extends CatchController
             $this->consignmentOutboundModel->commit();
         } catch (\Exception $exception) {
             $this->consignmentOutboundModel->rollback();
-            dd($exception->getMessage());
             return CatchResponse::fail($exception->getMessage());
         }
         return CatchResponse::success();
     }
 
-    public function turnSales()
+    /**
+     * 转销售
+     *
+     * @param Request $request
+     * @return Json
+     * @author 1131191695@qq.com
+     */
+    public function turnSales(Request $request)
     {
         // 转销售
+        $params = $request->param();
+        if (empty($params)) {
+            throw new BusinessException("数据为空");
+        }
+        $this->consignmentOutboundModel->startTrans();
+        try {
+            $salesOrderMap = [
+                "sales_time" => date("Y-m-d"),
+                "salesman_id" => $params['salesman_id'],
+                "supplier_id" => $params['supplier_id'],
+                "customer_info_id" => $params['customer_info_id'],
+                "sales_type" => "2",
+                "settlement_status" => 0,
+                "id" => 0,
+            ];
+            $goodsMap = [];
+            $inventoryQuantity = 0;
+            foreach ($params['goods'] as $good) {
+                if (!isset($good['inventory_quantity']) && empty($good['inventory_quantity'])) {
+                    continue;
+                }
+                $goodsMap[] = [
+                    "id" => $good['product_sku_id'],
+                    "product_id" => $good['product_id'],
+                    "product_code" => $good['product_code'],
+                    "sku_code" => $good['sku_code'],
+                    "item_number" => $good['item_number'],
+                    "unit_price" => $good['unit_price'],
+                    "tax_rate" => $good['tax_rate'],
+                    "product_name" => $good['product_name'],
+                    "quantity" => $good['inventory_quantity'],
+                    "note" => "",
+                    "total_price" => $good['unit_price'],
+                ];
+                $inventoryQuantity = bcadd($inventoryQuantity, $good['inventory_quantity']);
+                $this->consignmentOutboundDetails->updateBy($good['details_id'], [
+                    'inventory_quantity' => $good['inventory_quantity']
+                ]);
+            }
+            if (empty($goodsMap)) {
+                throw new BusinessException("没有出库的数据");
+            }
+            $this->consignmentOutboundModel->updateBy($params['id'], [
+                'inventory_quantity' => $inventoryQuantity
+            ]);
+            $salesOrderMap['goods_details'] = $goodsMap;
+            // 添加销售订单
+            app(SalesOrder::class)->insert($salesOrderMap);
+            $this->consignmentOutboundModel->commit();
+        } catch (Exception $exception) {
+            $this->consignmentOutboundModel->rollback();
+            throw new BusinessException($exception->getMessage());
+        }
+        return CatchResponse::success();
     }
 
 }

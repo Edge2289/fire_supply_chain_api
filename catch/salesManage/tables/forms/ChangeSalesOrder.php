@@ -42,10 +42,10 @@ class ChangeSalesOrder extends Form
                 // 获取自身公司下的员工
                     get_company_employees()
                 )->col(12)->required(),
-            self::select("supplier_id", "供应商")
-                ->options(
-                    $this->supplier->getSupplier()
-                )->col(12)->required(),
+//            self::select("supplier_id", "供应商")
+//                ->options(
+//                    $this->supplier->getSupplier()
+//                )->col(12)->required(),
             self::select("customer_info_id", "客户")
                 ->options(
                     $this->customerInfo->getFormLier()

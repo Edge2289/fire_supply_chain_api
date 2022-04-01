@@ -83,17 +83,17 @@ class PurchaseOrder extends CatchModel
         )->order("id desc")
             ->paginate();
         foreach ($data as &$datum) {
-            $details = "";
+            $details = [];
             $goodsDetails = [];
             foreach ($datum['hasPurchaseOrderDetails'] as $hasPurchaseOrderDetail) {
                 list($dataMap, $detail) = $this->assemblyDetailsData($hasPurchaseOrderDetail);
                 $goodsDetails[] = $dataMap;
-                $details .= $detail;
+                $details[] = $detail;
             }
             $datum['supplier_name'] = $datum["hasSupplierLicense"]["company_name"];
 
             $datum['goods_details'] = $goodsDetails;
-            $datum['detail'] = $details;
+            $datum['detail'] = implode(PHP_EOL, $details);
             unset($datum['hasPurchaseOrderDetails'], $datum["hasSupplierLicense"]);
         }
         return $data;

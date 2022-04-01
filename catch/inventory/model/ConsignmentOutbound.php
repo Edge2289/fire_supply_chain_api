@@ -32,6 +32,7 @@ class ConsignmentOutbound extends CatchModel
     protected $pk = 'id';
 
     protected $fieldToTime = ['outbound_time'];
+
     protected $fieldToString = ['salesman_id', 'supplier_id', 'customer_info_id', 'warehouse_id'];
 
     public function manyDetails(): HasMany
@@ -92,7 +93,7 @@ class ConsignmentOutbound extends CatchModel
             ])
             ->paginate();
         foreach ($data as &$datum) {
-            $details = "";
+            $details = [];
             $goodsDetails = [];
             $datum["warehouse_name"] = $datum["hasWarehouse"]["warehouse_name"] ?? '';
             $datum["supplier_name"] = $datum["hasSupplier"]["company_name"] ?? '';
@@ -102,10 +103,10 @@ class ConsignmentOutbound extends CatchModel
             foreach ($datum['manyDetails'] as $manyDetail) {
                 list($dataMap, $detail) = $this->assemblyBatchItem($manyDetail);
                 $goodsDetails[] = $dataMap;
-                $details .= $detail;
+                $details[] = $detail;
             }
             $datum['goods'] = $goodsDetails;
-            $datum['detail'] = $details;
+            $datum['detail'] = implode(PHP_EOL, $details);
             unset($datum["hasWarehouse"], $datum["hasSupplier"], $datum["hasCustomerInfo"],
                 $datum["hasFactory"], $datum["manyDetails"]);
         }

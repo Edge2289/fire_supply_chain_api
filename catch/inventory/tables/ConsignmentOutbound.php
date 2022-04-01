@@ -34,12 +34,13 @@ class ConsignmentOutbound extends CatchTable
                 HeaderItem::label('总额')->prop('amount'),
                 HeaderItem::label('出库日期')->prop('outbound_time'),
                 HeaderItem::label('总数量')->prop('put_num'),
-                HeaderItem::label('转销售数量')->prop('resold_quantity'),
+                HeaderItem::label('转销售数量')->prop('inventory_quantity'),
                 HeaderItem::label('明细')->prop('detail'),
                 HeaderItem::label('审核状态')->prop('audit_status_i'),
                 HeaderItem::label('备注')->prop('remark'),
                 HeaderItem::label('操作')->width(120)->actions([
-                    Actions::normal('修改', 'primary', 'handleUpdates')
+                    Actions::normal('修改', 'primary', 'handleUpdates'),
+                    Actions::normal("备货转销售", 'primary', "turnSales")->icon('el-icon-bangzhu'),
                 ])
             ])
             ->withSearch([
@@ -51,7 +52,6 @@ class ConsignmentOutbound extends CatchTable
                 Actions::normal("新增", "primary", "handleAdd", "el-icon-plus"),
                 Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu'),
                 Actions::normal("作废", 'primary', "cancel")->icon('el-icon-bangzhu'),
-                Actions::normal("备货转销售", 'primary', "turnSales")->icon('el-icon-bangzhu'),
             ])
             ->selectionChange()
             ->render();

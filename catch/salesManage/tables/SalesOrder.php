@@ -28,7 +28,7 @@ class SalesOrder extends CatchTable
                 HeaderItem::label()->selection(),
                 HeaderItem::label('状态')->prop('status_i'),
                 HeaderItem::label('订单编号')->prop('order_code')->width(170),
-                HeaderItem::label('供货者')->prop('supplier_name'),
+//                HeaderItem::label('供货者')->prop('supplier_name'),
                 HeaderItem::label('客户')->prop('customer_name'),
                 HeaderItem::label('明细摘要')->prop('detail'),
                 HeaderItem::label('总额')->prop('amount'),

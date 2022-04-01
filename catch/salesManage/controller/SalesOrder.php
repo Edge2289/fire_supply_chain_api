@@ -55,18 +55,21 @@ class SalesOrder extends CatchController
         return CatchResponse::paginate($data);
     }
 
+    public function save(Request $request)
+    {
+        return $this->insert($request->param());
+    }
+
     /**
      * 保存或者更新
      *
-     * @param Request $request
+     * @param $params
      * @return Json
      * @author 1131191695@qq.com
      */
-    public function save(Request $request)
+    public function insert($params)
     {
         // 保存基础信息
-        $params = $request->param();
-//        $this->validator(SalesOrderRequest::class, $params);
         // 保存商品
         $goodsDetails = $params['goods_details'];
         unset($params['goods_details']);
@@ -200,17 +203,40 @@ class SalesOrder extends CatchController
                 throw new BusinessException("销售订单商品数据为空");
             }
 
-
             $this->salesOrderModel->commit();
         } catch (\Exception $exception) {
             $this->salesOrderModel->rollback();
         }
     }
 
-    // 作废
-    public function invalid()
+    /**
+     * 作废
+     *
+     * @param Request $request
+     * @return Json
+     * @author 1131191695@qq.com
+     */
+    public function invalid(Request $request)
     {
-
+        $data = $request->param();
+        $this->salesOrderModel->startTrans();
+        try {
+            $data = $this->salesOrderModel->getFindByKey($data['id']);
+            if ($data['audit_status'] != 0) {
+                throw new BusinessException("订单已审核，无法作废");
+            }
+            if ($data['status'] != 0) {
+                throw new BusinessException("订单状态不为未完成，无法作废");
+            }
+            $this->salesOrderModel->updateBy($data['id'], [
+                'status' => 2
+            ]);
+            $this->salesOrderModel->commit();
+        } catch (\Exception $exception) {
+            $this->salesOrderModel->rollback();
+            throw new BusinessException($exception->getMessage());
+        }
+        return CatchResponse::success();
     }
 
     /**
@@ -352,9 +378,9 @@ class SalesOrder extends CatchController
             $params['pageSize'] = 10;
         }
         $queryModel = $this->salesOrderModel;
-        if (isset($params['supplier_id']) && !empty($params['supplier_id'])) {
-            $queryModel = $this->salesOrderModel->where("supplier_id", $params['supplier_id']);
-        }
+//        if (isset($params['warehouse_id']) && !empty($params['warehouse_id'])) {
+//            $queryModel = $this->salesOrderModel->where("warehouse_id", $params['supplier_id']);
+//        }
         $data = $queryModel->where("status", 0)
             ->with([
                 "hasSupplierLicense" => function ($query) {

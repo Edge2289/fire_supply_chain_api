@@ -27,18 +27,19 @@ class ReadyOutbound extends CatchTable
         return $this->getTable('readyOutbound')
             ->header([
                 HeaderItem::label()->selection(),
-                HeaderItem::label('编号')->width(80)->prop('ready_outbound_code'),
-                HeaderItem::label('产品名称')->prop('product_name'),
-                HeaderItem::label('产品sku编号')->prop('product_sku_name'),
+                HeaderItem::label('状态')->prop('status_i'),
+                HeaderItem::label('编号')->width(80)->prop('consignment_outbound_code'),
                 HeaderItem::label('仓库')->prop('warehouse_name'),
-                HeaderItem::label('供应商')->width(200)->prop('supplier_name'),
-                HeaderItem::label('厂家')->prop('factory_name'),
+                HeaderItem::label('客户')->prop('customer_name'),
+                HeaderItem::label('总额')->prop('amount'),
+                HeaderItem::label('出库日期')->prop('outbound_time'),
                 HeaderItem::label('总数量')->prop('put_num'),
                 HeaderItem::label('转销售数量')->prop('resold_quantity'),
-                HeaderItem::label('入库数量')->prop('inventory_quantity'),
-                HeaderItem::label('明细')->prop('details'),
+                HeaderItem::label('明细')->prop('detail'),
+                HeaderItem::label('审核状态')->prop('audit_status_i'),
+                HeaderItem::label('备注')->prop('remark'),
                 HeaderItem::label('操作')->width(120)->actions([
-                    Actions::normal('修改', 'primary', 'handle_update')
+                    Actions::normal('修改', 'primary', 'handleUpdates')
                 ])
             ])
             ->withSearch([
@@ -47,8 +48,9 @@ class ReadyOutbound extends CatchTable
             ])
             ->withApiRoute('readyOutbound')
             ->withActions([
-                Actions::create(),
+                Actions::normal("新增", "primary", "handleAdd", "el-icon-plus"),
                 Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu'),
+                Actions::normal("作废", 'primary', "cancel")->icon('el-icon-bangzhu'),
                 Actions::normal("备货转销售", 'primary', "turnSales")->icon('el-icon-bangzhu'),
                 Actions::normal("备货入库", 'primary', "stockIn")->icon('el-icon-bangzhu'),
             ])

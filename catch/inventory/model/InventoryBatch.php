@@ -73,11 +73,15 @@ class InventoryBatch extends CatchModel
             ->paginate();
         foreach ($data as &$datum) {
             $datum['out_number'] = 0;
-            if (isset($params['clear'])) {
+            if (!isset($params['clear'])) {
                 $datum['number'] = ($datum['number'] - $datum['use_number']);
             }
             $datum["product_name"] = $datum["hasProduct"]["product_name"] ?? '';
+            $datum["product_code"] = $datum["hasProductSku"]["product_code"] ?? '';
             $datum["product_sku_name"] = $datum["hasProductSku"]["sku_code"] ?? '';
+            $datum["item_number"] = $datum["hasProductSku"]["item_number"] ?? '';
+            $datum["tax_rate"] = $datum["hasProductSku"]["tax_rate"] ?? '';
+            $datum["unit_price"] = $datum["hasProductSku"]["unit_price"] ?? '';
             unset($datum["hasProduct"], $datum["hasProductSku"]);
         }
         return $data;

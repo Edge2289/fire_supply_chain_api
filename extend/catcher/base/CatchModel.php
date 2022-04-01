@@ -121,7 +121,7 @@ abstract class CatchModel extends \think\Model
             "quantity" => $hasPurchaseOrderDetail["quantity"],
             "note" => $hasPurchaseOrderDetail["note"],
         ];
-        $detail = sprintf("商品: %s, 数量:%s" . PHP_EOL, $hasPurchaseOrderDetail['hasProductData']['product_name'], $hasPurchaseOrderDetail["quantity"]);
+        $detail = sprintf("商品: %s, 数量:%s", $hasPurchaseOrderDetail['hasProductData']['product_name'], $hasPurchaseOrderDetail["quantity"]);
         return [$data, $detail];
     }
 
@@ -136,6 +136,7 @@ abstract class CatchModel extends \think\Model
     {
         $map = [
             "id" => $data['hasInventoryBatchData']['id'],
+            "details_id" => $data['id'],
             "inventory_id" => $data['inventory_id'],
             "product_id" => $data['product_id'],
             "product_sku_id" => $data['product_sku_id'],
@@ -149,12 +150,12 @@ abstract class CatchModel extends \think\Model
             "production_date" => $data['hasInventoryBatchData']['production_date'],
             "valid_until" => $data['hasInventoryBatchData']['valid_until'],
             "registration_number" => $data['hasInventoryBatchData']['registration_number'],
-            "number" => ($data['hasInventoryBatchData']['number'] - $data['hasInventoryBatchData']['use_number']),
+            "number" => ($data['hasInventoryBatchData']['number'] - $data['hasInventoryBatchData']['use_number'] + $data['quantity']),
             "put_num" => $data['quantity'],
             "product_name" => $data['hasProductData']['product_name'],
             "product_sku_name" => $data['hasProductSkuData']['sku_code'],
         ];
-        $detail = sprintf("商品: %s, 数量:%s" . PHP_EOL, $data['hasProductData']['product_name'], $data["quantity"]);
+        $detail = sprintf("商品: %s, 数量:%s", $data['hasProductData']['product_name'], $data["quantity"]);
         return [$map, $detail];
     }
 }
