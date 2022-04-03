@@ -29,6 +29,7 @@ class CustomerLicense extends CatchModel
     // 字段
     protected $field = [
         'id', //
+        'customer_info_id',
         'company_name', // 企业名称
         'foreign_company', // 国外注册公司
         'company_type', // 类型

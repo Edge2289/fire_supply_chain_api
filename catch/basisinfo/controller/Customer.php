@@ -98,26 +98,33 @@ class Customer extends CatchController
         if (empty($type)) {
             return CatchResponse::fail("缺失客户类型");
         }
-        if (!$id) {
-            $id = $this->customerInfoModel->insertGetId(['customer_type' => $type]);
-        }
-        $map = $request->param();
-        if ($type == 2) {
-            // 医院内容
-            $map['effective_end_date'] = strtotime($map['effective_end_date']);
-            $map['effective_start_date'] = strtotime($map['effective_start_date']);
-            $map['certification_date'] = strtotime($map['certification_date']);
-            unset($map['id']);
-            $result = $this->customerInfoModel->updateBy($id, $map);
-        } else {
-            // 经销商内容 只要不是医院内容的话 则从suppliers_type 获取变更内容
-            $type = $request->param('suppliers_type') ?? "";
-            if (empty($type)) {
-                return CatchResponse::fail("请求类型缺失");
+        try {
+            $this->customerInfoModel->startTrans();
+            if (!$id) {
+                $id = $this->customerInfoModel->insertGetId(['customer_type' => $type]);
             }
-            $result = $this->{$type}(array_merge($map, [
-                "customer_info_id" => $id
-            ]));
+            $map = $request->param();
+            if ($type == 2) {
+                // 医院内容
+                $map['effective_end_date'] = strtotime($map['effective_end_date']);
+                $map['effective_start_date'] = strtotime($map['effective_start_date']);
+                $map['certification_date'] = strtotime($map['certification_date']);
+                unset($map['id']);
+                $result = $this->customerInfoModel->updateBy($id, $map);
+            } else {
+                // 经销商内容 只要不是医院内容的话 则从suppliers_type 获取变更内容
+                $type = $request->param('suppliers_type') ?? "";
+                if (empty($type)) {
+                    return CatchResponse::fail("请求类型缺失");
+                }
+                $result = $this->{$type}(array_merge($map, [
+                    "customer_info_id" => $id
+                ]));
+            }
+            $this->customerInfoModel->commit();
+        } catch (\Exception $exception) {
+            $this->customerInfoModel->rollback();
+            throw new BusinessException($exception->getMessage());
         }
         if ($result) {
             return CatchResponse::success([
@@ -368,10 +375,6 @@ class Customer extends CatchController
             return $this->businessAttachmentModel->insert($map);
         }
     }
-
-
-
-
 //    ----------------- help --------------------
 
     /**
@@ -403,11 +406,16 @@ class Customer extends CatchController
                 return CatchResponse::fail("数据不存在");
             }
             if ($data['customer_type'] == 1) {
-                $dataLicense = $this->customerLicenseModel->where("customer_info_id", $id)->find()->toArray();
-                $dataLicense['data_maintenance'] = explode(",", $dataLicense['data_maintenance']);
-                $mustNeed = $this->getComponentData($dataLicense['data_maintenance']);
-                $map = array_merge($map, $mustNeed);
-                $businessData['businessLicenseData'] = $dataLicense;
+                $dataLicense = $this->customerLicenseModel->where("customer_info_id", $id)->find();
+                if (empty($dataLicense)) {
+                    $dataLicense['data_maintenance'] = [];
+                    $businessData['businessLicenseData'] = [];
+                } else {
+                    $dataLicense['data_maintenance'] = explode(",", $dataLicense['data_maintenance']);
+                    $mustNeed = $this->getComponentData($dataLicense['data_maintenance']);
+                    $map = array_merge($map, $mustNeed);
+                    $businessData['businessLicenseData'] = $dataLicense;
+                }
                 $this->getBusinessLicenseData($id, $businessData, array_column($map, 'id'));
             } else {
                 $businessData['hospitalData'] = $data;

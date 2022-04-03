@@ -31,7 +31,7 @@ class Customer extends CatchTable
                 HeaderItem::label('客户类型')->prop('customer_type'),
                 HeaderItem::label('公司名称')->prop('company_name'),
                 HeaderItem::label('有效期(结束)')->prop('effective_end_date'),
-                HeaderItem::label('法人')->prop('company_name'),
+                HeaderItem::label('法人')->prop('legal_person'),
                 HeaderItem::label('审核状态')->prop('audit_status_i'),
                 HeaderItem::label('审核信息')->prop('audit_info'),
                 HeaderItem::label('操作')->width(200)->actions([
