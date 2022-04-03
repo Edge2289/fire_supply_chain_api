@@ -27,8 +27,8 @@ class ReadyOutbound extends CatchTable
         return $this->getTable('readyOutbound')
             ->header([
                 HeaderItem::label()->selection(),
-                HeaderItem::label('状态')->prop('status_i'),
-                HeaderItem::label('编号')->width(80)->prop('consignment_outbound_code'),
+                HeaderItem::label('状态')->width(80)->prop('status_i'),
+                HeaderItem::label('编号')->prop('consignment_outbound_code'),
                 HeaderItem::label('仓库')->prop('warehouse_name'),
                 HeaderItem::label('客户')->prop('customer_name'),
                 HeaderItem::label('总额')->prop('amount'),
@@ -38,8 +38,10 @@ class ReadyOutbound extends CatchTable
                 HeaderItem::label('明细')->prop('detail'),
                 HeaderItem::label('审核状态')->prop('audit_status_i'),
                 HeaderItem::label('备注')->prop('remark'),
-                HeaderItem::label('操作')->width(120)->actions([
-                    Actions::normal('修改', 'primary', 'handleUpdates')
+                HeaderItem::label('操作')->width(250)->actions([
+                    Actions::normal('修改', 'primary', 'handleUpdates'),
+                    Actions::normal("转销售", 'primary', "turnSales")->icon('el-icon-bangzhu'),
+                    Actions::normal("入库", 'primary', "stockIn")->icon('el-icon-bangzhu'),
                 ])
             ])
             ->withSearch([
@@ -51,8 +53,6 @@ class ReadyOutbound extends CatchTable
                 Actions::normal("新增", "primary", "handleAdd", "el-icon-plus"),
                 Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu'),
                 Actions::normal("作废", 'primary', "cancel")->icon('el-icon-bangzhu'),
-                Actions::normal("备货转销售", 'primary', "turnSales")->icon('el-icon-bangzhu'),
-                Actions::normal("备货入库", 'primary', "stockIn")->icon('el-icon-bangzhu'),
             ])
             ->selectionChange()
             ->render();

@@ -27,8 +27,8 @@ class ConsignmentOutbound extends CatchTable
         return $this->getTable('consignmentOutbound')
             ->header([
                 HeaderItem::label()->selection(),
-                HeaderItem::label('状态')->prop('status_i'),
-                HeaderItem::label('编号')->width(80)->prop('consignment_outbound_code'),
+                HeaderItem::label('状态')->width(80)->prop('status_i'),
+                HeaderItem::label('编号')->width(130)->prop('consignment_outbound_code'),
                 HeaderItem::label('仓库')->prop('warehouse_name'),
                 HeaderItem::label('客户')->prop('customer_name'),
                 HeaderItem::label('总额')->prop('amount'),
@@ -38,9 +38,9 @@ class ConsignmentOutbound extends CatchTable
                 HeaderItem::label('明细')->prop('detail'),
                 HeaderItem::label('审核状态')->prop('audit_status_i'),
                 HeaderItem::label('备注')->prop('remark'),
-                HeaderItem::label('操作')->width(120)->actions([
+                HeaderItem::label('操作')->width(200)->actions([
                     Actions::normal('修改', 'primary', 'handleUpdates'),
-                    Actions::normal("备货转销售", 'primary', "turnSales")->icon('el-icon-bangzhu'),
+                    Actions::normal("转销售", 'primary', "turnSales")->icon('el-icon-bangzhu'),
                 ])
             ])
             ->withSearch([
