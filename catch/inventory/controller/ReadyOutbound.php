@@ -321,6 +321,9 @@ class ReadyOutbound extends CatchController
                     'inventory_id' => $good['inventory_id'],
                     'inventory_batch_id' => $good['inventory_batch_id'],
                     'quantity' => $good['inventory_quantity_t'],
+                    "product_sku_id" => $good['product_sku_id'],
+                    "product_id" => $good['product_id'],
+                    'warehouse_id' => $params['warehouse_id'],
                     'form_type' => 2
                 ];
                 $inventoryQuantity = bcadd($inventoryQuantity, $good['inventory_quantity_t']);

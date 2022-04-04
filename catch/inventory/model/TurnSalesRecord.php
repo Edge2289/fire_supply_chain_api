@@ -10,7 +10,10 @@
 namespace catchAdmin\inventory\model;
 
 
+use catchAdmin\basisinfo\model\ProductBasicInfo;
+use catchAdmin\basisinfo\model\ProductSku;
 use catcher\base\CatchModel;
+use think\model\relation\HasOne;
 
 /**
  * Class TurnSalesRecord
@@ -23,5 +26,20 @@ class TurnSalesRecord extends CatchModel
     protected $name = 'turn_sales_record';
 
     protected $pk = 'id';
+
+    public function hasProductData(): HasOne
+    {
+        return $this->hasOne(ProductBasicInfo::class, "id", "product_id");
+    }
+
+    public function hasProductSkuData(): HasOne
+    {
+        return $this->hasOne(ProductSku::class, "id", "product_sku_id");
+    }
+
+    public function hasInventoryBatch(): HasOne
+    {
+        return $this->hasOne(InventoryBatch::class, "id", "inventory_batch_id");
+    }
 
 }

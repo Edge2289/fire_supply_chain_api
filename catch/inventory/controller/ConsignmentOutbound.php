@@ -320,7 +320,10 @@ class ConsignmentOutbound extends CatchController
                     'form_details_id' => $good['details_id'],
                     'inventory_id' => $good['inventory_id'],
                     'inventory_batch_id' => $good['inventory_batch_id'],
+                    "product_sku_id" => $good['product_sku_id'],
+                    "product_id" => $good['product_id'],
                     'quantity' => $good['inventory_quantity_t'],
+                    'warehouse_id' => $params['warehouse_id'],
                     'form_type' => 1
                 ];
                 $inventoryQuantity = bcadd($inventoryQuantity, $good['inventory_quantity_t']);

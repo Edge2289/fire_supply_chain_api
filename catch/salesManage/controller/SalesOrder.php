@@ -344,13 +344,42 @@ class SalesOrder extends CatchController
             }
             $goodsDetails[] = $details;
         }
-        return CatchResponse::success([
+        return CatchResponse::success($this->fillTurnSalesData([
             'sales_order_id' => $data['id'],
             'sales_type' => $data['sales_type'],
             'customer_info_id' => $data['customer_info_id'],
             'company_id' => $data['company_id'],
+            'warehouse_id' => 0,
             'goodsDetails' => $goodsDetails
-        ]);
+        ]));
+    }
+
+    protected function fillTurnSalesData(array $data): array
+    {
+        if (!in_array($data['sales_type'], [2, 3])) {
+            return $data;
+        }
+        $selectedNumber = 0;
+        foreach ($data['goodsDetails'] as &$goodsDetail) {
+            $iMap = [];
+            $turnSalesRecordData = app(TurnSalesRecord::class)->with([
+                'hasInventoryBatch', 'hasProductData', 'hasProductSkuData'
+            ])->where("product_sku_id", $goodsDetail['product_sku_id'])
+                ->where('sales_order_id', $data['sales_order_id'])->select();
+            foreach ($turnSalesRecordData as $datum) {
+                $data['warehouse_id'] = $datum['warehouse_id'];
+                $iMap = $datum['hasInventoryBatch'];
+                $iMap["product_name"] = $datum["hasProductData"]["product_name"] ?? '';
+                $iMap["product_sku_name"] = $datum["hasProductSkuData"]["sku_code"] ?? '';
+                $iMap['out_number'] = $datum['quantity'];
+                $selectedNumber += $datum['quantity'];
+            }
+            $goodsDetail['selectOutboundItem'] = $iMap;
+            $goodsDetail['selectedNumber'] = $selectedNumber;
+            $goodsDetail['selectedBatchNumber'] = count($turnSalesRecordData);
+            $goodsDetail['outbound_quantity'] = 0; // 出库数量
+        }
+        return $data;
     }
 
     /**
@@ -371,9 +400,6 @@ class SalesOrder extends CatchController
             $params['pageSize'] = 10;
         }
         $queryModel = $this->salesOrderModel;
-//        if (isset($params['warehouse_id']) && !empty($params['warehouse_id'])) {
-//            $queryModel = $this->salesOrderModel->where("warehouse_id", $params['supplier_id']);
-//        }
         $data = $queryModel->where("status", 0)
             ->with([
                 "hasSupplierLicense" => function ($query) {
