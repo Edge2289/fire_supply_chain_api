@@ -13,6 +13,7 @@ namespace catchAdmin\inventory\controller;
 use app\Request;
 use catchAdmin\inventory\model\ConsignmentOutboundDetails;
 use catchAdmin\inventory\model\InventoryBatch;
+use catchAdmin\inventory\model\TurnSalesRecord;
 use catchAdmin\salesManage\controller\SalesOrder;
 use catcher\base\CatchController;
 use catchAdmin\inventory\model\ConsignmentOutbound as ConsignmentOutboundModel;
@@ -273,6 +274,10 @@ class ConsignmentOutbound extends CatchController
         }
         $this->consignmentOutboundModel->startTrans();
         try {
+            $readyData = $this->consignmentOutboundModel->getFindByKey($params['id']);
+            if (empty($readyData)) {
+                throw new BusinessException("不存在当前订单");
+            }
             $salesOrderMap = [
                 "sales_time" => date("Y-m-d"),
                 "salesman_id" => $params['salesman_id'],
@@ -284,37 +289,58 @@ class ConsignmentOutbound extends CatchController
             ];
             $goodsMap = [];
             $inventoryQuantity = 0;
+            $turnSalesData = [];
             foreach ($params['goods'] as $good) {
-                if (!isset($good['inventory_quantity']) && empty($good['inventory_quantity'])) {
+                if (!isset($good['inventory_quantity_t']) && empty($good['inventory_quantity_t'])) {
                     continue;
                 }
-                $goodsMap[] = [
-                    "id" => $good['product_sku_id'],
-                    "product_id" => $good['product_id'],
-                    "product_code" => $good['product_code'],
-                    "sku_code" => $good['sku_code'],
-                    "item_number" => $good['item_number'],
-                    "unit_price" => $good['unit_price'],
-                    "tax_rate" => $good['tax_rate'],
-                    "product_name" => $good['product_name'],
-                    "quantity" => $good['inventory_quantity'],
-                    "note" => "",
-                    "total_price" => $good['unit_price'],
+                $cData = $this->consignmentOutboundDetails->where("id", $good['details_id'])->find();
+                if (($cData['quantity'] - $cData['inventory_quantity']) < $good['inventory_quantity_t']) {
+                    throw new BusinessException("存在商品不够数量转销售");
+                }
+                if (!isset($goodsMap[$good['product_sku_id']])) {
+                    $goodsMap[$good['product_sku_id']] = [
+                        "id" => $good['product_sku_id'],
+                        "product_id" => $good['product_id'],
+                        "product_code" => $good['product_code'],
+                        "sku_code" => $good['sku_code'],
+                        "item_number" => $good['item_number'],
+                        "unit_price" => $good['unit_price'],
+                        "tax_rate" => $good['tax_rate'],
+                        "product_name" => $good['product_name'],
+                        "quantity" => $good['inventory_quantity_t'],
+                        "note" => "",
+                        "total_price" => $good['unit_price'],
+                    ];
+                } else {
+                    $goodsMap[$good['product_sku_id']]['quantity'] += $good['inventory_quantity_t'];
+                }
+                $turnSalesData[] = [
+                    'form_id' => $params['id'],
+                    'form_details_id' => $good['details_id'],
+                    'inventory_id' => $good['inventory_id'],
+                    'inventory_batch_id' => $good['inventory_batch_id'],
+                    'quantity' => $good['inventory_quantity_t'],
+                    'form_type' => 1
                 ];
-                $inventoryQuantity = bcadd($inventoryQuantity, $good['inventory_quantity']);
-                $this->consignmentOutboundDetails->updateBy($good['details_id'], [
-                    'inventory_quantity' => $good['inventory_quantity']
-                ]);
+                $inventoryQuantity = bcadd($inventoryQuantity, $good['inventory_quantity_t']);
+                $this->consignmentOutboundDetails->where("id", $good['details_id'])->increment("inventory_quantity", $good['inventory_quantity_t']);
             }
-            if (empty($goodsMap)) {
+            if (empty($goodsMap) || $inventoryQuantity == 0) {
                 throw new BusinessException("没有出库的数据");
             }
-            $this->consignmentOutboundModel->updateBy($params['id'], [
-                'inventory_quantity' => $inventoryQuantity
-            ]);
-            $salesOrderMap['goods_details'] = $goodsMap;
+            $this->consignmentOutboundModel->where("id", $params['id'])->increment('inventory_quantity', $inventoryQuantity);
+            $salesOrderMap['goods_details'] = array_values($goodsMap);
             // 添加销售订单
-            app(SalesOrder::class)->insert($salesOrderMap);
+            $salesOrderData = app(SalesOrder::class)->insert($salesOrderMap);
+            if (isset($salesOrderData['data']['id']) && !empty($salesOrderData['data']['id'])) {
+                foreach ($turnSalesData as &$turnSalesDatum) {
+                    $turnSalesDatum['sales_order_id'] = $salesOrderData['data']['id'];
+                }
+                app(TurnSalesRecord::class)->insertAll($turnSalesData);
+            } else {
+                throw new BusinessException("保存销售订单失败");
+            }
             $this->consignmentOutboundModel->commit();
         } catch (Exception $exception) {
             $this->consignmentOutboundModel->rollback();
@@ -322,5 +348,4 @@ class ConsignmentOutbound extends CatchController
         }
         return CatchResponse::success();
     }
-
 }

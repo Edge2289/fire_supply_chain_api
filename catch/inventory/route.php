@@ -30,11 +30,12 @@ $router->group(function () use ($router) {
         $router->post("readyOutbound/audit/<id>", '\catchAdmin\inventory\controller\ReadyOutbound@audit'); // 审核
         $router->post("readyOutbound/invalid/<id>", '\catchAdmin\inventory\controller\ReadyOutbound@invalid'); // 作废
         $router->post("readyOutbound/turnSales/<id>", '\catchAdmin\inventory\controller\ReadyOutbound@turnSales'); // 转销售
+        $router->post("readyOutbound/stockIn/<id>", '\catchAdmin\inventory\controller\ReadyOutbound@stockIn'); // 入库
     });
 
 })->middleware('auth');
 
 $router->group(function () use ($router) {
     $router->get("inventoryBatch", '\catchAdmin\inventory\controller\Inventory@inventoryBatchList');
-    $router->get("warehouseItem", '\catchAdmin\inventory\controller\Warehouse@tableGetWarehouse');
+    $router->get("warehouseItem", '\catchAdmin\inventory\controller\Warehouse@getWarehouseItem');
 });

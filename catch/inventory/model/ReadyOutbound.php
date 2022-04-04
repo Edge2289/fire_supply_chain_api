@@ -86,7 +86,7 @@ class ReadyOutbound extends CatchModel
     {
         $data = $this->catchSearch()
             ->with([
-                "hasWarehouse", "hasSupplier", "hasFactory", "hasCustomerInfo",
+                "hasWarehouse", "hasFactory", "hasCustomerInfo",
                 'manyDetails', 'manyDetails.hasInventoryBatchData', "manyDetails.hasProductData", "manyDetails.hasProductSkuData",
             ])
             ->paginate();
@@ -94,18 +94,17 @@ class ReadyOutbound extends CatchModel
             $details = [];
             $goodsDetails = [];
             $datum["warehouse_name"] = $datum["hasWarehouse"]["warehouse_name"] ?? '';
-            $datum["supplier_name"] = $datum["hasSupplier"]["company_name"] ?? '';
             $datum["factory_name"] = $datum["hasFactory"]["company_name"] ?? '';
             $datum['customer_name'] = $datum["hasCustomerInfo"]["company_name"];
 
             foreach ($datum['manyDetails'] as $manyDetail) {
-                list($dataMap, $detail) = $this->assemblyBatchItem($manyDetail);
+                list($dataMap, $detail) = $this->assemblyBatchItem($manyDetail, ['resold_quantity', 'inventory_quantity']);
                 $goodsDetails[] = $dataMap;
                 $details[] = $detail;
             }
             $datum['goods'] = $goodsDetails;
             $datum['detail'] = implode(PHP_EOL, $details);
-            unset($datum["hasWarehouse"], $datum["hasSupplier"], $datum["hasCustomerInfo"],
+            unset($datum["hasWarehouse"], $datum["hasCustomerInfo"],
                 $datum["hasFactory"], $datum["manyDetails"]);
         }
         return $data;

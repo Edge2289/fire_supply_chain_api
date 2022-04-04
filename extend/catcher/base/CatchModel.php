@@ -132,12 +132,13 @@ abstract class CatchModel extends \think\Model
      * @return array
      * @author 1131191695@qq.com
      */
-    protected function assemblyBatchItem($data)
+    protected function assemblyBatchItem($data, $addFormData = [])
     {
         $map = [
             "id" => $data['hasInventoryBatchData']['id'],
             "details_id" => $data['id'],
             "inventory_id" => $data['inventory_id'],
+            "inventory_batch_id" => $data['inventory_batch_id'],
             "product_id" => $data['product_id'],
             "product_sku_id" => $data['product_sku_id'],
             "product_code" => $data['product_code'],
@@ -155,6 +156,11 @@ abstract class CatchModel extends \think\Model
             "product_name" => $data['hasProductData']['product_name'],
             "product_sku_name" => $data['hasProductSkuData']['sku_code'],
         ];
+        foreach ($addFormData as $key) {
+            if (isset($data[$key])) {
+                $map[$key] = $data[$key];
+            }
+        }
         $detail = sprintf("商品: %s, 数量:%s", $data['hasProductData']['product_name'], $data["quantity"]);
         return [$map, $detail];
     }

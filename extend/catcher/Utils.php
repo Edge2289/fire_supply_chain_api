@@ -10,15 +10,15 @@ use think\helper\Str;
 
 class Utils
 {
-  /**
-   * 字符串转换成数组
-   *
-   * @time 2019年12月25日
-   * @param string $string
-   * @param string $dep
-   * @return array
-   */
-    public static function stringToArrayBy(string  $string, $dep = ','): array
+    /**
+     * 字符串转换成数组
+     *
+     * @time 2019年12月25日
+     * @param string $string
+     * @param string $dep
+     * @return array
+     */
+    public static function stringToArrayBy(string $string, $dep = ','): array
     {
         if (Str::contains($string, $dep)) {
             return explode($dep, trim($string, $dep));
@@ -27,28 +27,28 @@ class Utils
         return [$string];
     }
 
-  /**
-   * 搜索参数
-   *
-   * @time 2020年01月13日
-   * @param array $params
-   * @param array $range
-   * @return array
-   */
+    /**
+     * 搜索参数
+     *
+     * @time 2020年01月13日
+     * @param array $params
+     * @param array $range
+     * @return array
+     */
     public static function filterSearchParams(array $params, array $range = []): array
     {
         $search = [];
 
         if (!empty($range)) {
-          foreach ($range as $field => $rangeField) {
-            if (count($rangeField) === 1) {
-              $search[$field] = [$params[$rangeField[0]]];
-              unset($params[$rangeField[0]]);
-            } else {
-              $search[$field] = [$params[$rangeField[0]], $params[$rangeField[1]]];
-              unset($params[$rangeField[0]], $params[$rangeField[1]]);
+            foreach ($range as $field => $rangeField) {
+                if (count($rangeField) === 1) {
+                    $search[$field] = [$params[$rangeField[0]]];
+                    unset($params[$rangeField[0]]);
+                } else {
+                    $search[$field] = [$params[$rangeField[0]], $params[$rangeField[1]]];
+                    unset($params[$rangeField[0]], $params[$rangeField[1]]);
+                }
             }
-          }
         }
 
         return array_merge($search, $params);
@@ -72,26 +72,31 @@ class Utils
             }
 
             $children = $value['children'] ?? false;
-            if($children) {
+            if ($children) {
                 unset($value['children']);
             }
 
             // 首先查询是否存在
             $menu = Db::name($table)
-                        ->where('permission_name', $value['permission_name'])
-                        ->where('module', $value['module'])
-                        ->where('permission_mark', $value['permission_mark'])
-                        ->find();
+                ->where('permission_name', $value['permission_name'])
+                ->where('module', $value['module'])
+                ->where('permission_mark', $value['permission_mark'])
+                ->find();
 
             if (!empty($menu)) {
                 $id = $menu['id'];
             } else {
+                foreach (['deleted_at', 'created_at', 'updated_at'] as $key) {
+                    if (is_string($value[$key])) {
+                        $value[$key] = strtotime($value[$key]);
+                    }
+                }
                 $id = Db::name($table)->insertGetId($value);
             }
             if ($children) {
                 foreach ($children as &$v) {
                     $v[$pid] = $id;
-                    $v['level'] = !$value[$pid] ? $id : $value['level'] . '-' .$id;
+                    $v['level'] = !$value[$pid] ? $id : $value['level'] . '-' . $id;
                 }
                 self::importTreeData($children, $table, $pid);
             }
@@ -135,7 +140,7 @@ class Utils
 
         $docComment = (new \ReflectionClass($controller))->getMethod($action)->getDocComment();
 
-        if (! $docComment) {
+        if (!$docComment) {
             return false;
         }
 
@@ -176,7 +181,7 @@ class Utils
     public static function tableWithPrefix(string $table): string
     {
         return Str::contains($table, self::tablePrefix()) ?
-                    $table : self::tablePrefix() . $table;
+            $table : self::tablePrefix() . $table;
     }
 
     /**
@@ -211,7 +216,7 @@ class Utils
      */
     public static function publicPath(string $path = ''): string
     {
-        return root_path($path ? 'public/'. $path : 'public');
+        return root_path($path ? 'public/' . $path : 'public');
     }
 
 
@@ -286,7 +291,7 @@ class Utils
                 $default = Utils::config('site.upload');
                 // 重新分配配置
                 app()->config->set([
-                    'default' =>  $default ? : 'local',
+                    'default' => $default ?: 'local',
                     'disks' => $disk,
                 ], 'filesystem');
             }
@@ -302,7 +307,7 @@ class Utils
      * @param int $ttl
      * @param string $store
      * @return mixed
-     *@throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public static function cache(string $key, \Closure $callable, int $ttl = 0, string $store = 'redis')
     {

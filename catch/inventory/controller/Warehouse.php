@@ -105,4 +105,9 @@ class Warehouse extends CatchController
     {
         return $this->warehouse->tableGetWarehouse();
     }
+
+    public function getWarehouseItem()
+    {
+        return CatchResponse::success($this->tableGetWarehouse());
+    }
 }

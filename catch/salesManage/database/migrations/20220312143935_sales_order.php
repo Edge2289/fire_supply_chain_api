@@ -18,7 +18,7 @@ class SalesOrder extends Migrator
             ->addColumn('num', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '商品总数量',])
             ->addColumn('put_num', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '已发货数量',])
             ->addColumn('amount', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'signed' => true, 'comment' => '价格总额',])
-            ->addColumn('sales_type', 'integer', ['limit' => MysqlAdapter::INT_TINY, 'null' => false, 'default' => 1, 'signed' => true, 'comment' => '销售方式{1:正常销售,2:备案转销售}',])
+            ->addColumn('sales_type', 'integer', ['limit' => MysqlAdapter::INT_TINY, 'null' => false, 'default' => 1, 'signed' => true, 'comment' => '销售方式{1:正常销售,2:备案转销售,3:寄售转销售,4:经销商提交}',])
             ->addColumn('status', 'integer', ['limit' => MysqlAdapter::INT_TINY, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '状态{0:未完成,1:已完成,2:作废}',])
             ->addColumn('settlement_type', 'integer', ['limit' => MysqlAdapter::INT_TINY, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '结算类型{0:现结,1:月结}',])
             ->addColumn('settlement_status', 'integer', ['limit' => MysqlAdapter::INT_TINY, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '结算状态{0:未结,1:已结}',])

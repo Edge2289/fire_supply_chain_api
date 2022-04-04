@@ -11,6 +11,11 @@ namespace catchAdmin\salesManage\controller;
 
 
 use catchAdmin\basisinfo\model\SupplierLicense;
+use catchAdmin\inventory\model\ConsignmentOutbound;
+use catchAdmin\inventory\model\ConsignmentOutboundDetails;
+use catchAdmin\inventory\model\ReadyOutbound;
+use catchAdmin\inventory\model\ReadyOutboundDetails;
+use catchAdmin\inventory\model\TurnSalesRecord;
 use catchAdmin\salesManage\model\SalesOrderDetailsModel;
 use catchAdmin\salesManage\model\SalesOrderModel;
 use catcher\base\CatchController;
@@ -140,7 +145,7 @@ class SalesOrder extends CatchController
         } catch (\Exception $exception) {
             // 回滚事务
             $this->salesOrderModel->rollback();
-            return CatchResponse::fail($exception->getMessage());
+            throw new BusinessException($exception->getMessage());
         }
         return CatchResponse::success(['id' => $id]);
     }
@@ -177,38 +182,6 @@ class SalesOrder extends CatchController
         return CatchResponse::fail("操作失败");
     }
 
-    // 出库 添加相对应的出库单
-    public function outbound(Request $request)
-    {
-        $data = $request->param();
-        try {
-            $this->salesOrderModel->startTrans();
-            $salesOrderData = $this->salesOrderModel->with([
-                "hasSalesOrderDetails"
-            ])->where("id", $data["id"])->lock(true)->find();
-
-            if ($salesOrderData['settlement_type'] == 0 && $salesOrderData["settlement_status"]) {
-                throw new BusinessException("销售订单结算类型为现结，结算状态为未结");
-            }
-
-            if ($salesOrderData['audit_status'] != 1) {
-                throw new BusinessException("销售订单未审核或者审核失败");
-            }
-
-            if ($salesOrderData['status'] != 0) {
-                throw new BusinessException("销售订单已完成或者已作废");
-            }
-
-            if (empty($salesOrderData["hasSalesOrderDetails"])) {
-                throw new BusinessException("销售订单商品数据为空");
-            }
-
-            $this->salesOrderModel->commit();
-        } catch (\Exception $exception) {
-            $this->salesOrderModel->rollback();
-        }
-    }
-
     /**
      * 作废
      *
@@ -231,6 +204,25 @@ class SalesOrder extends CatchController
             $this->salesOrderModel->updateBy($data['id'], [
                 'status' => 2
             ]);
+            // 恢复转销售来源的订单转销售数量
+            if (in_array($data['sales_type'], [1, 2])) {
+                // 获取转销售记录表
+                if ($data['sales_type'] == 1) {
+                    // 寄售出库
+                    $formModel = app(ConsignmentOutbound::class);
+                    $formDetailsModel = app(ConsignmentOutboundDetails::class);
+                } else {
+                    // 备货出库
+                    $formModel = app(ReadyOutbound::class);
+                    $formDetailsModel = app(ReadyOutboundDetails::class);
+                }
+                $turnSalesRecordData = app(TurnSalesRecord::class)->where('sales_order_id', $data['id'])->select();
+                foreach ($turnSalesRecordData as $turnSalesRecordDatum) {
+                    // 减少对应的订单转销售数
+                    $formModel->where("id", $turnSalesRecordDatum['form_id'])->decrement("inventory_quantity", $turnSalesRecordDatum['quantity']);
+                    $formDetailsModel->where("id", $turnSalesRecordDatum['form_details_id'])->decrement("inventory_quantity", $turnSalesRecordDatum['quantity']);
+                }
+            }
             $this->salesOrderModel->commit();
         } catch (\Exception $exception) {
             $this->salesOrderModel->rollback();
@@ -354,6 +346,7 @@ class SalesOrder extends CatchController
         }
         return CatchResponse::success([
             'sales_order_id' => $data['id'],
+            'sales_type' => $data['sales_type'],
             'customer_info_id' => $data['customer_info_id'],
             'company_id' => $data['company_id'],
             'goodsDetails' => $goodsDetails

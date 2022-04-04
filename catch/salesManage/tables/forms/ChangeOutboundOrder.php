@@ -42,7 +42,7 @@ class ChangeOutboundOrder extends Form
     public function fields(): array
     {
         return [
-            self::date("outbound_time", "销售日期")->col(12)->required(),
+            self::date("outbound_time", "出库日期")->col(12)->required(),
             self::select("outbound_man_id", "出库人员")
                 ->options(
                 // 获取自身公司下的员工
