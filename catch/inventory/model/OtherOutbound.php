@@ -10,11 +10,27 @@
 namespace catchAdmin\inventory\model;
 
 
+use think\model\relation\HasMany;
+
 /**
  * Class OtherOutbound
  * @package catchAdmin\inventory\model
  */
 class OtherOutbound
 {
+    protected $connection = 'business';
+
+    protected $name = 'other_outbound';
+
+    protected $pk = 'id';
+
+    protected $fieldToTime = ['outbound_time'];
+
+    protected $fieldToString = ['salesman_id', 'customer_info_id', 'warehouse_id'];
+
+    public function hasDetails(): HasMany
+    {
+        return $this->hasMany(OtherOutboundDetails::class, 'other_outbound_id', 'id');
+    }
 
 }
