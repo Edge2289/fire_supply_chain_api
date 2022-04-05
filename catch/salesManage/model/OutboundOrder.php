@@ -30,15 +30,6 @@ class OutboundOrder extends CatchModel
 
     protected $fieldToTime = ['outbound_time'];
 
-    public function __construct(array $data = [])
-    {
-        parent::__construct($data);
-        $this->maker(function ($result) {
-//            dd($result->isEmpty());
-//            $result = $this->fieldToFormat($result->toArray());
-        });
-    }
-
     /**
      * 关联出库订单详情
      * @return HasMany
@@ -95,8 +86,8 @@ class OutboundOrder extends CatchModel
                 $goodsDetails[] = $dataMap;
                 $details[] = $detail;
             }
-            $datum['supplier_name'] = $datum["hasSupplierLicense"]["company_name"];
-            $datum['customer_name'] = $datum["hasCustomerInfo"]["company_name"];
+            $datum['supplier_name'] = $datum["hasSupplierLicense"]["company_name"] ?? "";
+            $datum['customer_name'] = $datum["hasCustomerInfo"]["company_name"] ?? "";
 
             $datum['goods_details'] = $goodsDetails;
             $datum['detail'] = implode(PHP_EOL, $details);

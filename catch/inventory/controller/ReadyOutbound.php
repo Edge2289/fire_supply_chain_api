@@ -335,7 +335,7 @@ class ReadyOutbound extends CatchController
             $this->readyOutboundModel->where("id", $params['id'])->increment('inventory_quantity', $inventoryQuantity);
             $salesOrderMap['goods_details'] = array_values($goodsMap);
             // 添加销售订单
-            $salesOrderData = app(SalesOrder::class)->insert($salesOrderMap);
+            $salesOrderData = app(SalesOrder::class)->insert($salesOrderMap)->getData();
             if (isset($salesOrderData['data']['id']) && !empty($salesOrderData['data']['id'])) {
                 foreach ($turnSalesData as &$turnSalesDatum) {
                     $turnSalesDatum['sales_order_id'] = $salesOrderData['data']['id'];

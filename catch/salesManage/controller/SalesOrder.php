@@ -205,9 +205,9 @@ class SalesOrder extends CatchController
                 'status' => 2
             ]);
             // 恢复转销售来源的订单转销售数量
-            if (in_array($data['sales_type'], [1, 2])) {
+            if (in_array($data['sales_type'], [2, 3])) {
                 // 获取转销售记录表
-                if ($data['sales_type'] == 1) {
+                if ($data['sales_type'] == 2) {
                     // 寄售出库
                     $formModel = app(ConsignmentOutbound::class);
                     $formDetailsModel = app(ConsignmentOutboundDetails::class);
@@ -307,7 +307,7 @@ class SalesOrder extends CatchController
                 ]);
             })->find();
         if (empty($data)) {
-            throw new BusinessException("当前订单无法出库");
+            throw new BusinessException("订单条件不满足，无法出库");
         }
         $goodsDetails = [];
         // 获取出库订单控制器
@@ -366,12 +366,12 @@ class SalesOrder extends CatchController
                 'hasInventoryBatch', 'hasProductData', 'hasProductSkuData'
             ])->where("product_sku_id", $goodsDetail['product_sku_id'])
                 ->where('sales_order_id', $data['sales_order_id'])->select();
-            foreach ($turnSalesRecordData as $datum) {
+            foreach ($turnSalesRecordData as $key => $datum) {
                 $data['warehouse_id'] = $datum['warehouse_id'];
-                $iMap = $datum['hasInventoryBatch'];
-                $iMap["product_name"] = $datum["hasProductData"]["product_name"] ?? '';
-                $iMap["product_sku_name"] = $datum["hasProductSkuData"]["sku_code"] ?? '';
-                $iMap['out_number'] = $datum['quantity'];
+                $iMap[$key] = $datum['hasInventoryBatch'];
+                $iMap[$key]["product_name"] = $datum["hasProductData"]["product_name"] ?? '';
+                $iMap[$key]["product_sku_name"] = $datum["hasProductSkuData"]["sku_code"] ?? '';
+                $iMap[$key]['out_number'] = $datum['quantity'];
                 $selectedNumber += $datum['quantity'];
             }
             $goodsDetail['selectOutboundItem'] = $iMap;

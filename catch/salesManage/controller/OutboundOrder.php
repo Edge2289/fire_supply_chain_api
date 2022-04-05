@@ -100,6 +100,16 @@ class OutboundOrder extends CatchController
                 $this->restoreOutBoundOrder($params['id']);
             }
             $salesOrderData = $this->salesOrderModel->getFindByKey($params['sales_order_id']);
+            if ($salesOrderData['status'] != 1) {
+                throw new BusinessException("订单不是未完成，无法出库");
+            }
+            if ($salesOrderData['audit_status'] != 2) {
+                throw new BusinessException("订单未审核, 无法出库");
+            }
+            if ($salesOrderData['settlement_type'] == 0 && $salesOrderData['settlement_status'] == 0) {
+                // 结算类型为现结，但是未结算
+                throw new BusinessException("订单结算类型为现结，但未结算");
+            }
             if ($salesOrderData['customer_info_id'] != $params['customer_info_id']) {
                 throw new BusinessException("订单客户归属有误");
             }
