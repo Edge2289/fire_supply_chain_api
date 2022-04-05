@@ -402,7 +402,7 @@ class SalesOrder extends CatchController
         $queryModel = $this->salesOrderModel;
         $data = $queryModel->where("status", 0)
             ->with([
-                "hasSupplierLicense" => function ($query) {
+                "hasCustomerInfo" => function ($query) {
                     $query->field(["id", "company_name"]);
                 }
             ])

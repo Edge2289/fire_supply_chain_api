@@ -21,9 +21,7 @@ class ReceivableSheet extends CatchModel
     // 这个根据登陆的账号去获取链接
     protected $connection = 'business';
 
-    protected $name = 'receivable_sheet';
+    protected $name = 'receivable_sheet_many_sales_order';
 
     protected $pk = 'id';
-
-    protected $fieldToTime = ['receivable_time'];
 }

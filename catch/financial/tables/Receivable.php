@@ -49,7 +49,8 @@ class Receivable extends CatchTable
             ])
             ->withApiRoute('receivable')
             ->withActions([
-                Actions::normal("新增", "primary", "handleAdd", "el-icon-plus")
+                Actions::normal("新增", "primary", "handleAdd", "el-icon-plus"),
+                Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu'),
             ])
             ->selectionChange()
             ->render();

@@ -33,6 +33,6 @@ $router->group(function () use ($router) {
 $router->group(function () use ($router) {
     $router->get("salesOrder/outboundOrder", "catchAdmin\salesManage\controller\SalesOrder@outboundOrder");
     $router->get("receivable/outboundOrder", "catchAdmin\salesManage\controller\OutboundOrder@getAlertOrder");
-    $router->get("receivable/salesOrder", "catchAdmin\salesManage\controller\salesOrder@getAlertOrder");
+    $router->get("receivable/salesOrder", "catchAdmin\salesManage\controller\SalesOrder@getAlertOrder");
 });
 

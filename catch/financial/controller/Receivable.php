@@ -67,7 +67,7 @@ class Receivable extends CatchController
                 // 存在id
                 $id = $params['id'];
                 // 删除旧的数据
-                $this->receivableSheet->destroy(['payment_sheet_id' => $id]);
+                $this->receivableSheet->destroy(['receivable_sheet_id' => $id]);
                 $this->receivableModel->updateBy($id, $params);
             } else {
                 $params['receivable_code'] = getCode("RS");
@@ -75,6 +75,10 @@ class Receivable extends CatchController
             }
             $map = [];
             foreach ($salesOrder as $value) {
+                $data = $this->receivableSheet->where("sales_order_id", $value['id'])->find();
+                if (!empty($data)) {
+                    throw new BusinessException("存在部分销售订单已填写回款单");
+                }
                 $map[] = [
                     "receivable_sheet_id" => $id,
                     "sales_order_id" => $value['id'],
@@ -102,15 +106,15 @@ class Receivable extends CatchController
     public function audit(Request $request)
     {
         $params = $request->param();
-        $data = $this->receivableModel->findBy($params['id']);
-        if (!$data) {
-            return CatchResponse::fail("数据不存在");
-        }
-        if ($data['audit_status'] == 1) {
-            return CatchResponse::fail("回款单已审核,无法修改");
-        }
         $this->receivableModel->startTrans();
         try {
+            $data = $this->receivableModel->getFindByKey($params['id']);
+            if (!$data) {
+                return CatchResponse::fail("数据不存在");
+            }
+            if ($data['audit_status'] == 1) {
+                return CatchResponse::fail("回款单已审核,无法修改");
+            }
             $this->receivableModel->updateBy($params['id'], $params);
             // 修改采购订单状态
             $ids = [];
@@ -130,5 +134,33 @@ class Receivable extends CatchController
             $this->receivableModel->rollback();
             return CatchResponse::fail();
         }
+    }
+
+    /**
+     * 删除回款单
+     * @param Request $request
+     * @return \think\response\Json
+     * @author 1131191695@qq.com
+     */
+    public function delete(Request $request)
+    {
+        $id = $request->param("id");
+        try {
+            $data = $this->receivableModel->getFindByKey($id);
+            if (!$data) {
+                return CatchResponse::fail("数据不存在");
+            }
+            if ($data['audit_status'] == 1) {
+                return CatchResponse::fail("回款单已审核,无法修改");
+            }
+            $this->receivableModel->startTrans();
+            $this->receivableModel->deleteBy($id);
+            $this->receivableSheet->destroy(['receivable_sheet_id' => $id]);
+            $this->receivableModel->commit();
+        } catch (\Exception $exception) {
+            $this->receivableModel->rollback();
+            throw new BusinessException($exception->getMessage());
+        }
+        return CatchResponse::success();
     }
 }

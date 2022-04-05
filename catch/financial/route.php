@@ -17,7 +17,7 @@ $router->group(function () use ($router) {
         $router->post("receivable", '\catchAdmin\financial\controller\Receivable@save'); // 提交
         $router->put("receivable", '\catchAdmin\financial\controller\Receivable@save'); // 更新
         $router->delete("receivable", '\catchAdmin\financial\controller\Receivable@delete'); // 删除
-        $router->post("receivable/audit/<id>", '\catchAdmin\financial\controller\Invoice@save'); // 审核
+        $router->post("receivable/audit/<id>", '\catchAdmin\financial\controller\Receivable@audit'); // 审核
     });
 
     $router->group(function () use ($router) {
@@ -26,7 +26,7 @@ $router->group(function () use ($router) {
         $router->post("payment", '\catchAdmin\financial\controller\Payment@save'); // 提交
         $router->put("payment", '\catchAdmin\financial\controller\Payment@save'); // 更新
         $router->delete("payment", '\catchAdmin\financial\controller\Payment@delete'); // 删除
-        $router->post("payment/audit/<id>", '\catchAdmin\financial\controller\Invoice@save'); // 审核
+        $router->post("payment/audit/<id>", '\catchAdmin\financial\controller\Invoice@audit'); // 审核
     });
 
     $router->group(function () use ($router) {
@@ -35,7 +35,7 @@ $router->group(function () use ($router) {
         $router->post("invoice", '\catchAdmin\financial\controller\Invoice@save'); // 提交
         $router->put("invoice", '\catchAdmin\financial\controller\Invoice@save'); // 更新
         $router->delete("invoice", '\catchAdmin\financial\controller\Invoice@delete'); // 删除
-        $router->post("invoice/audit/<id>", '\catchAdmin\financial\controller\Invoice@save'); // 审核
+        $router->post("invoice/audit/<id>", '\catchAdmin\financial\controller\Invoice@audit'); // 审核
     });
 })->middleware('auth');
 
