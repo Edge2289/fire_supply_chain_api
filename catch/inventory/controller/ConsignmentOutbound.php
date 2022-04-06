@@ -84,12 +84,6 @@ class ConsignmentOutbound extends CatchController
             if (isset($data['id']) && !empty($data['id'])) {
                 // 存在数据
                 $consignmentOutboundData = $this->clearOldData($data['id']);
-                if ($consignmentOutboundData['audit_status'] != 0) {
-                    throw new BusinessException("订单已审核，无法修改");
-                }
-                if ($consignmentOutboundData['status'] != 0) {
-                    throw new BusinessException("订单状态不为未完成，无法修改");
-                }
                 $id = $data['id'];
                 $consignmentOutboundData->updateBy($id, $data);
             } else {
@@ -162,7 +156,20 @@ class ConsignmentOutbound extends CatchController
      */
     private function clearOldData($id, $isClear = true)
     {
-        $consignmentOutboundData = $this->consignmentOutboundModel->getFindByKey($id);
+        $model = $this->consignmentOutboundModel->getFindByKey($id);
+        if (empty($model)) {
+            throw new BusinessException("不存在当前数据");
+        }
+        // 审核成功不可以修改
+        if ($model['audit_status'] == 1) {
+            throw new BusinessException("订单已审核,无法修改");
+        }
+        if ($model['status'] == 1) {
+            throw new BusinessException("订单已完成,无法修改");
+        }
+        if ($model['status'] == 2) {
+            throw new BusinessException("订单已作废,无法修改");
+        }
         $details = $this->consignmentOutboundDetails->where('consignment_outbound_id', $id)->select();
         foreach ($details as $detail) {
             // 恢复库存数据
@@ -173,7 +180,7 @@ class ConsignmentOutbound extends CatchController
         if ($isClear) {
             $this->consignmentOutboundDetails->destroy(['consignment_outbound_id' => $id]);
         }
-        return $consignmentOutboundData;
+        return $model;
     }
 
     /**

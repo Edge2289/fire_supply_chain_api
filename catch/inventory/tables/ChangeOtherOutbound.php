@@ -10,11 +10,22 @@
 namespace catchAdmin\inventory\tables;
 
 
+use catchAdmin\inventory\tables\forms\Factory;
+use catcher\CatchTable;
+
 /**
  * Class ChangeOtherOutbound
  * @package catchAdmin\inventory\tables
  */
-class ChangeOtherOutbound
+class ChangeOtherOutbound extends CatchTable
 {
+    protected function table()
+    {
+        // TODO: Implement table() method.
+    }
 
+    protected function form()
+    {
+        return Factory::create('changeOtherOutbound');
+    }
 }

@@ -36,7 +36,7 @@ class OtherPutInventory extends CatchTable
                 HeaderItem::label('明细')->prop('detail'),
                 HeaderItem::label('审核状态')->prop('audit_status_i'),
                 HeaderItem::label('备注')->prop('remark'),
-                HeaderItem::label('操作')->width(250)->actions([
+                HeaderItem::label('操作')->width(100)->actions([
                     Actions::normal('修改', 'primary', 'handleUpdates'),
                 ])
             ])

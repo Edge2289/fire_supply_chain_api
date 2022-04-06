@@ -154,7 +154,8 @@ class ReadyOutbound extends CatchController
 
     /**
      * @param $id
-     * @return array|CatchModel|mixed|Model|null
+     * @param bool $isClear
+     * @return array|CatchModel|mixed|Model
      * @throws DataNotFoundException
      * @throws DbException
      * @throws ModelNotFoundException
@@ -162,7 +163,20 @@ class ReadyOutbound extends CatchController
      */
     private function clearOldData($id, $isClear = true)
     {
-        $consignmentOutboundData = $this->readyOutboundModel->getFindByKey($id);
+        $model = $this->readyOutboundModel->getFindByKey($id);
+        if (empty($model)) {
+            throw new BusinessException("不存在当前数据");
+        }
+        // 审核成功不可以修改
+        if ($model['audit_status'] == 1) {
+            throw new BusinessException("订单已审核,无法修改");
+        }
+        if ($model['status'] == 1) {
+            throw new BusinessException("订单已完成,无法修改");
+        }
+        if ($model['status'] == 2) {
+            throw new BusinessException("订单已作废,无法修改");
+        }
         $details = $this->readyOutboundDetails->where('ready_outbound_id', $id)->select();
         foreach ($details as $detail) {
             // 恢复库存数据
@@ -173,7 +187,7 @@ class ReadyOutbound extends CatchController
         if ($isClear) {
             $this->readyOutboundDetails->destroy(['ready_outbound_id' => $id]);
         }
-        return $consignmentOutboundData;
+        return $model;
     }
 
     /**
