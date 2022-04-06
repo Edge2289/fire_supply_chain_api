@@ -33,6 +33,24 @@ $router->group(function () use ($router) {
         $router->post("readyOutbound/stockIn/<id>", '\catchAdmin\inventory\controller\ReadyOutbound@stockIn'); // 入库
     });
 
+    // 其他出库 otherOutbound
+
+    $router->group(function () use ($router) {
+        // 寄售出库
+        $router->resource('otherOutbound', '\catchAdmin\inventory\controller\OtherOutbound');
+        $router->post("otherOutbound/audit/<id>", '\catchAdmin\inventory\controller\OtherOutbound@audit'); // 审核
+        $router->post("otherOutbound/invalid/<id>", '\catchAdmin\inventory\controller\OtherOutbound@invalid'); // 作废
+
+    });
+    // 其他入库 otherPutInventory
+
+    $router->group(function () use ($router) {
+        // 寄售出库
+        $router->resource('otherPutInventory', '\catchAdmin\inventory\controller\OtherPutInventory');
+        $router->post("otherPutInventory/audit/<id>", '\catchAdmin\inventory\controller\OtherPutInventory@audit'); // 审核
+        $router->post("otherPutInventory/invalid/<id>", '\catchAdmin\inventory\controller\OtherPutInventory@invalid'); // 作废
+
+    });
 })->middleware('auth');
 
 $router->group(function () use ($router) {

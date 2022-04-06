@@ -12,12 +12,13 @@ namespace catchAdmin\inventory\model;
 
 use catchAdmin\basisinfo\model\ProductBasicInfo;
 use catchAdmin\basisinfo\model\ProductSku;
+use catcher\base\CatchModel;
 
 /**
  * Class OtherOutbound
  * @package catchAdmin\inventory\model
  */
-class OtherOutboundDetails
+class OtherOutboundDetails extends CatchModel
 {
     protected $connection = 'business';
 

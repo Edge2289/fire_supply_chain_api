@@ -10,13 +10,14 @@
 namespace catchAdmin\inventory\model;
 
 
+use catcher\base\CatchModel;
 use think\model\relation\HasMany;
 
 /**
  * Class OtherOutbound
  * @package catchAdmin\inventory\model
  */
-class OtherOutbound
+class OtherOutbound extends CatchModel
 {
     protected $connection = 'business';
 
