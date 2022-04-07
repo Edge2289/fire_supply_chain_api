@@ -222,7 +222,7 @@ class PurchaseOrder extends CatchController
     {
         // 保存基础信息
         $params = $request->param();
-        $this->validator(PurchaseOrderRequest::class, $params);
+//        $this->validator(PurchaseOrderRequest::class, $params);
         if (empty($params['id'])) {
             return CatchResponse::fail("更新缺失主键id");
         }
