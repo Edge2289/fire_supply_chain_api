@@ -277,6 +277,7 @@ class ProcurementWarehousing extends CatchController
                         'production_date' => $proWareDetail['production_date'],
                         'valid_until' => $proWareDetail['valid_until'],
                         'registration_number' => $proWareDetail['registration_number'],
+                        'number' => $proWareDetail['number'],
                         'use_number' => 0,
                     ];
                 }
