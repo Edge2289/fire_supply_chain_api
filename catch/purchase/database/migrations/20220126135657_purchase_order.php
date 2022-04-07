@@ -17,7 +17,7 @@ class PurchaseOrder extends Migrator
 {
     public function change()
     {
-        $table = $this->table('purchase_order', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '营业执照表', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table = $this->table('purchase_order', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '采购订单', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('purchase_code', 'string', ['limit' => 30, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '采购编号',])
             ->addColumn('company_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '公司id',])
             ->addColumn('purchase_date', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'signed' => false, 'comment' => '采购日期',])
