@@ -17,6 +17,7 @@ use catchAdmin\purchase\request\PurchaseOrderRequest;
 use catcher\base\CatchController;
 use catchAdmin\purchase\model\PurchaseOrder as PurchaseOrderModel;
 use catcher\CatchResponse;
+use fire\data\ChangeStatus;
 
 /**
  * 采购订单
@@ -45,15 +46,11 @@ class PurchaseOrder extends CatchController
      */
     public function index()
     {
-        $status = [
-            "未完成", "已完成", "作废"
-        ];
         $data = $this->purchaseOrderModel->getList();
         foreach ($data as &$datum) {
-            $datum['status_i'] = $status[$datum['status']];
-//            $datum['detail'] = $status[$datum['status']];
             $datum['settlement_type_i'] = $datum['settlement_type'] == 0 ? "现结" : "月结";
         }
+        ChangeStatus::getInstance()->audit()->status()->handle($data);
         return CatchResponse::paginate($data);
     }
 
@@ -333,7 +330,7 @@ class PurchaseOrder extends CatchController
                 "hasProductData", "hasProductSkuData"
             ]
         )->field([
-            "quantity", "note", "id", "product_id", "product_sku_id", "warehousing_quantity"
+            "quantity", "note", "id", "unit_price", "product_id", "product_sku_id", "warehousing_quantity"
         ])->whereRaw("(quantity - warehousing_quantity - return_quantity) > 0")
             ->where("purchase_order_id", $purchaseOrderId)->select()->toArray();
         $skuMap = [];
@@ -345,7 +342,7 @@ class PurchaseOrder extends CatchController
                 'product_code' => $datum['hasProductSkuData']['product_code'],
                 'sku_code' => $datum['hasProductSkuData']['sku_code'],
                 'item_number' => $datum['hasProductSkuData']['item_number'],
-                'unit_price' => $datum['hasProductSkuData']['unit_price'],
+                'unit_price' => $datum['unit_price'],
                 'tax_rate' => $datum['hasProductSkuData']['tax_rate'],
                 'n_tax_price' => $datum['hasProductSkuData']['n_tax_price'],
                 'packing_size' => $datum['hasProductSkuData']['packing_size'],

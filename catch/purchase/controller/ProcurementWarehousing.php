@@ -78,6 +78,7 @@ class ProcurementWarehousing extends CatchController
         foreach ($data as &$datum) {
             $warehouseData = $this->warehouse->where("id", $datum["warehouse_id"])->find();
             $datum['warehouse_name'] = $warehouseData['warehouse_name'];
+            $datum['purchase_code'] = $datum->hasPurchaseOrder->purchase_code;
         }
 
         ChangeStatus::getInstance()->audit()->status()->handle($data);
@@ -150,13 +151,18 @@ class ProcurementWarehousing extends CatchController
         $put_num = 0;
         foreach ($params as $param) {
             if (!isset($param['product']) || empty($param['product'])) {
-                throw new BusinessException("入库明细存在没有批次的商品");
+                continue;
             }
             foreach ($param['product'] as $product) {
                 $warehousingMap[] = [
                     "purchase_order_details_id" => $param["id"],
                     "product_id" => $param["product_id"],
                     "product_sku_id" => $param["product_sku_id"] ?? 0,
+                    'product_code' => $param['product_code'],
+                    'item_number' => $param['item_number'],
+                    'sku_code' => $param['sku_code'],
+                    'tax_rate' => $param['tax_rate'],
+                    'unit_price' => $param['unit_price'],
                     "batch_number" => $product["batch_number"] ?? "",
                     "serial_number" => $product["serial_number"] ?? "",
                     "production_date" => $product["production_date"] ?? "",
@@ -171,6 +177,9 @@ class ProcurementWarehousing extends CatchController
                 }
                 $put_num += $product["number"];
             }
+        }
+        if (empty($warehousingMap)) {
+            throw new BusinessException("入库明细存在没有批次的商品");
         }
         return [$warehousingMap, $changePurchaseOrderDetails, $put_num];
     }
@@ -275,6 +284,11 @@ class ProcurementWarehousing extends CatchController
                         'batch_number' => $proWareDetail['batch_number'],
                         'serial_number' => $proWareDetail['serial_number'],
                         'production_date' => $proWareDetail['production_date'],
+                        'product_code' => $proWareDetail['product_code'],
+                        'item_number' => $proWareDetail['item_number'],
+                        'sku_code' => $proWareDetail['sku_code'],
+                        'tax_rate' => $proWareDetail['tax_rate'],
+                        'unit_price' => $proWareDetail['unit_price'],
                         'valid_until' => $proWareDetail['valid_until'],
                         'registration_number' => $proWareDetail['registration_number'],
                         'number' => $proWareDetail['number'],

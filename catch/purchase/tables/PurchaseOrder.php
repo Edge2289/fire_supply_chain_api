@@ -34,6 +34,8 @@ class PurchaseOrder extends CatchTable
                 HeaderItem::label('总额')->prop('amount'),
                 HeaderItem::label('采购日期')->prop('purchase_date'),
                 HeaderItem::label('结算类型')->prop('settlement_type_i'),
+                HeaderItem::label('审核状态')->prop('audit_status_i'),
+                HeaderItem::label('审核信息')->prop('audit_info'),
                 HeaderItem::label('备注')->prop('remark'),
                 HeaderItem::label('操作')->width(200)->actions([
                     Actions::update("编辑", "editPurchaseOrder"),

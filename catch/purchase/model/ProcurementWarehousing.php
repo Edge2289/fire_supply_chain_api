@@ -27,6 +27,8 @@ class ProcurementWarehousing extends CatchModel
 
     protected $fieldToTime = ['put_date'];
 
+    protected $fieldToString = ['put_user_id', 'warehouse_id', 'purchase_order_id'];
+
     /**
      * @return \think\model\relation\HasMany
      * @author 1131191695@qq.com
@@ -40,9 +42,9 @@ class ProcurementWarehousing extends CatchModel
      * @return \think\model\relation\HasMany
      * @author 1131191695@qq.com
      */
-    public function hasPurchaseOrder(): \think\model\relation\HasMany
+    public function hasPurchaseOrder(): \think\model\relation\hasOne
     {
-        return $this->hasMany(PurchaseOrder::class, "id", "purchase_order_id");
+        return $this->hasOne(PurchaseOrder::class, "id", "purchase_order_id");
     }
 
     /**
@@ -52,7 +54,10 @@ class ProcurementWarehousing extends CatchModel
      */
     public function getList()
     {
-        return $this->catchSearch()->with("hasProcurementWarehousingDetails")->order("id desc")
+        return $this->catchSearch()->with([
+            "hasProcurementWarehousingDetails"
+        ])
+            ->order("id desc")
             ->paginate();
     }
 }
