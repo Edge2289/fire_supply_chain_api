@@ -17,7 +17,7 @@ $router->group(function () use ($router) {
     // 销售订单
     $router->get("salesOrder", "catchAdmin\salesManage\controller\SalesOrder@index");
     $router->post("salesOrder", "catchAdmin\salesManage\controller\SalesOrder@save");
-    $router->put("salesOrder", "catchAdmin\salesManage\controller\SalesOrder@save");
+    $router->put("salesOrder/<id>", "catchAdmin\salesManage\controller\SalesOrder@save");
     $router->post("salesOrder/audit/<id>", "catchAdmin\salesManage\controller\SalesOrder@audit");
     $router->post("salesOrder/invalid/<id>", "catchAdmin\salesManage\controller\SalesOrder@invalid");
 
