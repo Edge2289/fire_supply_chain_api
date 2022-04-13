@@ -11,6 +11,7 @@ namespace catchAdmin\basisinfo\model;
 
 
 use catcher\base\CatchModel;
+use think\model\relation\HasMany;
 
 /**
  * Class ProductSku
@@ -19,34 +20,10 @@ use catcher\base\CatchModel;
 class ProductSku extends CatchModel
 {
     protected $name = "product_sku";
-
     protected $pk = 'id';
 
-    protected $field = [
-        'id',
-        'product_id',
-        'product_code',
-        'sku_code',
-        'item_number',
-        'unit_price',
-        'tax_rate',
-        'n_tax_price',
-        'packing_size',
-        'packing_specification',
-        'valid_start_time',
-        'valid_end_time',
-        'created_at',
-        'updated_at',
-        'deleted_at',
-    ];
-
-    public function getValidStartTimeAttr($value)
+    public function hasProductEntity(): HasMany
     {
-        return date("Y-m-d", $value);
-    }
-
-    public function getValidEndTimeAttr($value)
-    {
-        return date("Y-m-d", $value);
+        return $this->hasMany(ProductEntity::class, "product_sku_id", "id");
     }
 }

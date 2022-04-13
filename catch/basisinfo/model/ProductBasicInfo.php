@@ -20,6 +20,8 @@ class ProductBasicInfo extends CatchModel
 {
     protected $name = "product_basic_info";
 
+    protected $fieldToString = ['factory_id', 'product_category'];
+
     public function withRegistered()
     {
         return $this->hasOne(ProductRegistered::class, "product_id", "id");

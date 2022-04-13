@@ -46,11 +46,14 @@ $router->group(function () use ($router) {
         $router->post('customer/disabled/<id>', '\catchAdmin\basisinfo\controller\Customer@disabled'); // 禁用客户
     });
 
+    $router->resource('productCategory', '\catchAdmin\basisinfo\controller\ProductCategory'); // 客户列表
 })->middleware('auth');
 
 $router->group(function () use ($router) {
     $router->get('suppliers/changeSuppliersSetting', '\catchAdmin\basisinfo\controller\Suppliers@changeSuppliersSetting');
     $router->get('factory/changeFactorySetting', '\catchAdmin\basisinfo\controller\Factory@changeFactorySetting');
     $router->get('product/changeProductSetting', '\catchAdmin\basisinfo\controller\Product@changeProductSetting');
+    $router->post('product/udi', '\catchAdmin\basisinfo\controller\Product@udi');
+    $router->get('product/udi', '\catchAdmin\basisinfo\controller\Product@udiList');
     $router->get('customer/changeCustomerSetting', '\catchAdmin\basisinfo\controller\Customer@changeCustomerSetting');
 });

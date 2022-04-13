@@ -11,10 +11,12 @@ namespace catchAdmin\basisinfo\controller;
 
 
 use catchAdmin\basisinfo\model\ProductBasicInfo;
-use catchAdmin\basisinfo\model\ProductDistributionInfo;
+use catchAdmin\basisinfo\model\ProductQualification;
+use catchAdmin\basisinfo\model\ProductEntity;
 use catchAdmin\basisinfo\model\ProductRecord;
 use catchAdmin\basisinfo\model\ProductRegistered;
 use catchAdmin\basisinfo\model\ProductSku;
+use catchAdmin\basisinfo\model\ProductUdi;
 use catchAdmin\basisinfo\request\ProductBasicInfoRequest;
 use catchAdmin\basisinfo\request\ProductRecordRequest;
 use catchAdmin\basisinfo\request\ProductRegisteredRequest;
@@ -22,7 +24,10 @@ use catcher\base\CatchController;
 use catcher\CatchResponse;
 use catcher\exceptions\BusinessException;
 use fire\data\ChangeStatus;
-use think\Db;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use \think\facade\Db;
+use think\facade\Filesystem;
 use think\Request;
 
 /**
@@ -35,24 +40,27 @@ class Product extends CatchController
 {
     private $productBasicInfoModel;
     private $productRecord;
-    private $productDistributionInfo;
+    private $productQualification;
     private $productSku;
     private $productRegistered;
+    private $productEntity;
 
 
     public function __construct(
-        ProductBasicInfo        $productBasicInfo,
-        ProductRecord           $productRecord,
-        ProductDistributionInfo $productDistributionInfo,
-        ProductSku              $productSku,
-        ProductRegistered       $productRegistered
+        ProductBasicInfo     $productBasicInfo,
+        ProductRecord        $productRecord,
+        ProductQualification $productQualification,
+        ProductSku           $productSku,
+        ProductRegistered    $productRegistered,
+        ProductEntity        $productEntity
     )
     {
         $this->productBasicInfoModel = $productBasicInfo;
         $this->productRecord = $productRecord;
-        $this->productDistributionInfo = $productDistributionInfo;
+        $this->productQualification = $productQualification;
         $this->productSku = $productSku;
         $this->productRegistered = $productRegistered;
+        $this->productEntity = $productEntity;
     }
 
     public function index()
@@ -130,27 +138,9 @@ class Product extends CatchController
 
         $skuData = $map['skuData'] ?? [];
         unset($map['skuData']);
-        $skuIds = [];
-        $addSkus = [];
-        $updateSkus = [];
-        if ($skuData) {
-            // 如果存在sku信息
-            foreach ($skuData as $datum) {
-                $datum['valid_start_time'] = strtotime($datum['valid_start_time']);
-                $datum['valid_end_time'] = strtotime($datum['valid_end_time']);
-                $datum['updated_at'] = time();
-                if (!empty($datum['id'])) {
-                    $skuIds[] = $datum['id'];
-                    $updateSkus[] = $datum;
-                } else {
-                    $datum['product_code'] = getCode("PC");
-                    $datum['created_at'] = time();
-                    $addSkus[] = $datum;
-                }
-            }
-        }
+        $map['product_category'] = $map['product_category'][0] ?? 0;
 
-        app(Db::class)->startTrans();
+        $this->productBasicInfoModel->startTrans();
         try {
             if (isset($map['id']) && !empty($map['id'])) {
                 $data = $this->productBasicInfoModel->where('id', $map['id'])->find();
@@ -162,33 +152,35 @@ class Product extends CatchController
                     throw new \Exception("修改失败");
                 }
                 $id = $map['id'];
+                // 清除数据
+                Db::table("f_product_sku")->where("product_id", $id)->delete();
+                Db::table("f_product_entity")->where("product_id", $id)->delete();
             } else {
                 $id = $this->productBasicInfoModel->storeBy($map);
             }
-            if ($skuData) {
-                // 删除
-                foreach ($this->productSku->whereNotIn('id', $skuIds)->select() as $item) {
-                    $item->delete();
+            foreach ($skuData as $skuDatum) {
+                // entityOptions
+                if (!isset($skuDatum['product_code']) || empty($skuDatum['product_code'])) {
+                    $skuDatum['product_code'] = getCode("PC");
                 }
-                if (!empty($addSkus)) {
-                    // 新增
-                    foreach ($addSkus as &$datum) {
-                        $datum['product_id'] = $id;
-                    }
-                    $this->productSku->insertAllBy($addSkus);
-                }
-                if (!empty($updateSkus)) {
-                    // 更新
-                    foreach ($updateSkus as $updateSku) {
-                        $this->productSku->updateBy($updateSku['id'], $updateSku);
-                    }
+                $skuDatum['product_id'] = $id;
+                $entityOptions = $skuDatum['entityOptions'];
+                unset($skuDatum['entityOptions']);
+                $skuId = $this->productSku->storeBy($skuDatum);
+                $map = [];
+                foreach ($entityOptions as $value) {
+                    $map['product_id'] = $id;
+                    $map['product_sku_id'] = $skuId;
+                    $map['deputy_unit_name'] = $value['deputyUnitName'];
+                    $map['proportion'] = $value['proportion'];
+                    $this->productEntity->insert($map);
                 }
             }
         } catch (\Exception $exception) {
-            app(Db::class)->rollback();
+            $this->productBasicInfoModel->rollback();
             throw new BusinessException(sprintf("操作失败【%s】", $exception->getMessage()));
         }
-        app(Db::class)->commit();
+        $this->productBasicInfoModel->commit();
         return $id;
     }
 
@@ -255,21 +247,16 @@ class Product extends CatchController
      * @throws \think\db\exception\ModelNotFoundException
      * @author 1131191695@qq.com
      */
-    protected function distributionInfoCall(array $map)
+    protected function qualificationCall(array $map)
     {
-        $map['signing_date'] = empty($map['signing_date']) ? $map['signing_date'] : strtotime($map['signing_date']);
-        $map['end_time'] = empty($map['end_time']) ? $map['end_time'] : strtotime($map['end_time']);
-        if (empty($map['product_id']) || empty($map['payment_days'])) {
-            throw new BusinessException("请填写完整信息");
-        }
         if (isset($map['id']) && !empty($map['id'])) {
-            $data = $this->productDistributionInfo->where('id', $map['id'])->find();
+            $data = $this->productQualification->where('id', $map['id'])->find();
             if (!$data) {
                 throw new BusinessException("数据不存在");
             }
-            return $this->productDistributionInfo->updateBy($map['id'], $map);
+            return $this->productQualification->updateBy($map['id'], $map);
         } else {
-            return $this->productDistributionInfo->storeBy($map);
+            return $this->productQualification->storeBy($map);
         }
     }
 
@@ -309,7 +296,8 @@ class Product extends CatchController
                     "component" => "registered",
                 ];
                 $productData['registered'] = $this->productRegistered->where("product_id", $id)->find();
-            } else {
+            }
+            if ($data['data_maintenance'] == 2) {
                 // 备案
                 $map[] = [
                     "id" => 3,
@@ -320,14 +308,41 @@ class Product extends CatchController
             }
             $map[] = [
                 "id" => 4,
-                "name" => "经销信息",
-                "component" => "distribution_info",
+                "name" => "资质审核",
+                "component" => "qualification",
             ];
-            $productData['distribution_info'] = $this->productDistributionInfo->where("product_id", $id)->find();
-            $productData['sku_data'] = $this->productSku->where("product_id", $id)->select();
+            $productData['qualification'] = $this->productQualification->where("product_id", $id)->find();
+            $productData['sku_data'] = $this->productSku->with([
+                "hasProductEntity" => function ($query) {
+                    $query->field(["product_sku_id", "proportion", "deputy_unit_name as deputyUnitName"]);
+                }
+            ])->where("product_id", $id)->select();
+            foreach ($productData['sku_data'] as &$sku_datum) {
+                $sku_datum['entityOptions'] = $sku_datum['hasProductEntity'];
+                unset($sku_datum['hasProductEntity']);
+            }
         }
         return CatchResponse::success([
             'componentData' => $map,
+            'initialComponentData' => [
+                [
+                    "id" => 1,
+                    "name" => "基础信息",
+                    "component" => "basic_info",
+                ], [
+                    "id" => 2,
+                    "name" => "注册证信息",
+                    "component" => "registered",
+                ], [
+                    "id" => 3,
+                    "name" => "备案信息",
+                    "component" => "record",
+                ], [
+                    "id" => 4,
+                    "name" => "资质审核",
+                    "component" => "qualification",
+                ]
+            ],
             'productData' => $productData,
         ]);
     }
@@ -391,5 +406,57 @@ class Product extends CatchController
             ])
             ->paginate();
         return CatchResponse::paginate($data);
+    }
+
+    /**
+     * 上传udi文件
+     *
+     * @return \think\response\Json
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
+     * @author 1131191695@qq.com
+     */
+    public function udi()
+    {
+        $file = request()->file('file');
+        $name = Filesystem::putFile('file', $file);
+        $fileExtendName = substr(strrchr($name, '.'), 1);
+        if ($fileExtendName != 'xls') {
+            return CatchResponse::fail("文件格式不对");
+        }
+        $objReader = IOFactory::createReader('Xls');
+        $path = Filesystem::disk('public')->putFile("", $file, 'md5');
+        $objPHPExcel = $objReader->load(root_path() . "public/storage/" . $path);
+        $sheet = $objPHPExcel->getSheet(0);   //excel中的第一张sheet
+
+        $highestRow = $sheet->getHighestRow();       // 取得总行数
+        $highestColumn = $sheet->getHighestColumn();   // 取得总列数
+        Coordinate::columnIndexFromString($highestColumn);
+        $lines = $highestRow - 1;
+        if ($lines <= 0) {
+            return json(['code' => 0, 'message' => '保存失败']);
+        }
+        $data = array();
+        for ($j = 2; $j <= $highestRow; $j++) {
+            $data[$j - 2] = [
+                'udi' => trim($objPHPExcel->getActiveSheet()->getCell("A" . $j)->getValue()),
+                'product_name' => trim($objPHPExcel->getActiveSheet()->getCell("I" . $j)->getValue()),
+                'item_number' => trim($objPHPExcel->getActiveSheet()->getCell("K" . $j)->getValue()),
+                'manufacturer' => trim($objPHPExcel->getActiveSheet()->getCell("U" . $j)->getValue()),
+                'registered' => trim($objPHPExcel->getActiveSheet()->getCell("R" . $j)->getValue()),
+            ];
+        }
+        Db::query("truncate table `f_product_udi`");
+        app(ProductUdi::class)->insertAll($data);
+        return CatchResponse::success();
+    }
+
+    /**
+     * @return \think\response\Json
+     * @author 1131191695@qq.com
+     */
+    public function udiList()
+    {
+        return CatchResponse::paginate(app(ProductUdi::class)->getList());
     }
 }

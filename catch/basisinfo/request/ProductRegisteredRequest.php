@@ -22,7 +22,6 @@ class ProductRegisteredRequest extends CatchRequest
     {
         return [
             'product_id|产品id' => 'require',
-            'registered_license_url|注册证照片' => 'require',
             'registered_code|注册证编号' => 'require|max:200',
             'registered_address|生产地址' => 'require',
             'registered_name|注册人名称' => 'require',

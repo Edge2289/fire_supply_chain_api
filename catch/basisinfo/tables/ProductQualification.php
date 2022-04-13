@@ -14,10 +14,10 @@ use catchAdmin\basisinfo\tables\forms\Factory;
 use catcher\CatchTable;
 
 /**
- * Class ProductDistributionInfo
+ * Class ProductQualification
  * @package catchAdmin\basisinfo\tables
  */
-class ProductDistributionInfo extends CatchTable
+class ProductQualification extends CatchTable
 {
 
     protected function table()
@@ -26,6 +26,6 @@ class ProductDistributionInfo extends CatchTable
 
     protected function form()
     {
-        return Factory::create('productDistributionInfo');
+        return Factory::create('ProductQualification');
     }
 }

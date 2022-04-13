@@ -55,7 +55,8 @@ class Product extends CatchTable
             ->withApiRoute('product')
             ->withActions([
                 Actions::normal("新增", 'primary', "addProduct")->icon('el-icon-plus'),
-                Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu'),
+                Actions::normal("审核", 'primary', "audit"),
+                Actions::normal("UDI更新", 'primary', "udiUpdate")->icon('el-icon-upload'),
             ])
             ->selectionChange()
             ->render();

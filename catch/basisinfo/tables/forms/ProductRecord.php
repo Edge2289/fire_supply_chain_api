@@ -21,16 +21,18 @@ class ProductRecord extends Form
     public function fields(): array
     {
         return [
-            self::input("product_name", "产品名称")->col(12)->required(),
-            self::select("factory_id", "生产厂家")->col(12)->clearable(true)->options(
-                \catchAdmin\basisinfo\model\Factory::where('audit_status', 1)->field(['id as value', 'company_name as label'])->select()->toArray()
-            ),
-            self::input("storage_conditions", "储运条件")->col(12)->required(),
-            self::radio("data_maintenance", "资料维护", 1)->col(12)->options(
-                self::options()->add('注册证', 1)
-                    ->add('备案凭证', 2)->render()
-            ),
-            self::image("产品图片", "product_img")->required(),
+            self::input("record_product_categories", "产品分类")->col(12)->required(),
+            self::input("record_code", "备案号")->col(12)->required(),
+            self::input("recorder_org_code", "组织机构代码")->col(12)->required(),
+            self::input("record_name", "备案人名称")->col(12)->required(),
+            self::input("record_creator_company_address", "备案人生产地址")->col(12)->required(),
+            self::input("record_proxy_name", "代理人")->col(12)->required(),
+            self::input("record_proxy_address", "代理人注册住址")->col(12)->required(),
+            self::input("product_desc", "产品描述")->col(12)->required(),
+            self::input("preliminary_use", "预备用途")->col(12)->required(),
+            self::input("record_department", "备案单位")->col(12)->required(),
+            self::date("record_time", "备案日期")->col(12)->required(),
+            self::input("record_remark", "备注")->col(12)->required(),
         ];
     }
 }

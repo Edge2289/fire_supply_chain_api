@@ -7,6 +7,7 @@ use catcher\CatchQuery;
 use catcher\traits\db\BaseOptionsTrait;
 use catcher\traits\db\RewriteTrait;
 use catcher\traits\db\WithTrait;
+use think\facade\Db;
 use think\model\concern\SoftDelete;
 use catcher\traits\db\ScopeTrait;
 
