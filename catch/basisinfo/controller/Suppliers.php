@@ -182,7 +182,6 @@ class Suppliers extends CatchController
      */
     public function operatingLicenseCall(array $params)
     {
-        $params['business_date_long'] = $params['business_date_long'] ? 1 : 0;
         if (!empty($params['business_end_date'])) {
             $params['business_end_date'] = strtotime($params['business_end_date']);
         }

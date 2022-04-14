@@ -37,7 +37,7 @@ class Product extends CatchTable
                 HeaderItem::label('审核信息')->prop('audit_info'),
                 HeaderItem::label('操作')->width(200)->actions([
                     Actions::update("编辑", "editProduct"),
-                    Actions::normal("导出审批", 'success', "facePrint")->icon('el-icon-printer'),
+                    Actions::normal("查看", 'success', "facePrint")->icon('el-icon-printer'),
                 ])
             ])
             ->withSearch([

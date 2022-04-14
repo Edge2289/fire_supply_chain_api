@@ -159,6 +159,9 @@ class Product extends CatchController
                 $id = $this->productBasicInfoModel->storeBy($map);
             }
             foreach ($skuData as $skuDatum) {
+                if (empty($skuDatum['entityOptions'])) {
+                    throw new BusinessException("" . $skuDatum['udi'] . "下的单位为空");
+                }
                 // entityOptions
                 if (!isset($skuDatum['product_code']) || empty($skuDatum['product_code'])) {
                     $skuDatum['product_code'] = getCode("PC");
@@ -166,7 +169,8 @@ class Product extends CatchController
                 $skuDatum['product_id'] = $id;
                 $entityOptions = $skuDatum['entityOptions'];
                 unset($skuDatum['entityOptions']);
-                $skuId = $this->productSku->storeBy($skuDatum);
+                unset($skuDatum['id'], $skuDatum['created_at'], $skuDatum['updated_at'], $skuDatum['deleted_at']);
+                $skuId = $this->productSku->insertGetId($skuDatum);
                 $map = [];
                 foreach ($entityOptions as $value) {
                     $map['product_id'] = $id;
@@ -249,6 +253,14 @@ class Product extends CatchController
      */
     protected function qualificationCall(array $map)
     {
+        foreach ($map as $key => $value) {
+            if (in_array($key, [
+                    'imported_documents_url', 'product_appearance_url', 'product_quality_url',
+                    'product_register_url', 'report_delivery_url'
+                ]) && !empty($value)) {
+                $map[$key] = $value[0] ?? "";
+            }
+        }
         if (isset($map['id']) && !empty($map['id'])) {
             $data = $this->productQualification->where('id', $map['id'])->find();
             if (!$data) {
@@ -311,7 +323,25 @@ class Product extends CatchController
                 "name" => "资质审核",
                 "component" => "qualification",
             ];
-            $productData['qualification'] = $this->productQualification->where("product_id", $id)->find();
+            $qualificationHandle = function () use ($id) {
+                $data = $this->productQualification->where("product_id", $id)->find();
+                if (empty($data)) {
+                    return "";
+                }
+                $map = [];
+                foreach ($data->toArray() as $key => $value) {
+                    if (in_array($key, [
+                            'imported_documents_url', 'product_appearance_url', 'product_quality_url',
+                            'product_register_url', 'report_delivery_url'
+                        ]) && !empty($value)) {
+                        $map[$key] = [$value];
+                    } else {
+                        $map[$key] = $value;
+                    }
+                }
+                return $map;
+            };
+            $productData['qualification'] = $qualificationHandle();
             $productData['sku_data'] = $this->productSku->with([
                 "hasProductEntity" => function ($query) {
                     $query->field(["product_sku_id", "proportion", "deputy_unit_name as deputyUnitName"]);
@@ -321,6 +351,9 @@ class Product extends CatchController
                 $sku_datum['entityOptions'] = $sku_datum['hasProductEntity'];
                 unset($sku_datum['hasProductEntity']);
             }
+        }
+        if (isset($productData['basic_info'])) {
+            $productData['basic_info']['product_category'] = [(int)$productData['basic_info']['product_category']];
         }
         return CatchResponse::success([
             'componentData' => $map,
@@ -345,6 +378,11 @@ class Product extends CatchController
             ],
             'productData' => $productData,
         ]);
+    }
+
+    public function delete()
+    {
+        return CatchResponse::fail("不允许删除");
     }
 
     /**
@@ -421,10 +459,14 @@ class Product extends CatchController
         $file = request()->file('file');
         $name = Filesystem::putFile('file', $file);
         $fileExtendName = substr(strrchr($name, '.'), 1);
-        if ($fileExtendName != 'xls') {
-            return CatchResponse::fail("文件格式不对");
+        if (!in_array($fileExtendName, ['xls', 'xlsx'])) {
+            return json(['code' => 0, 'message' => '文件格式不对']);
         }
-        $objReader = IOFactory::createReader('Xls');
+        if ($fileExtendName == 'xls') {
+            $objReader = IOFactory::createReader('Xls');
+        } else {
+            $objReader = IOFactory::createReader('Xlsx');
+        }
         $path = Filesystem::disk('public')->putFile("", $file, 'md5');
         $objPHPExcel = $objReader->load(root_path() . "public/storage/" . $path);
         $sheet = $objPHPExcel->getSheet(0);   //excel中的第一张sheet
@@ -446,7 +488,7 @@ class Product extends CatchController
                 'registered' => trim($objPHPExcel->getActiveSheet()->getCell("R" . $j)->getValue()),
             ];
         }
-        Db::query("truncate table `f_product_udi`");
+//        Db::query("truncate table `f_product_udi`");
         app(ProductUdi::class)->insertAll($data);
         return CatchResponse::success();
     }

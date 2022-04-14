@@ -35,6 +35,8 @@ abstract class CatchModel extends \think\Model
 
     protected $fieldToTime = [];
 
+    protected $fieldNumberToEmpty = [];
+
     // 分页 Limit
     public const LIMIT = 10;
     // 开启
@@ -73,6 +75,11 @@ abstract class CatchModel extends \think\Model
             foreach ($this->fieldToTime as $value) {
                 if (isset($result->{$value}) && !empty($result->{$value}) && !is_string($result->{$value})) {
                     $result->{$value} = date("Y-m-d", (int)$result->{$value});
+                }
+            }
+            foreach ($this->fieldNumberToEmpty as $field) {
+                if (isset($result->{$field}) && $result->{$field} == 0) {
+                    $result->{$field} = "";
                 }
             }
             return $result;

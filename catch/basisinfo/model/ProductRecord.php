@@ -20,4 +20,6 @@ class ProductRecord extends CatchModel
 {
     protected $name = 'product_record';
 
+    protected $fieldToTime = ['record_time'];
+
 }

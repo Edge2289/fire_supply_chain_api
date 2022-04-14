@@ -33,6 +33,7 @@ $router->group(function () use ($router) {
         $router->get('product', '\catchAdmin\basisinfo\controller\Product@index'); // 产品列表
         $router->post('product', '\catchAdmin\basisinfo\controller\Product@save'); // 产品保存
         $router->put('product/<id>', '\catchAdmin\basisinfo\controller\Product@update'); // 产品变更
+        $router->delete('product/<id>', '\catchAdmin\basisinfo\controller\Product@delete'); // 产品变更
         $router->post('product/audit/<id>', '\catchAdmin\basisinfo\controller\Product@audit'); // 产品审核
         $router->get('product/sku', '\catchAdmin\basisinfo\controller\Product@skuList'); // 产品sku列表
     });
