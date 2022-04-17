@@ -159,7 +159,7 @@ class Product extends CatchController
                 $id = $this->productBasicInfoModel->storeBy($map);
             }
             foreach ($skuData as $skuDatum) {
-                if (empty($skuDatum['entityOptions'])) {
+                if (empty($skuDatum['entity'])) {
                     throw new BusinessException("" . $skuDatum['udi'] . "下的单位为空");
                 }
                 // entityOptions
@@ -167,8 +167,8 @@ class Product extends CatchController
                     $skuDatum['product_code'] = getCode("PC");
                 }
                 $skuDatum['product_id'] = $id;
-                $entityOptions = $skuDatum['entityOptions'];
-                unset($skuDatum['entityOptions']);
+                $entityOptions = json_decode($skuDatum['entity'], true);
+                unset($skuDatum['entity']);
                 unset($skuDatum['id'], $skuDatum['created_at'], $skuDatum['updated_at'], $skuDatum['deleted_at']);
                 $skuId = $this->productSku->insertGetId($skuDatum);
                 $map = [];
@@ -349,6 +349,15 @@ class Product extends CatchController
             ])->where("product_id", $id)->select();
             foreach ($productData['sku_data'] as &$sku_datum) {
                 $sku_datum['entityOptions'] = $sku_datum['hasProductEntity'];
+                $entity = "";
+                foreach ($sku_datum['hasProductEntity'] as $k => $value) {
+                    if ($k == 0) {
+                        $entity = $value['deputyUnitName'];
+                        continue;
+                    }
+                    $entity .= ("/(" . $value['deputyUnitName'] . "=" . $value['proportion'] . ")");
+                }
+                $sku_datum['entity'] = $entity;
                 unset($sku_datum['hasProductEntity']);
             }
         }
