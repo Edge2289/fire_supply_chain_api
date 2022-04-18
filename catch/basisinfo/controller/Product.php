@@ -23,6 +23,7 @@ use catchAdmin\basisinfo\request\ProductRegisteredRequest;
 use catcher\base\CatchController;
 use catcher\CatchResponse;
 use catcher\exceptions\BusinessException;
+use catcher\Utils;
 use fire\data\ChangeStatus;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -386,6 +387,7 @@ class Product extends CatchController
                 ]
             ],
             'productData' => $productData,
+            'defaultTaxRate' => Utils::config('product.tax'),
         ]);
     }
 
@@ -497,9 +499,8 @@ class Product extends CatchController
                 'registered' => trim($objPHPExcel->getActiveSheet()->getCell("U" . $j)->getValue()),
             ];
         }
-//        Db::query("truncate table `f_product_udi`");
         app(ProductUdi::class)->insertAll($data);
-        return CatchResponse::success();
+        return CatchResponse::success([], 'success', 200);
     }
 
     /**
