@@ -493,8 +493,8 @@ class Product extends CatchController
                 'udi' => trim($objPHPExcel->getActiveSheet()->getCell("A" . $j)->getValue()),
                 'product_name' => trim($objPHPExcel->getActiveSheet()->getCell("I" . $j)->getValue()),
                 'item_number' => trim($objPHPExcel->getActiveSheet()->getCell("K" . $j)->getValue()),
-                'manufacturer' => trim($objPHPExcel->getActiveSheet()->getCell("U" . $j)->getValue()),
-                'registered' => trim($objPHPExcel->getActiveSheet()->getCell("R" . $j)->getValue()),
+                'manufacturer' => trim($objPHPExcel->getActiveSheet()->getCell("R" . $j)->getValue()),
+                'registered' => trim($objPHPExcel->getActiveSheet()->getCell("U" . $j)->getValue()),
             ];
         }
 //        Db::query("truncate table `f_product_udi`");
