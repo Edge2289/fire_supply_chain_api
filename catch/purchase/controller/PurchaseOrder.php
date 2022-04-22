@@ -344,7 +344,6 @@ class PurchaseOrder extends CatchController
                 'item_number' => $datum['hasProductSkuData']['item_number'],
                 'unit_price' => $datum['unit_price'],
                 'tax_rate' => $datum['hasProductSkuData']['tax_rate'],
-                'n_tax_price' => $datum['hasProductSkuData']['n_tax_price'],
                 'packing_size' => $datum['hasProductSkuData']['packing_size'],
                 'packing_specification' => $datum['hasProductSkuData']['packing_specification'],
                 'product_name' => $datum['hasProductData']['product_name'],

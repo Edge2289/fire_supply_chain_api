@@ -120,7 +120,6 @@ abstract class CatchModel extends \think\Model
             'item_number' => $hasPurchaseOrderDetail['hasProductSkuData']['item_number'],
             'unit_price' => $hasPurchaseOrderDetail['unit_price'],
             'tax_rate' => $hasPurchaseOrderDetail['hasProductSkuData']['tax_rate'],
-            'n_tax_price' => $hasPurchaseOrderDetail['hasProductSkuData']['n_tax_price'],
             'packing_size' => $hasPurchaseOrderDetail['hasProductSkuData']['packing_size'],
             'packing_specification' => $hasPurchaseOrderDetail['hasProductSkuData']['packing_specification'],
             'product_name' => $hasPurchaseOrderDetail['hasProductData']['product_name'],

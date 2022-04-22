@@ -35,7 +35,6 @@ $router->group(function () use ($router) {
         $router->put('product/<id>', '\catchAdmin\basisinfo\controller\Product@update'); // 产品变更
         $router->delete('product/<id>', '\catchAdmin\basisinfo\controller\Product@delete'); // 产品变更
         $router->post('product/audit/<id>', '\catchAdmin\basisinfo\controller\Product@audit'); // 产品审核
-        $router->get('product/sku', '\catchAdmin\basisinfo\controller\Product@skuList'); // 产品sku列表
     });
     // 客户路由
     $router->group(function () use ($router) {
@@ -56,5 +55,7 @@ $router->group(function () use ($router) {
     $router->get('product/changeProductSetting', '\catchAdmin\basisinfo\controller\Product@changeProductSetting');
     $router->post('product/udi', '\catchAdmin\basisinfo\controller\Product@udi');
     $router->get('product/udi', '\catchAdmin\basisinfo\controller\Product@udiList');
+    $router->get('product/category', '\catchAdmin\basisinfo\controller\ProductCategory@categoryList');
     $router->get('customer/changeCustomerSetting', '\catchAdmin\basisinfo\controller\Customer@changeCustomerSetting');
+    $router->get('product/sku', '\catchAdmin\basisinfo\controller\Product@skuList'); // 产品sku列表
 });

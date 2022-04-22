@@ -25,11 +25,13 @@ use catcher\CatchResponse;
 use catcher\exceptions\BusinessException;
 use catcher\Utils;
 use fire\data\ChangeStatus;
+use Phpml\Pipeline;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use \think\facade\Db;
 use think\facade\Filesystem;
 use think\Request;
+use function React\Promise\resolve;
 
 /**
  * 产品管理
@@ -163,13 +165,12 @@ class Product extends CatchController
                 if (empty($skuDatum['entity'])) {
                     throw new BusinessException("" . $skuDatum['udi'] . "下的单位为空");
                 }
-                // entityOptions
                 if (!isset($skuDatum['product_code']) || empty($skuDatum['product_code'])) {
                     $skuDatum['product_code'] = getCode("PC");
                 }
                 $skuDatum['product_id'] = $id;
-                $entityOptions = json_decode($skuDatum['entity'], true);
-                unset($skuDatum['entity']);
+                $entityOptions = $skuDatum['entityOptions']; //json_decode($skuDatum['entityOptions'], true);
+                unset($skuDatum['entity'], $skuDatum['entityOptions']);
                 unset($skuDatum['id'], $skuDatum['created_at'], $skuDatum['updated_at'], $skuDatum['deleted_at']);
                 $skuId = $this->productSku->insertGetId($skuDatum);
                 $map = [];
@@ -437,6 +438,7 @@ class Product extends CatchController
         $data = $request->param();
         // 搜索条件 时间
         $data = $this->productSku->leftJoin("product_basic_info pbi", "pbi.id = f_product_sku.product_id")
+            ->with(["hasProductEntity"])
             ->where("pbi.audit_status", 1) // 已审核的
             ->when(!empty($data), function ($query) use ($data) {
                 if (!empty($data['product_name'])) {
@@ -448,12 +450,30 @@ class Product extends CatchController
             })
             ->field([
                 "f_product_sku.id", "f_product_sku.product_id", "f_product_sku.product_code",
-                "f_product_sku.sku_code", "f_product_sku.item_number", "f_product_sku.unit_price",
-                "f_product_sku.tax_rate", "f_product_sku.n_tax_price", "f_product_sku.packing_size",
-                "f_product_sku.packing_specification", "pbi.product_name", "f_product_sku.udi",
-                "f_product_sku.entity"
+                "f_product_sku.sku_code", "f_product_sku.item_number",
+                "f_product_sku.tax_rate", "pbi.product_name", "f_product_sku.udi",
+                "f_product_sku.unit_price_1", "f_product_sku.unit_price_2", "f_product_sku.unit_price_3",
+                "f_product_sku.unit_price_4", "f_product_sku.procurement_price_1", "f_product_sku.procurement_price_2",
             ])
             ->paginate();
+        foreach ($data as &$datum) {
+            $unit_price = [];
+            $procurement_price = [];
+            for ($i = 1; $i < 5; $i++) {
+                $unit_price[] = [
+                    "label" => 'unit_price_' . $i,
+                    "value" => $datum['unit_price_' . $i] ?? 0
+                ];
+            }
+            $datum['unit_price_item'] = $unit_price;
+            for ($i = 1; $i < 3; $i++) {
+                $procurement_price[] = [
+                    "label" => 'procurement_price_' . $i,
+                    "value" => $datum['procurement_price_' . $i]
+                ];
+            }
+            $datum['procurement_price_item'] = $procurement_price;
+        }
         return CatchResponse::paginate($data);
     }
 

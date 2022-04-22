@@ -34,6 +34,13 @@ class ProductCategory extends CatchController
         return CatchResponse::success($data);
     }
 
+
+    public function categoryList()
+    {
+        $data = $this->productCategoryModel->select()->order("sort", "desc")->toTree(0, 'p_id');
+        return CatchResponse::success($data);
+    }
+
     public function save(Request $request)
     {
         $data = $request->param();
@@ -42,9 +49,12 @@ class ProductCategory extends CatchController
         return CatchResponse::success();
     }
 
-    public function update()
+    public function update(Request $request)
     {
-
+        $data = $request->param();
+        $data['p_id'] = $data['p_id'][0] ?? 0;
+        $this->productCategoryModel->updateBy($data['id'], $data);
+        return CatchResponse::success();
     }
 
     public function delete()

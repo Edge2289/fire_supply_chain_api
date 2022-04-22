@@ -322,7 +322,6 @@ class SalesOrder extends CatchController
                 'item_number' => $hasSalesOrderDetail->hasProductSkuData['item_number'],
                 'unit_price' => $hasSalesOrderDetail->hasProductSkuData['unit_price'],
                 'tax_rate' => $hasSalesOrderDetail->hasProductSkuData['tax_rate'],
-                'n_tax_price' => $hasSalesOrderDetail->hasProductSkuData['n_tax_price'],
                 'packing_size' => $hasSalesOrderDetail->hasProductSkuData['packing_size'],
                 'packing_specification' => $hasSalesOrderDetail->hasProductSkuData['packing_specification'],
                 'product_name' => $hasSalesOrderDetail->hasProductData['product_name'],
