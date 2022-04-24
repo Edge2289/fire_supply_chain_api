@@ -10,6 +10,7 @@ class SalesOrder extends Migrator
     {
         $table = $this->table('sales_order', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '销售订单', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('order_code', 'string', ['limit' => 60, 'default' => 0, 'signed' => true, 'comment' => '销售订单编号',])
+            ->addColumn('customer_code', 'string', ['limit' => 60, 'default' => 0, 'signed' => true, 'comment' => '客户单号',])
             ->addColumn('company_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '公司id',])
             ->addColumn('sales_time', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'signed' => false, 'comment' => '销售日期',])
             ->addColumn('salesman_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '销售人员',])

@@ -18,7 +18,7 @@ $router->group(function () use ($router) {
     $router->post('table/backup', '\catchAdmin\system\controller\DataDictionary@backup');
 
     // 上传
-    $router->group('upload', function () use ($router){
+    $router->group('upload', function () use ($router) {
         $router->post('image', '\catchAdmin\system\controller\Upload@image');
         $router->post('file', '\catchAdmin\system\controller\Upload@file');
     })->middleware(\catcher\middlewares\JsonResponseMiddleware::class);
@@ -44,10 +44,10 @@ $router->group(function () use ($router) {
 })->middleware('auth');
 
 // 获取 table
-$router->get('table/<module>/<tableClass>', function ($module, $tableClass){
+$router->get('table/<module>/<tableClass>', function ($module, $tableClass) {
     $table = sprintf('\\catchAdmin\\%s\\tables\\%s', $module, ucfirst($tableClass));
 
     return (new $table)->render(request()->param('only'));
 });
-
+$router->get('config/getSeparateConfig/<parent>/<key>', '\catchAdmin\system\controller\Config@getSeparateConfig');
 

@@ -68,3 +68,52 @@ if (!function_exists("get_company_employees")) {
         return $map;
     }
 }
+
+/**
+ * 通过产品id获取注册证号
+ *
+ * @param int $productId
+ * @return string
+ * @author 1131191695@qq.com
+ */
+function getProductRegisterCode(int $productId): string
+{
+    $productBasicInfo = \catchAdmin\basisinfo\model\ProductBasicInfo::where("id", $productId)->find();
+    $registered_code = "";
+    if (!empty($productBasicInfo)) {
+        switch ($productBasicInfo->data_maintenance ?? 3) {
+            case 1 :
+                $registered_code = $productBasicInfo->withRegistered->registered_code ?? "";
+                break;
+            case 2 :
+                $registered_code = $productBasicInfo->withRecord->record_code ?? "";
+                break;
+            default :
+                $registered_code = "";
+                break;
+        }
+    }
+    return $registered_code;
+}
+
+/**
+ * 获取厂家信息
+ *
+ * @param int $factoryId
+ * @return string
+ * @author 1131191695@qq.com
+ */
+function getFactoryName(int $factoryId)
+{
+    $factoryModel = \catchAdmin\basisinfo\model\Factory::where("id", $factoryId)->find();
+    if (empty($factoryModel)) {
+        return "";
+    }
+    if ($factoryModel->data_maintenance == 1) {
+        // 国内厂家
+        return $factoryModel->company_name;
+    } else {
+        // 国外厂家
+        return $factoryModel->company_name_en ?: $factoryModel->company_name;
+    }
+}

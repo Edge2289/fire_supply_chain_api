@@ -12,6 +12,7 @@ namespace catchAdmin\basisinfo\model;
 
 use catcher\base\CatchModel;
 use think\model\relation\HasMany;
+use think\model\relation\HasOne;
 
 /**
  * Class ProductSku
@@ -27,6 +28,19 @@ class ProductSku extends CatchModel
         'procurement_price_1', 'procurement_price_2',
     ];
 
+    /**
+     * @return HasOne
+     * @author 1131191695@qq.com
+     */
+    public function hasProductBasicInfo(): HasOne
+    {
+        return $this->hasOne(ProductBasicInfo::class, "id", "product_id");
+    }
+
+    /**
+     * @return HasMany
+     * @author 1131191695@qq.com
+     */
     public function hasProductEntity(): HasMany
     {
         return $this->hasMany(ProductEntity::class, "product_sku_id", "id");

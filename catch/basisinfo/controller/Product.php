@@ -10,6 +10,8 @@
 namespace catchAdmin\basisinfo\controller;
 
 
+use catchAdmin\basisinfo\controller\ProductPipeline\BoOrderThroudh;
+use catchAdmin\basisinfo\controller\ProductPipeline\OrderThroudh;
 use catchAdmin\basisinfo\model\ProductBasicInfo;
 use catchAdmin\basisinfo\model\ProductQualification;
 use catchAdmin\basisinfo\model\ProductEntity;
@@ -450,30 +452,34 @@ class Product extends CatchController
             })
             ->field([
                 "f_product_sku.id", "f_product_sku.product_id", "f_product_sku.product_code",
-                "f_product_sku.sku_code", "f_product_sku.item_number",
-                "f_product_sku.tax_rate", "pbi.product_name", "f_product_sku.udi",
+                "f_product_sku.sku_code", "f_product_sku.item_number", "pbi.product_name", "f_product_sku.udi",
                 "f_product_sku.unit_price_1", "f_product_sku.unit_price_2", "f_product_sku.unit_price_3",
                 "f_product_sku.unit_price_4", "f_product_sku.procurement_price_1", "f_product_sku.procurement_price_2",
             ])
             ->paginate();
-        foreach ($data as &$datum) {
+        $data->map(function ($datum) {
+            $datum['registered_code'] = getProductRegisterCode($datum['product_id']);
+            // 价格问题
             $unit_price = [];
             $procurement_price = [];
             for ($i = 1; $i < 5; $i++) {
                 $unit_price[] = [
-                    "label" => 'unit_price_' . $i,
+                    "label" => $i,
                     "value" => $datum['unit_price_' . $i] ?? 0
                 ];
             }
             $datum['unit_price_item'] = $unit_price;
             for ($i = 1; $i < 3; $i++) {
                 $procurement_price[] = [
-                    "label" => 'procurement_price_' . $i,
+                    "label" => $i,
                     "value" => $datum['procurement_price_' . $i]
                 ];
             }
             $datum['procurement_price_item'] = $procurement_price;
-        }
+            $datum['factory_name'] = getFactoryName($datum->hasProductBasicInfo->factory_id);
+            unset($datum->hasProductBasicInfo);
+            return $datum;
+        });
         return CatchResponse::paginate($data);
     }
 

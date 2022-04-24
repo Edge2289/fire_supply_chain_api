@@ -36,20 +36,21 @@ class ChangeSalesOrder extends Form
     public function fields(): array
     {
         return [
-            self::date("sales_time", "销售日期")->col(12)->required(),
+            self::date("sales_time", "单据日期")->col(12)->required(),
             self::select("salesman_id", "销售人员")
                 ->options(
                 // 获取自身公司下的员工
                     get_company_employees()
-                )->col(12)->required(),
+                )->col(12),
 //            self::select("supplier_id", "供应商")
 //                ->options(
 //                    $this->supplier->getSupplier()
 //                )->col(12)->required(),
-            self::select("customer_info_id", "客户")
+            self::select("customer_info_id", "客户名称")
                 ->options(
                     $this->customerInfo->getFormLier()
                 )->col(12)->required(),
+            self::input("customer_code", "客户单号")->col(12),
             self::select("sales_type", "销售类型")
                 ->options(
                     function () {

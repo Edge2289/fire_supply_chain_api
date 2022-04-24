@@ -16,6 +16,7 @@ class SalesOrderDetails extends Migrator
             ->addColumn('item_number', 'string', ['limit' => 50, 'null' => false, 'default' => "", 'signed' => false, 'comment' => '货号',])
             ->addColumn('sku_code', 'string', ['limit' => 50, 'null' => false, 'default' => "", 'signed' => false, 'comment' => 'sku',])
             ->addColumn('tax_rate', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'signed' => false, 'comment' => '税率',])
+            ->addColumn('entity', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => false, 'comment' => '单位',])
             ->addColumn('unit_price', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'signed' => false, 'comment' => '单价',])
             ->addColumn('amount', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'signed' => false, 'comment' => '总额',])
             ->addColumn('quantity', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '数量',])

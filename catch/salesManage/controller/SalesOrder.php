@@ -21,6 +21,7 @@ use catchAdmin\salesManage\model\SalesOrderModel;
 use catcher\base\CatchController;
 use catcher\CatchResponse;
 use catcher\exceptions\BusinessException;
+use catcher\Utils;
 use fire\data\ChangeStatus;
 use think\db\exception\DbException;
 use think\Request;
@@ -75,11 +76,13 @@ class SalesOrder extends CatchController
     public function insert($params)
     {
         // 保存基础信息
-        // 保存商品
         $goodsDetails = $params['goods_details'];
         unset($params['goods_details']);
         $this->salesOrderModel->startTrans();
         try {
+            if (empty($params['salesman_id'])) {
+                $params['salesman_id'] = \request()->user()->id;
+            }
             if (isset($params["id"]) && !empty($params["id"])) {
                 // 存在id 更新操作
                 $data = $this->salesOrderModel->findBy($params['id']);
@@ -103,8 +106,6 @@ class SalesOrder extends CatchController
                     throw new BusinessException("销售订单添加失败");
                 }
             }
-            $totalNum = 0;
-            $totalPrice = 0;
             // 重新添加商品数据
             $skuIds = [];
             $map = [];
@@ -112,18 +113,20 @@ class SalesOrder extends CatchController
                 if (in_array($goodsDetail['id'], $skuIds)) {
                     throw new BusinessException("商品数据重复");
                 }
+                if (empty($goodsDetail['entity']) || empty($goodsDetail['unit_price'])) {
+                    throw new BusinessException("商品数据填写不完整");
+                }
                 $skuIds[] = $goodsDetail['id'];
-                $totalNum += $goodsDetail['quantity'];
-                $totalPrice = bcadd($totalPrice, bcmul($goodsDetail['unit_price'], $goodsDetail['quantity'], 2), 2);
                 $map[] = [
                     'sales_order_id' => $id,
                     'product_id' => $goodsDetail['product_id'] ?? 0,
                     'product_sku_id' => $goodsDetail['id'],
                     'product_code' => $goodsDetail['product_code'],
                     'item_number' => $goodsDetail['item_number'],
+                    'entity' => $goodsDetail['entity'],
                     'sku_code' => $goodsDetail['sku_code'],
                     'unit_price' => $goodsDetail['unit_price'],
-                    'tax_rate' => $goodsDetail['tax_rate'],
+                    'tax_rate' => Utils::config('product.tax'),
                     'quantity' => $goodsDetail['quantity'],
                     'delivery_number' => 0,
                     'note' => $goodsDetail['note'] ?? "",
@@ -136,10 +139,6 @@ class SalesOrder extends CatchController
             if (empty($gId)) {
                 throw new \Exception("销售订单商品添加失败");
             }
-            $this->salesOrderModel->updateBy($id, [
-                'num' => $totalNum,
-                'amount' => (string)$totalPrice,
-            ]);
             // 提交事务
             $this->salesOrderModel->commit();
         } catch (\Exception $exception) {

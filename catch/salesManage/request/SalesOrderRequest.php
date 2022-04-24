@@ -21,7 +21,7 @@ class SalesOrderRequest extends CatchRequest
     protected function rules(): array
     {
         return [
-            'purchase_date|销售日期' => 'require',
+            'purchase_date|单据日期' => 'require',
             'user_id|销售人员' => 'require',
             'supplier_id|供应商' => 'require|max:100',
             'goods_details|商品' => 'require'

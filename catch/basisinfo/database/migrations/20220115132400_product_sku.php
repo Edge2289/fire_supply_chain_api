@@ -26,7 +26,6 @@ class ProductSku extends Migrator
             ->addColumn('udi', 'string', ['limit' => 60, 'null' => false, 'default' => '', 'signed' => false, 'comment' => 'udi',])
             ->addColumn('sku_code', 'string', ['limit' => 100, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '规格',])
             ->addColumn('item_number', 'string', ['limit' => 100, 'null' => false, 'default' => '', 'signed' => false, 'comment' => '型号',])
-            ->addColumn('tax_rate', 'integer', ['limit' => MysqlAdapter::INT_MEDIUM, 'default' => 0, 'null' => false, 'signed' => false, 'comment' => '税率',])
             ->addColumn('unit_price_1', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'null' => false, 'signed' => true, 'comment' => '单价1',])
             ->addColumn('unit_price_2', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'null' => false, 'signed' => true, 'comment' => '单价2',])
             ->addColumn('unit_price_3', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'null' => false, 'signed' => true, 'comment' => '单价3',])

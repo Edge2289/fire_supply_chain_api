@@ -110,25 +110,41 @@ abstract class CatchModel extends \think\Model
      * @return array
      * @author 1131191695@qq.com
      */
-    protected function assemblyDetailsData($hasPurchaseOrderDetail)
+    protected function assemblyDetailsData($goodsDetailsData)
     {
+        // 单位
+        // 含税单价
+        $unit_price = [];
+        $procurement_price = [];
+        for ($i = 1; $i < 5; $i++) {
+            $unit_price[] = [
+                "label" => $i,
+                "value" => $goodsDetailsData['hasProductSkuData']['unit_price_' . $i] ?? 0
+            ];
+        }
+        for ($i = 1; $i < 3; $i++) {
+            $procurement_price[] = [
+                "label" => $i,
+                "value" => $goodsDetailsData['hasProductSkuData']['procurement_price_' . $i]
+            ];
+        }
         $data = [
-            'id' => $hasPurchaseOrderDetail['hasProductSkuData']['id'],
-            'product_id' => $hasPurchaseOrderDetail['hasProductSkuData']['product_id'],
-            'product_code' => $hasPurchaseOrderDetail['hasProductSkuData']['product_code'],
-            'sku_code' => $hasPurchaseOrderDetail['hasProductSkuData']['sku_code'],
-            'item_number' => $hasPurchaseOrderDetail['hasProductSkuData']['item_number'],
-            'unit_price' => $hasPurchaseOrderDetail['unit_price'],
-            'tax_rate' => $hasPurchaseOrderDetail['hasProductSkuData']['tax_rate'],
-            'packing_size' => $hasPurchaseOrderDetail['hasProductSkuData']['packing_size'],
-            'packing_specification' => $hasPurchaseOrderDetail['hasProductSkuData']['packing_specification'],
-            'product_name' => $hasPurchaseOrderDetail['hasProductData']['product_name'],
-            'udi' => $hasPurchaseOrderDetail['hasProductSkuData']['udi'],
-            'entity' => $hasPurchaseOrderDetail['hasProductSkuData']['entity'],
-            "quantity" => $hasPurchaseOrderDetail["quantity"],
-            "note" => $hasPurchaseOrderDetail["note"],
+            'id' => $goodsDetailsData['hasProductSkuData']['id'],
+            'product_id' => $goodsDetailsData['hasProductSkuData']['product_id'],
+            'product_code' => $goodsDetailsData['hasProductSkuData']['product_code'],
+            'sku_code' => $goodsDetailsData['hasProductSkuData']['sku_code'],
+            'item_number' => $goodsDetailsData['hasProductSkuData']['item_number'],
+            'unit_price' => $goodsDetailsData['unit_price'],
+            'product_name' => $goodsDetailsData['hasProductData']['product_name'],
+            'udi' => $goodsDetailsData['hasProductSkuData']['udi'],
+            'entity' => $goodsDetailsData['entity'],
+            "quantity" => $goodsDetailsData["quantity"],
+            "note" => $goodsDetailsData["note"],
+            "hasProductEntity" => $goodsDetailsData['hasProductSkuData']->hasProductEntity->toArray(),
+            "unit_price_item" => $unit_price,
+            "procurement_price_item" => $procurement_price,
         ];
-        $detail = sprintf("商品: %s, 数量:%s", $hasPurchaseOrderDetail['hasProductData']['product_name'], $hasPurchaseOrderDetail["quantity"]);
+        $detail = sprintf("商品: %s, 数量:%s", $data['product_name'], $data["quantity"]);
         return [$data, $detail];
     }
 
