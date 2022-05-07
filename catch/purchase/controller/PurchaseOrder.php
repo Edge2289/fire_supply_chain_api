@@ -11,12 +11,14 @@ namespace catchAdmin\purchase\controller;
 
 
 use app\Request;
+use catchAdmin\basisinfo\model\ProductEntity;
 use catchAdmin\basisinfo\model\SupplierLicense;
 use catchAdmin\purchase\model\PurchaseOrderDetails;
 use catchAdmin\purchase\request\PurchaseOrderRequest;
 use catcher\base\CatchController;
 use catchAdmin\purchase\model\PurchaseOrder as PurchaseOrderModel;
 use catcher\CatchResponse;
+use catcher\Utils;
 use fire\data\ChangeStatus;
 
 /**
@@ -74,6 +76,9 @@ class PurchaseOrder extends CatchController
         try {
             $params['purchase_date'] = strtotime($params['purchase_date']);
             $params['company_id'] = \request()->user()->department_id;
+            if (empty($params['user_id'])) {
+                $params['user_id'] = \request()->user()->id;
+            }
             $id = $this->purchaseOrderModel->insertGetId($params);
             if (empty($id)) {
                 throw new \Exception("采购订单添加失败");
@@ -92,8 +97,9 @@ class PurchaseOrder extends CatchController
                     'item_number' => $goodsDetail['item_number'],
                     'sku_code' => $goodsDetail['sku_code'],
                     'unit_price' => $goodsDetail['unit_price'],
-                    'tax_rate' => $goodsDetail['tax_rate'],
+                    'tax_rate' => Utils::config('product.tax'),
                     'quantity' => $goodsDetail['quantity'],
+                    'entity' => $goodsDetail['entity'],
                     'receipt_quantity' => 0,
                     'warehousing_quantity' => 0,
                     'return_quantity' => 0,
@@ -104,10 +110,6 @@ class PurchaseOrder extends CatchController
             if (empty($gId)) {
                 throw new \Exception("采购订单商品添加失败");
             }
-            $this->purchaseOrderModel->updateBy($id, [
-                'num' => $totalNum,
-                'amount' => (string)$totalPrice,
-            ]);
             // 提交事务
             $this->purchaseOrderModel->commit();
         } catch (\Exception $exception) {
@@ -180,7 +182,8 @@ class PurchaseOrder extends CatchController
                     'item_number' => $goodsDetail['item_number'],
                     'sku_code' => $goodsDetail['sku_code'],
                     'unit_price' => $goodsDetail['unit_price'],
-                    'tax_rate' => $goodsDetail['tax_rate'],
+                    'tax_rate' => Utils::config('product.tax'),
+                    'entity' => $goodsDetail['entity'],
                     'quantity' => $goodsDetail['quantity'],
                     'receipt_quantity' => 0,
                     'warehousing_quantity' => 0,
@@ -330,7 +333,7 @@ class PurchaseOrder extends CatchController
                 "hasProductData", "hasProductSkuData"
             ]
         )->field([
-            "quantity", "note", "id", "unit_price", "product_id", "product_sku_id", "warehousing_quantity"
+            "quantity", "note", "id", "unit_price", "product_id", "product_sku_id", "warehousing_quantity", "entity"
         ])->whereRaw("(quantity - warehousing_quantity - return_quantity) > 0")
             ->where("purchase_order_id", $purchaseOrderId)->select()->toArray();
         $skuMap = [];
@@ -343,12 +346,11 @@ class PurchaseOrder extends CatchController
                 'sku_code' => $datum['hasProductSkuData']['sku_code'],
                 'item_number' => $datum['hasProductSkuData']['item_number'],
                 'unit_price' => $datum['unit_price'],
-                'tax_rate' => $datum['hasProductSkuData']['tax_rate'],
-                'packing_size' => $datum['hasProductSkuData']['packing_size'],
-                'packing_specification' => $datum['hasProductSkuData']['packing_specification'],
+                'tax_rate' => Utils::config('product.tax'),
                 'product_name' => $datum['hasProductData']['product_name'],
                 'udi' => $datum['hasProductSkuData']['udi'],
-                'entity' => $datum['hasProductSkuData']['entity'],
+                'entity' => $datum['entity'],
+                'entity_name' => ProductEntity::find($datum['entity'])["deputy_unit_name"] ?? "",
                 "quantity" => $datum["quantity"],
                 "warehousing_quantity" => $datum["warehousing_quantity"],
                 "note" => $datum["note"],

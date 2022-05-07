@@ -8,7 +8,7 @@ class OtherPutInventory extends Migrator
 {
     public function change()
     {
-        $table = $this->table('other_put_inventory', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => 'xxx', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table = $this->table('other_put_inventory', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '其他入库', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('other_put_inventory_code', 'string', ['limit' => 60, 'default' => 0, 'signed' => true, 'comment' => '编号',])
             ->addColumn('company_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '公司id',])
             ->addColumn('outbound_time', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'signed' => false, 'comment' => '出库日期',])

@@ -19,6 +19,7 @@ use catchAdmin\inventory\model\OtherOutbound as OtherOutboundModel;
 use catcher\base\CatchModel;
 use catcher\CatchResponse;
 use catcher\exceptions\BusinessException;
+use catcher\Utils;
 use Exception;
 use fire\data\ChangeStatus;
 use think\db\exception\DataNotFoundException;
@@ -125,7 +126,7 @@ class OtherOutbound extends CatchController
                     'product_code' => $goods_detail['product_code'],
                     'item_number' => $goods_detail['item_number'],
                     'sku_code' => $goods_detail['product_sku_name'],
-                    'tax_rate' => $goods_detail['tax_rate'],
+                    'tax_rate' => Utils::config('product.tax'),
                     'unit_price' => $goods_detail['unit_price'],
                     'amount' => bcmul($goods_detail['unit_price'], $goods_detail['put_num'], 2),
                     'quantity' => $goods_detail['put_num'],

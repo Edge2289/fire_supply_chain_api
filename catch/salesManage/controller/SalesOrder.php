@@ -83,6 +83,7 @@ class SalesOrder extends CatchController
             if (empty($params['salesman_id'])) {
                 $params['salesman_id'] = \request()->user()->id;
             }
+            $params['sales_time'] = strtotime($params['sales_time']);
             if (isset($params["id"]) && !empty($params["id"])) {
                 // 存在id 更新操作
                 $data = $this->salesOrderModel->findBy($params['id']);
@@ -95,10 +96,9 @@ class SalesOrder extends CatchController
                 $this->salesOrderModel->updateBy($params['id'], $params);
                 $id = $params['id'];
                 // 删除
-                $this->salesOrderModel->where("procurement_warehousing_id", $params['id'])->delete();
+                $this->salesOrderDetailsModel->destroy(["sales_order_id" => $params['id']]);
             } else {
                 $params['order_code'] = getCode("SO");
-                $params['sales_time'] = strtotime($params['sales_time']);
                 $params['company_id'] = request()->user()->department_id;
                 unset($params['id']);
                 $id = $this->salesOrderModel->insertGetId($params);

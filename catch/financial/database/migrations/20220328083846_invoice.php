@@ -8,7 +8,7 @@ class Invoice extends Migrator
 {
     public function change()
     {
-        $table = $this->table('invoice_sheet', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => 'xxx', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table = $this->table('invoice_sheet', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '发票', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('invoice_code', 'string', ['limit' => 60, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '发票单号',])
             ->addColumn('invoice_number', 'string', ['limit' => 60, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '发票号码',])
             ->addColumn('order_type', 'integer', ['limit' => MysqlAdapter::INT_MEDIUM, 'null' => false, 'default' => 1, 'signed' => true, 'comment' => '订单类型{1:采购订单,2:出库订单}',])

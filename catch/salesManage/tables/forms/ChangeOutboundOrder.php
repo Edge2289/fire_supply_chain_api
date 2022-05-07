@@ -42,28 +42,28 @@ class ChangeOutboundOrder extends Form
     public function fields(): array
     {
         return [
-            self::date("outbound_time", "出库日期")->col(12)->required(),
-            self::select("outbound_man_id", "出库人员")
+            self::date("outbound_time", "单据日期")->col(8)->required(),
+            self::select("outbound_man_id", "经手人")
                 ->options(
                 // 获取自身公司下的员工
                     get_company_employees()
-                )->col(12)->required(),
-            self::select("warehouse_id", "仓库")
+                )->col(8)->required(),
+            self::select("customer_info_id", "客户")
+                ->options(
+                    $this->customerInfo->getFormLier()
+                )->col(8)->required()->clearable(true),
+            self::select("sales_order_id", "销售订单")
+                ->options(
+                    $this->salesOrder->getOutOrder()
+                )->col(8)->required()->clearable(true),
+            self::select("warehouse_id", "出库仓库")
                 ->options(
                     $this->warehouse->tableGetWarehouse()
                 )->
                 col(12)->required(),
-            self::select("customer_info_id", "客户")
-                ->options(
-                    $this->customerInfo->getFormLier()
-                )->col(12)->required()->clearable(true),
-            self::select("sales_order_id", "销售订单")
-                ->options(
-                    $this->salesOrder->getOutOrder()
-                )->col(12)->required()->clearable(true),
             self::input("logistics_code", "物流公司")->col(12),
             self::input("logistics_number", "物流单号")->col(12),
-            self::textarea("remark", "备注")
+            self::textarea("remark", "备注")->col(12)
         ];
     }
 }

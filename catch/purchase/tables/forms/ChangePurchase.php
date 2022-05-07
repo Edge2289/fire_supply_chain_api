@@ -32,11 +32,11 @@ class ChangePurchase extends Form
     public function fields(): array
     {
         return [
-            self::date("purchase_date", "采购日期")->col(12)->required(),
+            self::date("purchase_date", "单据日期")->col(12)->required(),
             self::select("user_id", "采购人员")
                 ->options(
                     get_company_employees()
-                )->col(12)->required(),
+                )->col(12),
             self::select("supplier_id", "供应商")
                 ->options(
                     $this->supplier->getSupplier()
@@ -46,6 +46,7 @@ class ChangePurchase extends Form
                     self::options()->add('现结', "0")
                         ->add('月结', "1")->render()
                 )->col(12)->required(),
+            self::textarea("remark", "备注")->col(12)
         ];
     }
 }

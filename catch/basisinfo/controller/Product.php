@@ -449,6 +449,9 @@ class Product extends CatchController
                 if (!empty($data['sku_code'])) {
                     $query->where("f_product_sku.sku_code", "like", "%" . $data['sku_code'] . "%");
                 }
+                if (!empty($data['product_category_id'])) {
+                    $query->where("pbi.product_category_id", $data['product_category_id']);
+                }
             })
             ->field([
                 "f_product_sku.id", "f_product_sku.product_id", "f_product_sku.product_code",

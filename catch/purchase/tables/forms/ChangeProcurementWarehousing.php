@@ -36,23 +36,29 @@ class ChangeProcurementWarehousing extends Form
     public function fields(): array
     {
         return [
-            self::date("put_date", "入库日期")->col(12)->required(),
-            self::select("put_user_id", "入库人员")
+            self::date("put_date", "单据日期")->col(8)->required(),
+            self::select("put_user_id", "经手人")
                 ->options(
                     get_company_employees()
-                )->col(12)->required(),
-            self::select("warehouse_id", "仓库")
-                ->options(
-                    $this->warehouse->tableGetWarehouse()
-                )->
-                col(12)->required(),
+                )->col(8)->required(),
             self::select("purchase_order_id", "采购订单")
                 ->options(
                     $this->purchaseOrder->tableGetPurchaseOrderLists()
                 )->
-                col(12)->required(),
-            self::input("delivery_code", "收货单号")->col(12)->required(),
-            self::textarea("remark", "备注")->col(12)->required(),
+                col(8)->required(),
+            self::select("warehouse_id", "仓库")
+                ->options(
+                    $this->warehouse->tableGetWarehouse()
+                )->
+                col(8)->required(),
+            self::textarea("remark", "备注")->col(12),
+            self::date("delivery_code2", "收/验货日期")->col(8),
+            self::input("delivery_code1", "收/验货人员")->col(8),
+            self::input("delivery_code3", "是否合格")->col(8),
+            self::input("delivery_code4", "物流信息")->col(8),
+            self::input("delivery_code5", "快递公司")->col(8),
+            self::input("delivery_code6", "快递单号")->col(8),
+            self::file("供应商附件", "attachment")
         ];
     }
 }

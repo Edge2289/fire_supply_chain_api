@@ -21,6 +21,7 @@ use catchAdmin\inventory\model\ReadyOutbound as ReadyOutboundModel;
 use catcher\base\CatchModel;
 use catcher\CatchResponse;
 use catcher\exceptions\BusinessException;
+use catcher\Utils;
 use Exception;
 use fire\data\ChangeStatus;
 use think\db\exception\DataNotFoundException;
@@ -320,7 +321,7 @@ class ReadyOutbound extends CatchController
                         "sku_code" => $good['sku_code'],
                         "item_number" => $good['item_number'],
                         "unit_price" => $good['unit_price'],
-                        "tax_rate" => $good['tax_rate'],
+                        "tax_rate" => Utils::config('product.tax'),
                         "product_name" => $good['product_name'],
                         "quantity" => $good['inventory_quantity_t'],
                         "note" => "",

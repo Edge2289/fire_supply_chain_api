@@ -25,7 +25,7 @@ class ProductBasicInfo extends Migrator
             ->addColumn('goods_name', 'string', ['limit' => 300, 'null' => false, 'default' => '', 'signed' => true, 'comment' => '商品名称',])
             ->addColumn('factory_id', 'integer', ['limit' => 10, 'default' => 0, 'null' => false, 'signed' => false, 'comment' => '生产厂家',])
             ->addColumn('product_type', 'string', ['limit' => 30, 'default' => "", 'signed' => false, 'comment' => '产品类型',])
-            ->addColumn('product_category', 'integer', ['limit' => MysqlAdapter::INT_MEDIUM, 'default' => 0, 'signed' => false, 'comment' => '产品类别',])
+            ->addColumn('product_category_id', 'integer', ['limit' => MysqlAdapter::INT_MEDIUM, 'default' => 0, 'signed' => false, 'comment' => '产品类别',])
             ->addColumn('storage_conditions', 'string', ['limit' => 100, 'null' => false, 'default' => '', 'signed' => true, 'comment' => '储运条件',])
             ->addColumn('data_maintenance', 'string', ['limit' => 30, 'default' => "", 'null' => false, 'signed' => false, 'comment' => '资料维护 1 注册证 2 备案凭证 3 凭证审核',])
             ->addColumn('audit_status', 'integer', ['limit' => MysqlAdapter::INT_TINY, 'default' => 0, 'signed' => true, 'comment' => '审核状态 {0:未审核,1:已审核,2:审核失败}',])

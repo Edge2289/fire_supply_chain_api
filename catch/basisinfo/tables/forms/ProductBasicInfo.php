@@ -44,7 +44,7 @@ class ProductBasicInfo extends Form
                     ->add('非医疗器械', "4")->render()
             )->required(),
 
-            self::cascader('product_category', '产品类别', [])->options(
+            self::cascader('product_category_id', '产品类别', [])->options(
                 ProductCategoryModel::field(['id', 'name', 'p_id'])
                     ->select()->toTree(0, 'p_id')
             )->col(12)->props(self::props('name', 'id', [
