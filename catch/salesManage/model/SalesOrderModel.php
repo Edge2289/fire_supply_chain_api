@@ -75,9 +75,16 @@ class SalesOrderModel extends CatchModel
      * @throws \think\db\exception\DbException
      * @author 1131191695@qq.com
      */
-    public function getList()
+    public function getList($data = [])
     {
-        $data = $this->catchSearch()->with(
+        if (!empty($data)) {
+            $map = \request()->param();
+            foreach ($data as $key => $datum) {
+                $map[$key] = $datum;
+            }
+            $data = $map;
+        }
+        $data = $this->catchSearch($data)->with(
             [
                 "hasSalesOrderDetails", "hasSalesOrderDetails.hasProductData", "hasSalesOrderDetails.hasProductSkuData",
                 "hasSupplierLicense", "hasCustomerInfo"

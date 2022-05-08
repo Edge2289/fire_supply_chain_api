@@ -387,9 +387,9 @@ class Customer extends CatchController
      * @throws \think\db\exception\ModelNotFoundException
      * @author 1131191695@qq.com
      */
-    public function changeCustomerSetting(Request $request)
+    public function changeCustomerSetting(Request $request, $customerId = 0)
     {
-        $id = $request->param('id') ?? 0;
+        $id = $customerId == 0 ? ($request->param('id') ?? 0) : $customerId;
         $map = [
             [
                 "id" => 1,
