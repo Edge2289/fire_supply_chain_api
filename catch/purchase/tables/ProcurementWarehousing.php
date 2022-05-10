@@ -10,6 +10,7 @@
 namespace catchAdmin\purchase\tables;
 
 
+use catchAdmin\inventory\model\Warehouse;
 use catcher\CatchTable;
 use catcher\library\table\Actions;
 use catcher\library\table\HeaderItem;
@@ -41,7 +42,7 @@ class ProcurementWarehousing extends CatchTable
             ])
             ->withSearch([
                 Search::label('入库编号')->text('purchase_code', '采购编号'),
-                Search::label('仓库')->text('warehouse_id', '仓库'),
+                Search::label('仓库')->select('warehouse_id', '仓库', app(Warehouse::class)->tableGetWarehouse()),
                 Search::label('状态')->select('audit_status', '请选择审核状态',
                     Search::options()->add('全部', '')
                         ->add('未完成', 0)

@@ -368,13 +368,16 @@ class PurchaseOrder extends CatchController
      * @throws \think\db\exception\ModelNotFoundException
      * @author 1131191695@qq.com
      */
-    public function tableGetPurchaseOrderLists()
+    public function tableGetPurchaseOrderLists($supplier_id = 0)
     {
         $data = $this->purchaseOrderDetailsModel->alias("pod")
             ->join("purchase_order po", "po.id = pod.purchase_order_id")
             ->field(["po.id", "po.purchase_code"])
             ->where("po.audit_status", 1) // 已审核
             ->where("po.status", 0) // 未完成
+            ->when(!empty($supplier_id), function ($query) use ($supplier_id) {
+                $query->where("po.supplier_id", $supplier_id);
+            })
             ->where(function ($query) {
                 $query->where([
                     "po.settlement_type" => 0,

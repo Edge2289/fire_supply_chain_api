@@ -25,9 +25,12 @@ class ProcurementWarehousing extends CatchModel
 
     protected $pk = 'id';
 
-    protected $fieldToTime = ['put_date'];
+    protected $fieldToTime = ['put_date', 'inspection_date'];
 
-    protected $fieldToString = ['put_user_id', 'warehouse_id', 'purchase_order_id'];
+    protected $fieldToString = [
+        'put_user_id', 'warehouse_id', 'purchase_order_id', 'logistics_info',
+        'is_qualified', 'courier_company', 'inspection_user_id', 'supplier_id'
+    ];
 
     /**
      * @return \think\model\relation\HasMany

@@ -102,6 +102,7 @@ class ProcurementWarehousing extends CatchController
         $this->procurementWarehousing->startTrans();
         try {
             $params['put_date'] = strtotime($params['put_date']);
+            $params['inspection_date'] = strtotime($params['inspection_date']);
             $params['put_num'] = $put_num;
 
             if (isset($params["id"]) && !empty($params["id"])) {

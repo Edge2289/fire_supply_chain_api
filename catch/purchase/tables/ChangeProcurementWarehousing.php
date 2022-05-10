@@ -29,6 +29,10 @@ class ChangeProcurementWarehousing extends CatchTable
 
     protected function form()
     {
+        $type = $_GET['type'] ?? "";
+        if (!empty($type)) {
+            return app(\catchAdmin\purchase\controller\PurchaseOrder::class)->tableGetPurchaseOrderLists($type);
+        }
         return Factory::create('changeProcurementWarehousing');
     }
 }
