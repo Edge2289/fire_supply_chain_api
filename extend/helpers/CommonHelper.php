@@ -74,6 +74,9 @@ if (!function_exists("get_company_employees")) {
  *
  * @param int $productId
  * @return string
+ * @throws \think\db\exception\DataNotFoundException
+ * @throws \think\db\exception\DbException
+ * @throws \think\db\exception\ModelNotFoundException
  * @author 1131191695@qq.com
  */
 function getProductRegisterCode(int $productId): string
@@ -100,7 +103,10 @@ function getProductRegisterCode(int $productId): string
  * 获取厂家信息
  *
  * @param int $factoryId
- * @return string
+ * @return mixed|string
+ * @throws \think\db\exception\DataNotFoundException
+ * @throws \think\db\exception\DbException
+ * @throws \think\db\exception\ModelNotFoundException
  * @author 1131191695@qq.com
  */
 function getFactoryName(int $factoryId)

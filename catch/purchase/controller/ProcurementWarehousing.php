@@ -168,7 +168,7 @@ class ProcurementWarehousing extends CatchController
                     "serial_number" => $product["serial_number"] ?? "",
                     "production_date" => $product["production_date"] ?? "",
                     "valid_until" => $product["valid_until"] ?? "",
-                    "registration_number" => $product["registration_number"] ?? "",
+                    "registration_number" => getProductRegisterCode($param["product_id"]),
                     "number" => $product["number"] ?? "",
                 ];
                 if (isset($changePurchaseOrderDetails[$param["id"]])) {
