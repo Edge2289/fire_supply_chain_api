@@ -106,11 +106,11 @@ abstract class CatchModel extends \think\Model
     /**
      * 组装
      *
-     * @param $hasPurchaseOrderDetail
+     * @param $goodsDetailsData
      * @return array
      * @author 1131191695@qq.com
      */
-    protected function assemblyDetailsData($goodsDetailsData)
+    public function assemblyDetailsData($goodsDetailsData)
     {
         // 单位
         // 含税单价

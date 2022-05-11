@@ -29,7 +29,6 @@ class OutboundOrder extends CatchTable
                 HeaderItem::label()->selection(),
                 HeaderItem::label('状态')->prop('status_i'),
                 HeaderItem::label('出库编号')->prop('outbound_order_code')->width(130),
-//                HeaderItem::label('供货者')->prop('supplier_name'),
                 HeaderItem::label('客户')->prop('customer_name'),
                 HeaderItem::label('明细摘要')->prop('detail'),
                 HeaderItem::label('总额')->prop('amount'),
@@ -70,6 +69,7 @@ class OutboundOrder extends CatchTable
             ->withActions([
                 Actions::normal("新增", 'primary', "add")->icon('el-icon-plus'),
                 Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu'),
+                Actions::normal("填写物流信息", 'primary', "fill_logistics"),
                 Actions::normal("发票", 'primary', "invoice"),
                 Actions::normal("作废", 'primary', "cancel"),
                 Actions::normal("导出", 'primary', "export"),

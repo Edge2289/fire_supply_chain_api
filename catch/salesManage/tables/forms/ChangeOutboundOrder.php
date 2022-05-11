@@ -61,8 +61,6 @@ class ChangeOutboundOrder extends Form
                     $this->warehouse->tableGetWarehouse()
                 )->
                 col(12)->required(),
-            self::input("logistics_code", "物流公司")->col(12),
-            self::input("logistics_number", "物流单号")->col(12),
             self::textarea("remark", "备注")->col(12)
         ];
     }

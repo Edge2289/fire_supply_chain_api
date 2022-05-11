@@ -314,23 +314,14 @@ class SalesOrder extends CatchController
         foreach ($data['hasSalesOrderDetails'] as $hasSalesOrderDetail) {
             $details = [
                 'sales_order_details_id' => $hasSalesOrderDetail['id'],
-                'product_id' => $hasSalesOrderDetail->hasProductSkuData['product_id'],
-                'product_code' => $hasSalesOrderDetail->hasProductSkuData['product_code'],
-                'product_sku_id' => $hasSalesOrderDetail->hasProductSkuData['id'],
-                'sku_code' => $hasSalesOrderDetail->hasProductSkuData['sku_code'],
-                'item_number' => $hasSalesOrderDetail->hasProductSkuData['item_number'],
-                'unit_price' => $hasSalesOrderDetail->hasProductSkuData['unit_price'],
-                'tax_rate' => $hasSalesOrderDetail->hasProductSkuData['tax_rate'],
-                'packing_size' => $hasSalesOrderDetail->hasProductSkuData['packing_size'],
-                'packing_specification' => $hasSalesOrderDetail->hasProductSkuData['packing_specification'],
                 'product_name' => $hasSalesOrderDetail->hasProductData['product_name'],
-                'udi' => $hasSalesOrderDetail->hasProductSkuData['udi'],
-                'entity' => $hasSalesOrderDetail->hasProductSkuData['entity'],
                 "quantity" => $hasSalesOrderDetail["quantity"],
                 "outbound_quantity" => bcsub($hasSalesOrderDetail["quantity"], $hasSalesOrderDetail["delivery_number"]),
                 "selectedNumber" => 0,
                 "selectedBatchNumber" => 0,
             ];
+            list($assemblyDetailsData, $detail) = $this->salesOrderModel->assemblyDetailsData($hasSalesOrderDetail);
+            $details = array_merge($details, $assemblyDetailsData);
             // 存在销售数据
             if (isset($params['outbound_order_id'])) {
                 // selectOutboundItem
