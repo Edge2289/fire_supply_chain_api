@@ -55,12 +55,12 @@ class ChangeOutboundOrder extends Form
             self::select("sales_order_id", "销售订单")
                 ->options(
                     $this->salesOrder->getOutOrder()
-                )->col(8)->required()->clearable(true),
+                )->col(8)->required()->clearable(true)->appendEmit('change'),
             self::select("warehouse_id", "出库仓库")
                 ->options(
                     $this->warehouse->tableGetWarehouse()
                 )->
-                col(12)->required(),
+                col(12)->required()->appendEmit('change'),
             self::textarea("remark", "备注")->col(12)
         ];
     }

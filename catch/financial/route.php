@@ -40,5 +40,5 @@ $router->group(function () use ($router) {
 })->middleware('auth');
 
 $router->group(function () use ($router) {
-
+    $router->get('sourceList', '\catchAdmin\financial\controller\SourceList@index'); // 获取源单的数据
 });

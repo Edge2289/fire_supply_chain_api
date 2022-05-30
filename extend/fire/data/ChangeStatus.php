@@ -12,20 +12,26 @@ namespace fire\data;
 
 /**
  * Class ChangeStatus
+ * @method self settlementStatus
+ * @method self status
+ * @method self invoiceStatus
+ * @method self settlementType
+ * @method self auditStatus
  * @package fire\data
  */
 class ChangeStatus
 {
-    private static $auditStatus = false;
 
-    private static $status = false;
-
-    private $statusArr = [
+    private $statusI = [
         "未完成", "已完成", "作废"
     ];
     //审核状态 {0:未审核,1:已审核,2:审核失败}
     private $auditStatusI = [
         "未审核", "已审核", "审核失败"
+    ];
+    // 结款状态 {0:未结款,1:部分结款,2:已付清}
+    private $settlementStatusI = [
+        "未结款", "部分结款", "已付清"
     ];
 
     /**
@@ -44,30 +50,53 @@ class ChangeStatus
     public function handle(&$data)
     {
         foreach ($data as &$datum) {
-            if (self::$auditStatus) {
-                $datum['audit_status_i'] = $this->auditStatusI[$datum['audit_status']];
-            }
-            if (self::$status) {
-                $datum['status_i'] = $this->statusArr[$datum['status']];
+            foreach ($this->getStatusMap() as $statusDatum) {
+                if ($this->{$statusDatum} ?? false) {
+                    $name = $statusDatum . "I";
+                    // 不存在
+                    if (!($this->{$name} ?? false)) {
+                        continue;
+                    }
+                    $datum[uncamelize($name)] = $this->{$name}[$datum['audit_status']];
+                }
             }
         }
     }
 
-    public function audit(array $arr = []): self
+    /**
+     * 获取状态的集合
+     *
+     * @return array
+     */
+    public function getStatusMap(): array
     {
-        if (!empty($arr)) {
-            $this->statusArr = $arr;
+        $r = new \ReflectionClass($this);
+        $statusMap = [];
+        foreach (explode("method", $r->getDocComment()) as $key => $value) {
+            if ($key == 0) {
+                continue;
+            }
+            $name = explode("\n", $value)[0] ?? "";
+            $name = substr($name, 6);
+            !empty(trim($name)) && $statusMap[] = trim($name);
         }
-        self::$auditStatus = true;
-        return $this;
+        return $statusMap;
     }
 
-    public function status(array $arr = []): self
+    /**
+     * 魔术方法
+     *
+     * @param $name
+     * @param $arguments
+     * @return $this
+     */
+    public function __call($name, $arguments)
     {
-        if (!empty($arr)) {
-            $this->statusArr = $arr;
+        if (!empty($arguments)) {
+            $key = $name . "I";
+            $this->{$key} = $arguments;
         }
-        self::$status = true;
+        $this->$name = true;
         return $this;
     }
 

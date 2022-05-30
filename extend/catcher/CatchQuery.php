@@ -119,13 +119,14 @@ class CatchQuery extends Query
      * @param array $params
      * @return CatchQuery
      */
-    public function catchSearch(array $params = []): CatchQuery
+    public function catchSearch(array $params = [], $companyAli = ''): CatchQuery
     {
         $params = empty($params) ? \request()->param() : $params;
 
         // 如果查询表存在公司id的话，那么则自动添加公司id上去
         if (in_array("company_id", $this->getTableFields()) && !empty(request()->user()->department_id)) {
-            $params["company_id"] = request()->user()->department_id;
+            $name = empty($companyAli) ? 'company_id' : $companyAli . '.company_id';
+            $params[$name] = request()->user()->department_id;
         }
         if (empty($params)) {
             return $this;
