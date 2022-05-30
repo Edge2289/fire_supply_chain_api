@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/2/14
  * Time: 22:22
@@ -32,7 +32,7 @@ class CustomerHospital extends Form
             self::textarea("detailed_address", "地址")->required(),
             self::date("effective_start_date", "有限期限(开始)")->col(12)->required(),
             self::date("effective_end_date", "有限期限(结束)")->col(12)->required(),
-            self::input("certification_date", "发证日期")->col(12),
+            self::date("certification_date", "发证日期")->col(12),
             self::input("certification_department", "发证机关")->col(12),
             self::input("business_scope", "诊疗科目")->col(12),
         ];

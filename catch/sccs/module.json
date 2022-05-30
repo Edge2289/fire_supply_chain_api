@@ -1,0 +1,15 @@
+{
+    "name": "sccs",
+    "alias": "sccs",
+    "description": "sccs",
+    "version": "1.0.0",
+    "keywords": [],
+    "order": 0,
+    "services": [
+        "\\catchAdmin\\sccs\\SccsService"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": [],
+    "enable": true
+}

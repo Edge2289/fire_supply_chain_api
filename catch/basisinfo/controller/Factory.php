@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/11
  * Time: 11:49
@@ -18,6 +18,7 @@ use catcher\base\CatchController;
 use catcher\CatchResponse;
 use \catchAdmin\basisinfo\model\Factory as FactoryModel;
 use catcher\exceptions\BusinessException;
+use fire\data\ChangeStatus;
 
 /**
  * 厂家管理
@@ -47,14 +48,10 @@ class Factory extends CatchController
      *
      * @return \think\response\Json
      * @throws \think\db\exception\DbException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function index()
     {
-        // 审核状态 {0:未审核,1:已审核,2:审核失败}
-        $auditStatusI = [
-            "未审核", "已审核", "审核失败"
-        ];
         $data = $this->factory->getList();
         foreach ($data as &$datum) {
             $datum['business_end_date_z'] = "";
@@ -63,18 +60,19 @@ class Factory extends CatchController
             } elseif (!empty($datum['business_end_date'])) {
                 $datum['business_end_date_z'] = $datum['business_end_date'];
             }
-            $datum['factory_type_name'] = $datum['factory_type'] == 1? "国内厂家": "国外厂家";
-            $datum['audit_status_i'] = $auditStatusI[$datum['audit_status']];
+            $datum['factory_type_name'] = $datum['factory_type'] == 1 ? "国内厂家" : "国外厂家";
         }
+
+        ChangeStatus::getInstance()->audit()->handle($data);
         return CatchResponse::paginate($data);
     }
 
     /**
      * 获取设置
      *
-     * @author xiejiaqing
      * @param Request $request
      * @return \think\response\Json
+     * @author 1131191695@qq.com
      */
     public function changeFactorySetting(Request $request)
     {
@@ -100,7 +98,7 @@ class Factory extends CatchController
             $factoryData['factory'] = $data;
             if ($data['factory_type'] != 2) {
                 // 如果是国外公司，直接返回
-                foreach ($data['data_maintenance'] as $value) {
+                foreach ($data['data_maintenance'] ?: [] as $value) {
                     if ($value == 1) {
                         $map[] = [
                             "id" => 2,
@@ -128,12 +126,12 @@ class Factory extends CatchController
     /**
      * 自定义
      *
-     * @author xiejiaqing
      * @param $id
      * @param $factoryData
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
+     * @author 1131191695@qq.com
      */
     private function factoryAuxiliary($id, &$factoryData)
     {
@@ -144,9 +142,9 @@ class Factory extends CatchController
     /**
      * 保存
      *
-     * @author xiejiaqing
      * @param Request $request
      * @return \think\response\Json
+     * @author 1131191695@qq.com
      */
     public function save(Request $request)
     {
@@ -166,12 +164,12 @@ class Factory extends CatchController
     /**
      * 更新
      *
-     * @author xiejiaqing
      * @param Request $request
      * @return \think\response\Json
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
+     * @author 1131191695@qq.com
      */
     public function update(Request $request)
     {
@@ -191,12 +189,12 @@ class Factory extends CatchController
     /**
      * 厂家信息
      *
-     * @author xiejiaqing
      * @param array $data
      * @return bool|int
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
+     * @author 1131191695@qq.com
      */
     protected function factoryCall(array $data)
     {
@@ -218,8 +216,9 @@ class Factory extends CatchController
             $map['business_start_date'] = strtotime($map['business_start_date']);
             $map['business_end_date'] = strtotime($map['business_end_date']);
             $map['establish_date'] = strtotime($map['establish_date']);
-            $map['registration_date'] = strtotime($map['registration_date']);
+            $map['registration_date'] = isset($map['registration_date']) ? strtotime($map['registration_date']) : 0;
             unset($map['form_factory_type']);
+            $map['data_maintenance'] = implode(",", $map['data_maintenance']);
         }
         if (isset($map['id']) && !empty($map['id'])) {
             $data = $this->factory->where('id', $map['id'])->find();
@@ -236,12 +235,12 @@ class Factory extends CatchController
     /**
      * 生产许可证
      *
-     * @author xiejiaqing
      * @param array $data
      * @return bool|int
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
+     * @author 1131191695@qq.com
      */
     protected function productionLicenseCall(array $data)
     {
@@ -255,12 +254,12 @@ class Factory extends CatchController
     /**
      * 备案
      *
-     * @author xiejiaqing
      * @param array $data
      * @return bool|int
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException\
+     * @author 1131191695@qq.com
      */
     protected function recordCall(array $data)
     {
@@ -274,9 +273,14 @@ class Factory extends CatchController
     }
 
     /**
-     * 缺少审核
-     * 审核成功不可以再次审核
-     * 审核失败允许再次审核
+     * 审核
+     *
+     * @param Request $request
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @author 1131191695@qq.com
      */
     public function audit(Request $request)
     {
@@ -286,6 +290,9 @@ class Factory extends CatchController
         $factoryData = $this->factory->findBy($data['id']);
         if (empty($factoryData)) {
             throw new BusinessException("不存在产品");
+        }
+        if ($factoryData['audit'] == 1) {
+            return CatchResponse::fail("已审核");
         }
         $b = $this->factory->updateBy($data['id'], [
             'audit_status' => $data['audit_status'],

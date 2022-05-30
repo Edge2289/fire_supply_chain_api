@@ -10,10 +10,10 @@ abstract class CatchController
     /**
      * 魔术方法
      *
-     * @author xiejiaqing
      * @param $method
      * @param mixed $param
      * @return mixed
+     * @author 1131191695@qq.com
      */
     public final function __call($method, $param)
     {
@@ -38,9 +38,9 @@ abstract class CatchController
     /**
      *
      *
-     * @author xiejiaqing
      * @param string $class
      * @param array $params
+     * @author 1131191695@qq.com
      */
     public final function validator(string $class, array $params)
     {

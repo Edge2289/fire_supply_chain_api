@@ -1,4 +1,5 @@
 <?php
+
 namespace catchAdmin\system\model;
 
 use catcher\base\CatchModel;
@@ -14,30 +15,31 @@ class Config extends CatchModel
 
     protected $field = [
         'id', // 
-		'name', // 配置名称
-		'pid', // 父级配置
-		'key', // 配置键名
-		'value', // 配置键值
+        'name', // 配置名称
+        'pid', // 父级配置
+        'key', // 配置键名
+        'value', // 配置键值
         'component', // 组件
-		'status', // 1 启用 2 禁用
-		'creator_id', // 创建人
-		'created_at', // 创建时间
-		'updated_at', // 更新时间
-		'deleted_at', // 删除时间   
+        'status', // 1 启用 2 禁用
+        'creator_id', // 创建人
+        'created_at', // 创建时间
+        'updated_at', // 更新时间
+        'deleted_at', // 删除时间
     ];
 
     /**
      *
      * @time 2020年04月17日
      * @return \think\Collection
-     *@throws \think\db\exception\DbException
+     * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\db\exception\DataNotFoundException
      */
     public function getParentConfig()
     {
         return $this->where('pid', 0)
-                    ->field(['id', 'name', 'component'])->select();
+            ->where("status", 1)
+            ->field(['id', 'name', 'component'])->select();
     }
 
     /**
@@ -45,10 +47,10 @@ class Config extends CatchModel
      *
      * @time 2020年04月20日
      * @param array $data
-     * @throws \think\db\exception\DataNotFoundException
+     * @return bool
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @return bool
+     * @throws \think\db\exception\DataNotFoundException
      */
     public function storeBy(array $data)
     {
@@ -66,7 +68,7 @@ class Config extends CatchModel
         $config = [];
         foreach ($data as $key => $item) {
             foreach ($item as $k => $value) {
-                $config[$key . '.' .$k] = [
+                $config[$key . '.' . $k] = [
                     'pid' => $parentConfig['id'],
                     'key' => $key . '.' . $k,
                     'value' => $value,
@@ -77,16 +79,16 @@ class Config extends CatchModel
         }
 
         $this->where('pid', $parentConfig->id)
-           ->select()
-           ->each(function ($item) use (&$config){
-               if (isset($config[$item['key']])) {
-                  if ($config[$item['key']]['value'] != $item->value) {
-                      $item['value'] = $config[$item['key']]['value'];
-                      $item->save();
-                  }
-                   unset($config[$item['key']]);
-              }
-           });
+            ->select()
+            ->each(function ($item) use (&$config) {
+                if (isset($config[$item['key']])) {
+                    if ($config[$item['key']]['value'] != $item->value) {
+                        $item['value'] = $config[$item['key']]['value'];
+                        $item->save();
+                    }
+                    unset($config[$item['key']]);
+                }
+            });
 
         if (count($config)) {
             return $this->insertAll($config);
@@ -101,16 +103,16 @@ class Config extends CatchModel
      * @time 2020年04月19日
      * @param $key
      * @param int $pid
-     * @throws \think\db\exception\DataNotFoundException
+     * @return array|Model|null
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @return array|Model|null
+     * @throws \think\db\exception\DataNotFoundException
      */
     public function isExistConfig($key, $pid = 0)
     {
         return $this->where('pid', $pid)
-                    ->where('key', $key)
-                    ->find();
+            ->where('key', $key)
+            ->find();
     }
 
     /**
@@ -119,16 +121,16 @@ class Config extends CatchModel
      * @time 2020年04月19日
      * @param int $pid
      * @param array $field
-     * @throws \think\db\exception\DataNotFoundException
+     * @return \think\Collection
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @return \think\Collection
+     * @throws \think\db\exception\DataNotFoundException
      */
     public function subConfig($pid = 0, array $field = ['*'])
     {
         return $this->where('pid', $pid)
-                    ->field($field)
-                    ->select();
+            ->field($field)
+            ->select();
     }
 
     /**
@@ -136,17 +138,17 @@ class Config extends CatchModel
      *
      * @time 2020年04月20日
      * @param string $component
-     * @throws \think\db\exception\DataNotFoundException
+     * @return array|mixed
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @return array|mixed
+     * @throws \think\db\exception\DataNotFoundException
      */
     public function getConfig(string $component)
     {
         $data = [];
         $configs = $this->where('pid', $this->where('component', $component)->value('id'))
-                      ->field('id,`key` as k,value,pid')
-                      ->select();
+            ->field('id,`key` as k,value,pid')
+            ->select();
 
         foreach ($configs as $config) {
             if (strpos($config['k'], '.') !== false) {
@@ -156,5 +158,10 @@ class Config extends CatchModel
         }
 
         return $data;
+    }
+
+    public function config()
+    {
+        
     }
 }

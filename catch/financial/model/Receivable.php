@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/2/20
  * Time: 20:02
@@ -11,6 +11,7 @@ namespace catchAdmin\financial\model;
 
 
 use catcher\base\CatchModel;
+use think\model\relation\HasMany;
 
 /**
  * Class Receivable
@@ -25,20 +26,17 @@ class Receivable extends CatchModel
 
     protected $pk = 'id';
 
-    public function getReceivableTimeAttr($value)
-    {
-        return $this->toDate($value);
-    }
+    protected $fieldToTime = ['receivable_time'];
 
     /**
      * 关联发货单表
      *
-     * @return \think\model\relation\HasMany
-     * @author xiejiaqing
+     * @return HasMany
+     * @author 1131191695@qq.com
      */
-    public function manyDeliveryOrder()
+    public function manyReceivableSheet(): HasMany
     {
-//        return $this->hasMany(PaymentSheet::class, "payment_sheet_id", "id");
+        return $this->hasMany(ReceivableSheet::class, "payment_sheet_id", "id");
     }
 
     public function getList()

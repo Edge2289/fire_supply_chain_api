@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/2/20
  * Time: 14:54
@@ -10,6 +10,7 @@
 namespace catchAdmin\purchase\model;
 
 
+use catchAdmin\basisinfo\model\ProductBasicInfo;
 use catcher\base\CatchModel;
 
 /**
@@ -24,4 +25,9 @@ class ProcurementWarehousingDetails extends CatchModel
     protected $name = 'procurement_warehousing_details';
 
     protected $pk = 'id';
+
+    public function hasProductBasicInfo()
+    {
+        return $this->hasOne(ProductBasicInfo::class, "id", "product_id");
+    }
 }

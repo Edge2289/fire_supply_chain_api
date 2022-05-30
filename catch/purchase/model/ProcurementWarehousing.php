@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/2/20
  * Time: 14:54
@@ -25,14 +25,16 @@ class ProcurementWarehousing extends CatchModel
 
     protected $pk = 'id';
 
-    public function getPutDateAttr($value)
-    {
-        return (string)$value;
-    }
+    protected $fieldToTime = ['put_date', 'inspection_date'];
+
+    protected $fieldToString = [
+        'put_user_id', 'warehouse_id', 'purchase_order_id', 'logistics_info',
+        'is_qualified', 'courier_company', 'inspection_user_id', 'supplier_id'
+    ];
 
     /**
      * @return \think\model\relation\HasMany
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function hasProcurementWarehousingDetails(): \think\model\relation\HasMany
     {
@@ -40,17 +42,25 @@ class ProcurementWarehousing extends CatchModel
     }
 
     /**
+     * @return \think\model\relation\HasMany
+     * @author 1131191695@qq.com
+     */
+    public function hasPurchaseOrder(): \think\model\relation\hasOne
+    {
+        return $this->hasOne(PurchaseOrder::class, "id", "purchase_order_id");
+    }
+
+    /**
      * @return mixed|\think\Paginator
      * @throws \think\db\exception\DbException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function getList()
     {
-        $data = $this->catchSearch()->with("hasProcurementWarehousingDetails")->order("id desc")
+        return $this->catchSearch()->with([
+            "hasProcurementWarehousingDetails"
+        ])
+            ->order("id desc")
             ->paginate();
-//        foreach ($data as &$datum) {
-//            $datum['goods_details'] = $datum['hasProcurementWarehousingDetails'];
-//        }
-        return $data;
     }
 }

@@ -20,9 +20,8 @@ class ProductRegistered extends Migrator
      */
     public function change()
     {
-        $table = $this->table('product_registered', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '产品注册证', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table = $this->table('product_registered', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '产品注册证', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('product_id', 'integer', ['limit' => MysqlAdapter::INT_MEDIUM, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '产品id',])
-            ->addColumn('registered_license_url', 'string', ['limit' => 200, 'null' => false, 'default' => "", 'signed' => true, 'comment' => ' 注册证',])
             ->addColumn('registered_product_categories', 'integer', ['limit' => MysqlAdapter::INT_MEDIUM, 'default' => 0, 'signed' => false, 'comment' => '产品分类',])
             ->addColumn('registered_code', 'string', ['limit' => 100, 'null' => false, 'default' => '', 'signed' => false, 'comment' => '注册证编号',])
             ->addColumn('registered_address', 'string', ['limit' => 300, 'default' => '', 'null' => false, 'signed' => true, 'comment' => '生产地址',])
@@ -36,7 +35,6 @@ class ProductRegistered extends Migrator
             ->addColumn('end_time', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '有效期至',])
             ->addColumn('registered_department', 'string', ['limit' => 300, 'default' => '', 'signed' => true, 'comment' => '审批部门',])
             ->addColumn('registered_remark', 'string', ['limit' => 300, 'default' => '', 'signed' => true, 'comment' => '备注',])
-
             ->addColumn('created_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '创建时间',])
             ->addColumn('updated_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '更新时间',])
             ->addColumn('deleted_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '软删除',])

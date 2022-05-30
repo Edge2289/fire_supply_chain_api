@@ -1,4 +1,5 @@
 <?php
+
 namespace catchAdmin\login\controller;
 
 use catchAdmin\login\request\LoginRequest;
@@ -12,6 +13,12 @@ use thans\jwt\facade\JWTAuth;
 
 class Index extends CatchController
 {
+    // 前端模板渲染
+    public function index()
+    {
+        return view("index");
+    }
+
     /**
      * 登陆
      *
@@ -113,10 +120,10 @@ class Index extends CatchController
     /**
      * refresh token
      *
+     * @return \think\response\Json
      * @author JaguarJack
      * @email njphper@gmail.com
      * @time 2020/5/18
-     * @return \think\response\Json
      */
     public function refreshToken()
     {

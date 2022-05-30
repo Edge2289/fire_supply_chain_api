@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/6
  * Time: 19:49
@@ -30,16 +30,16 @@ class Suppliers extends CatchTable
                 HeaderItem::label('编号')->prop('id'),
                 HeaderItem::label('统一社会信用代码')->prop('unified_code'),
                 HeaderItem::label('企业名称')->prop('company_name'),
-                HeaderItem::label('企业类型')->prop('company_type'),
+//                HeaderItem::label('企业类型')->prop('company_type'),
                 HeaderItem::label('法人')->prop('legal_person'),
-                HeaderItem::label('经营范围')->prop('business_scope'),
+//                HeaderItem::label('经营范围')->prop('business_scope'),
                 HeaderItem::label('登记日期')->prop('establish_date'),
                 HeaderItem::label('审核状态')->prop('audit_status_i'),
                 HeaderItem::label('状态')->prop('status_i'),
                 HeaderItem::label('审核信息')->prop('audit_info'),
                 HeaderItem::label('操作')->width(200)->actions([
                     Actions::update("编辑", "editSuppliers"),
-                    Actions::normal("面单打印", 'success', "facePrint")->icon('el-icon-printer'),
+                    Actions::normal("查看", 'success', "facePrint")->icon('el-icon-printer'),
                 ])
             ])
             ->withSearch([

@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/15
  * Time: 23:36
@@ -19,5 +19,7 @@ use catcher\base\CatchModel;
 class ProductRecord extends CatchModel
 {
     protected $name = 'product_record';
+
+    protected $fieldToTime = ['record_time'];
 
 }

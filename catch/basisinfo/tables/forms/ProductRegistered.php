@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/17
  * Time: 21:00
@@ -21,7 +21,6 @@ class ProductRegistered extends Form
     public function fields(): array
     {
         return [
-            self::image("注册证图片", "registered_license_url")->required(),
             self::input("registered_code", "注册证编号")->col(12)->required(),
             self::select("registered_product_categories", "产品分类")->col(12)->clearable(true)->options(
                 self::options()->add('普通耗材', 1)

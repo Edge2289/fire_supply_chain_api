@@ -1,0 +1,15 @@
+{
+  "name": "销售管理",
+  "alias": "salesManage",
+  "description": "销售管理",
+  "version": "1.0.0",
+  "keywords": [],
+  "order": 0,
+  "services": [
+    "\\catchAdmin\\salesManage\\SalesManageService"
+  ],
+  "aliases": {},
+  "files": [],
+  "requires": [],
+  "enable": true
+}

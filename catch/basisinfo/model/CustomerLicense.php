@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/12
  * Time: 16:56
@@ -21,30 +21,15 @@ class CustomerLicense extends CatchModel
     protected $name = "customer_license";
 
     protected $pk = 'id';
-    
-    public function getEstablishDateAttr($value)
-    {
-        return $this->toDate($value);
-    }
 
-    public function getBusinessEndDateAttr($value)
-    {
-        return $this->toDate($value);
-    }
-
-    public function getBusinessStartDateAttr($value)
-    {
-        return $this->toDate($value);
-    }
-
-    public function getRegistrationDateAttr($value)
-    {
-        return $this->toDate($value);
-    }
+    protected $fieldToTime = [
+        'registration_date', 'business_start_date', 'business_end_date', 'establish_date'
+    ];
 
     // 字段
     protected $field = [
         'id', //
+        'customer_info_id',
         'company_name', // 企业名称
         'foreign_company', // 国外注册公司
         'company_type', // 类型
@@ -61,9 +46,6 @@ class CustomerLicense extends CatchModel
         'business_scope', // 经营范围
         'data_maintenance', // 资料维护
         'other', // 备注
-        'audit_status', // 审核状态
-        'audit_info', // 审核信息
-        'status', // 状态
         'created_at', // 创建时间
         'updated_at', // 更新时间
         'deleted_at', // 删除状态，null 未删除 timestamp 已删除
@@ -72,10 +54,9 @@ class CustomerLicense extends CatchModel
     /**
      * 列表
      *
-     * @time 2020年01月09日
-     * @param $params
-     * @return \think\Paginator
+     * @return array|mixed
      * @throws \think\db\exception\DbException
+     * @author 1131191695@qq.com
      */
     public function getList()
     {

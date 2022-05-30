@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/27
  * Time: 16:39
@@ -11,11 +11,15 @@ namespace catchAdmin\purchase\controller;
 
 
 use app\Request;
+use catchAdmin\basisinfo\model\ProductEntity;
+use catchAdmin\basisinfo\model\SupplierLicense;
 use catchAdmin\purchase\model\PurchaseOrderDetails;
 use catchAdmin\purchase\request\PurchaseOrderRequest;
 use catcher\base\CatchController;
 use catchAdmin\purchase\model\PurchaseOrder as PurchaseOrderModel;
 use catcher\CatchResponse;
+use catcher\Utils;
+use fire\data\ChangeStatus;
 
 /**
  * 采购订单
@@ -40,11 +44,16 @@ class PurchaseOrder extends CatchController
      * 列表
      *
      * @return \think\response\Json
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function index()
     {
-        return CatchResponse::paginate($this->purchaseOrderModel->getList());
+        $data = $this->purchaseOrderModel->getList();
+        foreach ($data as &$datum) {
+            $datum['settlement_type_i'] = $datum['settlement_type'] == 0 ? "现结" : "月结";
+        }
+        ChangeStatus::getInstance()->audit()->status()->handle($data);
+        return CatchResponse::paginate($data);
     }
 
     /**
@@ -52,7 +61,7 @@ class PurchaseOrder extends CatchController
      *
      * @param Request $request
      * @return \think\response\Json
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function save(Request $request)
     {
@@ -66,7 +75,11 @@ class PurchaseOrder extends CatchController
         $this->purchaseOrderModel->startTrans();
         try {
             $params['purchase_date'] = strtotime($params['purchase_date']);
-            $id = $this->purchaseOrderModel->createBy($params);
+            $params['company_id'] = \request()->user()->department_id;
+            if (empty($params['user_id'])) {
+                $params['user_id'] = \request()->user()->id;
+            }
+            $id = $this->purchaseOrderModel->insertGetId($params);
             if (empty($id)) {
                 throw new \Exception("采购订单添加失败");
             }
@@ -84,8 +97,9 @@ class PurchaseOrder extends CatchController
                     'item_number' => $goodsDetail['item_number'],
                     'sku_code' => $goodsDetail['sku_code'],
                     'unit_price' => $goodsDetail['unit_price'],
-                    'tax_rate' => $goodsDetail['tax_rate'],
+                    'tax_rate' => Utils::config('product.tax'),
                     'quantity' => $goodsDetail['quantity'],
+                    'entity' => $goodsDetail['entity'],
                     'receipt_quantity' => 0,
                     'warehousing_quantity' => 0,
                     'return_quantity' => 0,
@@ -96,10 +110,6 @@ class PurchaseOrder extends CatchController
             if (empty($gId)) {
                 throw new \Exception("采购订单商品添加失败");
             }
-            $this->purchaseOrderModel->updateBy($id, [
-                'num' => $totalNum,
-                'amount' => (string)$totalPrice,
-            ]);
             // 提交事务
             $this->purchaseOrderModel->commit();
         } catch (\Exception $exception) {
@@ -118,7 +128,7 @@ class PurchaseOrder extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function update(Request $request)
     {
@@ -172,7 +182,8 @@ class PurchaseOrder extends CatchController
                     'item_number' => $goodsDetail['item_number'],
                     'sku_code' => $goodsDetail['sku_code'],
                     'unit_price' => $goodsDetail['unit_price'],
-                    'tax_rate' => $goodsDetail['tax_rate'],
+                    'tax_rate' => Utils::config('product.tax'),
+                    'entity' => $goodsDetail['entity'],
                     'quantity' => $goodsDetail['quantity'],
                     'receipt_quantity' => 0,
                     'warehousing_quantity' => 0,
@@ -205,13 +216,13 @@ class PurchaseOrder extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function audit(Request $request)
     {
         // 保存基础信息
         $params = $request->param();
-        $this->validator(PurchaseOrderRequest::class, $params);
+//        $this->validator(PurchaseOrderRequest::class, $params);
         if (empty($params['id'])) {
             return CatchResponse::fail("更新缺失主键id");
         }
@@ -265,7 +276,7 @@ class PurchaseOrder extends CatchController
      * @param Request $request
      * @return \think\response\Json
      * @throws \think\db\exception\DbException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function getAlertOrder(Request $request)
     {
@@ -302,5 +313,90 @@ class PurchaseOrder extends CatchController
             "data" => $data,
             "supple" => $supple
         ]);
+    }
+
+    /**
+     * 获取采购订单的详情
+     *
+     * @return \think\response\Json
+     * @throws \think\db\exception\DbException
+     * @author 1131191695@qq.com
+     */
+    public function getPurchaseOrderDetails(request $request)
+    {
+        $purchaseOrderId = $request->param("purchaser_order_id");
+        if (!$purchaseOrderId) {
+            return CatchResponse::fail("请选择采购订单");
+        }
+        $data = $this->purchaseOrderDetailsModel->with(
+            [
+                "hasProductData", "hasProductSkuData"
+            ]
+        )->field([
+            "quantity", "note", "id", "unit_price", "product_id", "product_sku_id", "warehousing_quantity", "entity"
+        ])->whereRaw("(quantity - warehousing_quantity - return_quantity) > 0")
+            ->where("purchase_order_id", $purchaseOrderId)->select()->toArray();
+        $skuMap = [];
+        foreach ($data as $datum) {
+            $skuMap[] = [
+                'id' => $datum['id'],
+                'product_sku_id' => $datum['hasProductSkuData']['id'],
+                'product_id' => $datum['hasProductSkuData']['product_id'],
+                'product_code' => $datum['hasProductSkuData']['product_code'],
+                'sku_code' => $datum['hasProductSkuData']['sku_code'],
+                'item_number' => $datum['hasProductSkuData']['item_number'],
+                'unit_price' => $datum['unit_price'],
+                'tax_rate' => Utils::config('product.tax'),
+                'product_name' => $datum['hasProductData']['product_name'],
+                'udi' => $datum['hasProductSkuData']['udi'],
+                'entity' => $datum['entity'],
+                'entity_name' => ProductEntity::find($datum['entity'])["deputy_unit_name"] ?? "",
+                "quantity" => $datum["quantity"],
+                "warehousing_quantity" => $datum["warehousing_quantity"],
+                "note" => $datum["note"],
+            ];
+        }
+        return CatchResponse::success($skuMap);
+    }
+
+    /**
+     * 获取采购订单数据
+     *
+     * @return array
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @author 1131191695@qq.com
+     */
+    public function tableGetPurchaseOrderLists($supplier_id = 0)
+    {
+        $data = $this->purchaseOrderDetailsModel->alias("pod")
+            ->join("purchase_order po", "po.id = pod.purchase_order_id")
+            ->field(["po.id", "po.purchase_code"])
+            ->where("po.audit_status", 1) // 已审核
+            ->where("po.status", 0) // 未完成
+            ->when(!empty($supplier_id), function ($query) use ($supplier_id) {
+                $query->where("po.supplier_id", $supplier_id);
+            })
+            ->where(function ($query) {
+                $query->where([
+                    "po.settlement_type" => 0,
+                    "po.settlement_status" => 1,
+                ])->whereOr([
+                    "po.settlement_type" => 1,
+                    "po.settlement_status" => 0,
+                ]);
+            })->whereRaw("(pod.quantity - pod.warehousing_quantity - pod.return_quantity) > 0")
+            ->order("po.id", "desc")
+            ->group("po.id")
+            ->select()->toArray();
+        $map = [];
+        foreach ($data as $datum) {
+            $map[] = [
+                "label" => $datum['purchase_code'],
+                "value" => (string)$datum['id'],
+            ];
+        }
+        return $map;
     }
 }

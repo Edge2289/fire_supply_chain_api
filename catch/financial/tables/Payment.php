@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/2/20
  * Time: 20:13
@@ -10,7 +10,6 @@
 namespace catchAdmin\financial\tables;
 
 
-use catchAdmin\financial\tables\forms\Factory;
 use catcher\CatchTable;
 use catcher\library\table\Actions;
 use catcher\library\table\HeaderItem;
@@ -50,7 +49,8 @@ class Payment extends CatchTable
             ])
             ->withApiRoute('payment')
             ->withActions([
-                Actions::normal("新增", "primary", "handleAdd", "el-icon-plus")
+                Actions::normal("新增", "primary", "handleAdd", "el-icon-plus"),
+                Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu')
             ])
             ->selectionChange()
             ->render();

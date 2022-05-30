@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/2/6
  * Time: 21:05
@@ -20,27 +20,23 @@ use catcher\library\form\Form;
  */
 class ChangePurchase extends Form
 {
-    private $users;
     private $supplier;
 
     public function __construct(
-        Users           $users,
         SupplierLicense $supplier
     )
     {
-        $this->users = $users;
         $this->supplier = $supplier;
     }
 
     public function fields(): array
     {
         return [
-            self::date("purchase_date", "采购日期")->col(12)->required(),
+            self::date("purchase_date", "单据日期")->col(12)->required(),
             self::select("user_id", "采购人员")
                 ->options(
-                // 获取自身公司下的员工
-                    $this->getUser()
-                )->col(12)->required(),
+                    get_company_employees()
+                )->col(12),
             self::select("supplier_id", "供应商")
                 ->options(
                     $this->supplier->getSupplier()
@@ -50,24 +46,7 @@ class ChangePurchase extends Form
                     self::options()->add('现结', "0")
                         ->add('月结', "1")->render()
                 )->col(12)->required(),
+            self::textarea("remark", "备注")->col(12)
         ];
-    }
-
-    public function getUser()
-    {
-        $userId = request()->user()->id;
-        $data = $this->users->where("id", $userId)->find();
-        if (!$data['department_id']) {
-            return [];
-        }
-        $data = $this->users->where("department_id", $data['department_id'])->select();
-        $map = [];
-        foreach ($data as $datum) {
-            $map[] = [
-                'value' => (string)$datum['id'],
-                'label' => $datum['username'],
-            ];
-        }
-        return $map;
     }
 }

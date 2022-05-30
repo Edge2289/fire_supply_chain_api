@@ -1,4 +1,5 @@
 <?php
+
 namespace catchAdmin\system\controller;
 
 use app\Request;
@@ -20,10 +21,10 @@ class Config extends CatchController
      * 获取父级别配置
      *
      * @time 2020年04月17日
-     * @throws \think\db\exception\DataNotFoundException
+     * @return Json
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @return Json
+     * @throws \think\db\exception\DataNotFoundException
      */
     public function parent()
     {
@@ -53,13 +54,33 @@ class Config extends CatchController
      *
      * @time 2020年04月20日
      * @param $id
-     * @throws \think\db\exception\DataNotFoundException
+     * @return Json
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @return Json
+     * @throws \think\db\exception\DataNotFoundException
      */
     public function read($id)
     {
         return CatchResponse::success($this->configModel->getConfig($id));
+    }
+
+    /**
+     * @param $parent
+     * @param $key
+     * @return Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @author 1131191695@qq.com
+     */
+    public function getSeparateConfig($parent, $key)
+    {
+        if ($key) {
+            $parent .= ('.' . $key);
+        }
+        if (empty($parent)) {
+            return CatchResponse::fail();
+        }
+        return CatchResponse::success($this->configModel->where("key", $parent)->find());
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/6
  * Time: 09:44
@@ -22,25 +22,9 @@ class SupplierLicense extends CatchModel
 
     protected $pk = 'id';
 
-    public function getEstablishDateAttr($value)
-    {
-        return $this->toDate($value);
-    }
-
-    public function getBusinessEndDateAttr($value)
-    {
-        return $this->toDate($value);
-    }
-
-    public function getBusinessStartDateAttr($value)
-    {
-        return $this->toDate($value);
-    }
-
-    public function getRegistrationDateAttr($value)
-    {
-        return $this->toDate($value);
-    }
+    protected $fieldToTime = [
+        'registration_date', 'business_start_date', 'business_end_date', 'establish_date'
+    ];
 
     // 字段
     protected $field = [
@@ -72,10 +56,9 @@ class SupplierLicense extends CatchModel
     /**
      * 列表
      *
-     * @time 2020年01月09日
-     * @param $params
-     * @return \think\Paginator
+     * @return array|mixed
      * @throws \think\db\exception\DbException
+     * @author 1131191695@qq.com
      */
     public function getList()
     {
@@ -90,7 +73,7 @@ class SupplierLicense extends CatchModel
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function getSupplier()
     {

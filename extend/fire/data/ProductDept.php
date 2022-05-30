@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/20
  * Time: 21:24
@@ -17,8 +17,8 @@ namespace fire\data;
 class ProductDept
 {
     /**
-     * @author xiejiaqing
      * @return array[]
+     * @author 1131191695@qq.com
      */
     public static function data(): array
     {

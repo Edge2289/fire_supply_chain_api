@@ -22,10 +22,10 @@ class BackUpDatabase
      *
      * @time 2020年07月19日
      * @param $tables
-     * @throws \think\db\exception\DataNotFoundException
+     * @return void
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @return void
+     * @throws \think\db\exception\DataNotFoundException
      */
     public function done($tables)
     {
@@ -148,7 +148,7 @@ class BackUpDatabase
 
         \config([
             'connections' => $connections,
-        ],'database.connections');
+        ], 'database.connections');
 
     }
 
@@ -156,8 +156,8 @@ class BackUpDatabase
      * 文件压缩
      *
      * @time 2020年07月19日
-     * @throws \Exception
      * @return void
+     * @throws \Exception
      */
     protected function zip()
     {

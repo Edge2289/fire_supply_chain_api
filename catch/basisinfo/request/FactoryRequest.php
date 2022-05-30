@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/11
  * Time: 15:21
@@ -26,7 +26,7 @@ class FactoryRequest extends CatchRequest
         return [
             'company_name|企业名称' => 'require|max:200',
             'foreign_company|国外注册公司' => 'max:200',
-            'unified_code|统一社会信用代码' => 'require|unique:'.Factory::class,
+            'unified_code|统一社会信用代码' => 'require|unique:' . Factory::class,
             'residence|住所' => 'require|max:200',
             'legal_person|法人' => 'require|max:200',
             'establish_date|登记日期' => 'require',

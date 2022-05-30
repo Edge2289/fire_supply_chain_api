@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/2/20
  * Time: 20:02
@@ -11,6 +11,7 @@ namespace catchAdmin\financial\model;
 
 
 use catcher\base\CatchModel;
+use think\model\relation\HasMany;
 
 /**
  * Class Payment
@@ -25,18 +26,15 @@ class Payment extends CatchModel
 
     protected $pk = 'id';
 
-    public function getPaymentTimeAttr($value)
-    {
-        return $this->toDate($value);
-    }
+    protected $fieldToTime = ['payment_time'];
 
     /**
      * 关联采购订单表
      *
      * @return \think\model\relation\HasMany
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
-    public function manyPurchaserOrder()
+    public function manyPaymentSheet(): HasMany
     {
         return $this->hasMany(PaymentSheet::class, "payment_sheet_id", "id");
     }

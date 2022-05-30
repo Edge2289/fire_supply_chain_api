@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/5
  * Time: 21:34
@@ -37,9 +37,9 @@ class UserSelectDbMiddleware
     /**
      * 获取数据库名称
      *
-     * @author xiejiaqing
      * @param Request $request
      * @return string
+     * @author 1131191695@qq.com
      */
     private function getDatabaseName(Request $request): string
     {

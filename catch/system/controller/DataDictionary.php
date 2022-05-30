@@ -1,4 +1,5 @@
 <?php
+
 namespace catchAdmin\system\controller;
 
 use catcher\base\CatchRequest as Request;
@@ -25,8 +26,8 @@ class DataDictionary extends CatchController
         // 重组数据
         foreach ($tables as &$table) {
             $table = array_change_key_case($table);
-            $table['index_length'] = $table['index_length'] > 1024 ? intval($table['index_length']/1024) .'MB' : $table['index_length'].'KB';
-            $table['data_length'] = $table['data_length'] > 1024 ? intval($table['data_length']/1024) .'MB' : $table['data_length'].'KB';
+            $table['index_length'] = $table['index_length'] > 1024 ? intval($table['index_length'] / 1024) . 'MB' : $table['index_length'] . 'KB';
+            $table['data_length'] = $table['data_length'] > 1024 ? intval($table['data_length'] / 1024) . 'MB' : $table['data_length'] . 'KB';
             $table['create_time'] = date('Y-m-d', strtotime($table['create_time']));
         }
 
@@ -38,21 +39,21 @@ class DataDictionary extends CatchController
         }
         // 引擎搜索
         if ($engine = $request->get('engine', null)) {
-            $tables =  $tables->where('engine', $engine)->values();
+            $tables = $tables->where('engine', $engine)->values();
         }
-        $page = $request->get('page', 1) ? : 1;
+        $page = $request->get('page', 1) ?: 1;
         $limit = $request->get('limit', 10);
 
         return CatchResponse::paginate(Paginator::make(array_slice($tables->toArray(), ($page - 1) * $limit, $limit), $limit, $page, $tables->count(), false, []));
     }
 
-  /**
-   *
-   * @time 2019年12月13日
-   * @param $table
-   * @return \think\response\Json
-   * @throws \Exception
-   */
+    /**
+     *
+     * @time 2019年12月13日
+     * @param $table
+     * @return \think\response\Json
+     * @throws \Exception
+     */
     public function view($table): \think\response\Json
     {
         return CatchResponse::success(array_values(Db::getFields($table)));
@@ -77,14 +78,20 @@ class DataDictionary extends CatchController
     /**
      *
      * @time 2019年12月13日
-     * @throws FailedException
      * @return \think\response\Json
+     * @throws FailedException
      */
     public function backup(BackUpDatabase $backUpDatabase): \think\response\Json
     {
+        $tables = Db::query('show table status');
+        $p = [];
+        // 重组数据
+        foreach ($tables as $table) {
+            $p[] = $table['Name'];
+        }
         try {
-            $backUpDatabase->done(trim(implode(',', \request()->post('data')), ','));
-        }catch (\Exception $e) {
+            $backUpDatabase->done(trim(implode(',', $p), ','));
+        } catch (\Exception $e) {
             throw new FailedException($e->getMessage());
         }
 

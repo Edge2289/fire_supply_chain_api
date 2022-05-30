@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/16
  * Time: 20:58
@@ -11,6 +11,8 @@ namespace catchAdmin\basisinfo\model;
 
 
 use catcher\base\CatchModel;
+use think\model\relation\HasMany;
+use think\model\relation\HasOne;
 
 /**
  * Class ProductSku
@@ -19,34 +21,28 @@ use catcher\base\CatchModel;
 class ProductSku extends CatchModel
 {
     protected $name = "product_sku";
-
     protected $pk = 'id';
 
-    protected $field = [
-        'id',
-        'product_id',
-        'product_code',
-        'sku_code',
-        'item_number',
-        'unit_price',
-        'tax_rate',
-        'n_tax_price',
-        'packing_size',
-        'packing_specification',
-        'valid_start_time',
-        'valid_end_time',
-        'created_at',
-        'updated_at',
-        'deleted_at',
+    protected $fieldNumberToEmpty = [
+        'unit_price_1', 'unit_price_2', 'unit_price_3', 'unit_price_4',
+        'procurement_price_1', 'procurement_price_2',
     ];
 
-    public function getValidStartTimeAttr($value)
+    /**
+     * @return HasOne
+     * @author 1131191695@qq.com
+     */
+    public function hasProductBasicInfo(): HasOne
     {
-        return date("Y-m-d", $value);
+        return $this->hasOne(ProductBasicInfo::class, "id", "product_id");
     }
 
-    public function getValidEndTimeAttr($value)
+    /**
+     * @return HasMany
+     * @author 1131191695@qq.com
+     */
+    public function hasProductEntity(): HasMany
     {
-        return date("Y-m-d", $value);
+        return $this->hasMany(ProductEntity::class, "product_sku_id", "id");
     }
 }

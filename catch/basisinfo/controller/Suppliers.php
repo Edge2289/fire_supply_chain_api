@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/5
  * Time: 22:46
@@ -25,6 +25,7 @@ use catcher\base\CatchController;
 use catchAdmin\basisinfo\model\SupplierLicense;
 use catcher\CatchResponse;
 use catcher\exceptions\BusinessException;
+use fire\data\ChangeStatus;
 
 /**
  * 供应商管理
@@ -61,22 +62,14 @@ class Suppliers extends CatchController
 
     /**
      * @return \think\response\Json
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function index()
     {
-        // 审核状态 {0:未审核,1:已审核,2:审核失败}
-        $auditStatusI = [
-            "未审核", "已审核", "审核失败"
-        ];
-        $statusI = [
-            "未开启", "使用中"
-        ];
         $data = $this->supplier->getList();
-        foreach ($data as &$datum) {
-            $datum['audit_status_i'] = $auditStatusI[$datum['audit_status'] ?: 0];
-            $datum['status_i'] = $statusI[$datum['status']];
-        }
+        ChangeStatus::getInstance()->audit()->status([
+            "未开启", "使用中"
+        ])->handle($data);
         return CatchResponse::paginate($data);
     }
 
@@ -85,7 +78,7 @@ class Suppliers extends CatchController
      *
      * @param Request $request
      * @return \think\response\Json
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function save(Request $request)
     {
@@ -111,7 +104,7 @@ class Suppliers extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function update($id, Request $request)
     {
@@ -128,7 +121,7 @@ class Suppliers extends CatchController
 
     /**
      * @return \think\response\Json
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function delete()
     {
@@ -143,7 +136,7 @@ class Suppliers extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function businessLicenseCall(array $params)
     {
@@ -185,11 +178,10 @@ class Suppliers extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function operatingLicenseCall(array $params)
     {
-        $params['business_date_long'] = $params['business_date_long'] ? 1 : 0;
         if (!empty($params['business_end_date'])) {
             $params['business_end_date'] = strtotime($params['business_end_date']);
         }
@@ -212,7 +204,7 @@ class Suppliers extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function registrationLicenseCall(array $params)
     {
@@ -235,7 +227,7 @@ class Suppliers extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function suppleInfoCall(array $params)
     {
@@ -260,7 +252,7 @@ class Suppliers extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function businessAttachmentCall(array $params)
     {
@@ -288,7 +280,7 @@ class Suppliers extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function changeSuppliersSetting(Request $request)
     {
@@ -326,7 +318,7 @@ class Suppliers extends CatchController
      *
      * @param $dataMaintenance
      * @return array[]
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     private function getComponentData($dataMaintenance): array
     {
@@ -368,7 +360,7 @@ class Suppliers extends CatchController
      * @param array $businessData
      * @param array $ids
      * @return void
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     private function getBusinessLicenseData(int $business_license_id, array &$businessData, array $ids): void
     {
@@ -445,7 +437,7 @@ class Suppliers extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function getBusinessScope(): array
     {
@@ -460,7 +452,7 @@ class Suppliers extends CatchController
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function auditSuppliers(AuditSuppliersRequest $auditSuppliers)
     {
@@ -486,7 +478,7 @@ class Suppliers extends CatchController
      *
      * @param Request $request
      * @return \think\response\Json
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function openSuppliers(Request $request)
     {
@@ -521,7 +513,7 @@ class Suppliers extends CatchController
      *
      * @param Request $request
      * @return \think\response\Json
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function disabledSuppliers(Request $request)
     {

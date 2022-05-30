@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/2/3
  * Time: 23:25
@@ -22,7 +22,6 @@ class PurchaseOrderRequest extends CatchRequest
     {
         return [
             'purchase_date|采购日期' => 'require',
-            'user_id|采购人员' => 'require',
             'supplier_id|供应商' => 'require|max:100',
             'goods_details|商品' => 'require'
         ];

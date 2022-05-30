@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/30
  * Time: 23:17
@@ -56,7 +56,7 @@ class PurchaseOrder extends CatchModel
      * 关联供货者
      *
      * @return \think\model\relation\HasOne
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function hasSupplierLicense()
     {
@@ -67,7 +67,7 @@ class PurchaseOrder extends CatchModel
      * 获取符合条件的供应商
      *
      * @return mixed
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function getSupplierLicense()
     {
@@ -76,10 +76,25 @@ class PurchaseOrder extends CatchModel
 
     public function getList()
     {
-        $data = $this->catchSearch()->with("hasPurchaseOrderDetails")->order("id desc")
+        $data = $this->catchSearch()->with(
+            [
+                "hasPurchaseOrderDetails", "hasPurchaseOrderDetails.hasProductData", "hasPurchaseOrderDetails.hasProductSkuData", "hasSupplierLicense"
+            ]
+        )->order("id desc")
             ->paginate();
         foreach ($data as &$datum) {
-            $datum['goods_details'] = $datum['hasPurchaseOrderDetails'];
+            $details = [];
+            $goodsDetails = [];
+            foreach ($datum['hasPurchaseOrderDetails'] as $hasPurchaseOrderDetail) {
+                list($dataMap, $detail) = $this->assemblyDetailsData($hasPurchaseOrderDetail);
+                $goodsDetails[] = $dataMap;
+                $details[] = $detail;
+            }
+            $datum['supplier_name'] = $datum["hasSupplierLicense"]["company_name"];
+
+            $datum['goods_details'] = $goodsDetails;
+            $datum['detail'] = implode(PHP_EOL, $details);
+            unset($datum['hasPurchaseOrderDetails'], $datum["hasSupplierLicense"]);
         }
         return $data;
     }

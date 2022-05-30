@@ -1,0 +1,42 @@
+<?php
+// +----------------------------------------------------------------------
+// | CatchAdmin [Just Like ～ ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2017~{$year} http://catchadmin.com All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed ( https://github.com/yanwenwu/catch-admin/blob/master/LICENSE.txt )
+// +----------------------------------------------------------------------
+// | Author: JaguarJack [ njphper@gmail.com ]
+// +----------------------------------------------------------------------
+
+use think\migration\Migrator;
+use think\migration\db\Column;
+use Phinx\Db\Adapter\MysqlAdapter;
+
+class InventoryBatch extends Migrator
+{
+    public function change()
+    {
+        $table = $this->table('inventory_batch', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '库存批次', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table->addColumn('inventory_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '入库单id',])
+            ->addColumn('company_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '公司id',])
+            ->addColumn('product_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '产品id',])
+            ->addColumn('product_sku_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '产品sku_id',])
+            ->addColumn('product_code', 'string', ['limit' => 50, 'null' => false, 'default' => "", 'signed' => false, 'comment' => '产品编号',])
+            ->addColumn('item_number', 'string', ['limit' => 50, 'null' => false, 'default' => "", 'signed' => false, 'comment' => '货号',])
+            ->addColumn('sku_code', 'string', ['limit' => 50, 'null' => false, 'default' => "", 'signed' => false, 'comment' => 'sku',])
+            ->addColumn('tax_rate', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'signed' => false, 'comment' => '税率',])
+            ->addColumn('unit_price', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'signed' => false, 'comment' => '单价',])
+            ->addColumn('batch_number', 'string', ['limit' => 100, 'null' => false, 'default' => "", 'signed' => false, 'comment' => '批号',])
+            ->addColumn('serial_number', 'string', ['limit' => 100, 'null' => false, 'default' => "", 'signed' => false, 'comment' => '序列号',])
+            ->addColumn('production_date', 'string', ['limit' => 100, 'null' => false, 'default' => "", 'signed' => false, 'comment' => '生产日期',])
+            ->addColumn('valid_until', 'string', ['limit' => 100, 'null' => false, 'default' => "", 'signed' => false, 'comment' => '有效期至',])
+            ->addColumn('registration_number', 'string', ['limit' => 100, 'null' => false, 'default' => "", 'signed' => false, 'comment' => '注册证号',])
+            ->addColumn('number', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '数量',])
+            ->addColumn('use_number', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => false, 'comment' => '使用数量',])
+            ->addColumn('created_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '创建时间',])
+            ->addColumn('updated_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '更新时间',])
+            ->addColumn('deleted_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '软删除',])
+            ->create();
+    }
+}

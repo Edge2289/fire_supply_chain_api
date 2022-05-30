@@ -17,11 +17,11 @@ class Factory extends Migrator
 {
     /**
      * 厂家迁移
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function change()
     {
-        $table = $this->table('factory', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '厂家营业执照信息', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table = $this->table('factory', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '厂家营业执照信息', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('factory_code', 'string', ['limit' => 20, 'null' => false, 'default' => '', 'signed' => true, 'comment' => '厂家编号',])
             ->addColumn('factory_type', 'integer', ['limit' => MysqlAdapter::INT_TINY, 'null' => false, 'default' => 1, 'signed' => false, 'comment' => '厂家类型{1:国内公司,2:国外公司}',])
             ->addColumn('company_name', 'string', ['limit' => 300, 'default' => '', 'signed' => true, 'comment' => '企业名称',])
@@ -42,10 +42,8 @@ class Factory extends Migrator
             ->addColumn('other', 'string', ['limit' => 300, 'default' => '', 'signed' => false, 'comment' => '备注',])
             ->addColumn('audit_status', 'integer', ['limit' => MysqlAdapter::INT_TINY, 'default' => 0, 'signed' => true, 'comment' => '审核状态 {0:未审核,1:已审核,2:审核失败}',])
             ->addColumn('audit_info', 'string', ['limit' => 300, 'default' => '', 'signed' => true, 'comment' => '审核信息',])
-
             ->addColumn('audit_user_id', 'integer', ['limit' => MysqlAdapter::INT_MEDIUM, 'default' => 0, 'signed' => true, 'comment' => '审核人id',])
             ->addColumn('audit_user_name', 'string', ['limit' => 60, 'default' => '', 'signed' => true, 'comment' => '审核人名字',])
-
             ->addColumn('created_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '创建时间',])
             ->addColumn('updated_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '更新时间',])
             ->addColumn('deleted_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0, 'signed' => true, 'comment' => '软删除',])

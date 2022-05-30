@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/11
  * Time: 21:32
@@ -56,7 +56,7 @@ class Warehouse extends CatchController
     public function save(CatchRequest $request): \think\response\Json
     {
         return CatchResponse::success($this->warehouse->storeBy(array_merge($request->post(), [
-            'company_id' => request()->user()->company_id
+            'company_id' => request()->user()->department_id
         ])));
     }
 
@@ -72,13 +72,13 @@ class Warehouse extends CatchController
     {
         $find = $this->warehouse->find([
             'id' => $id,
-            'company_id' => request()->user()->company_id
+            'company_id' => request()->user()->department_id
         ]);
         if (empty($find)) {
             throw new BusinessException("不存在的数据");
         }
         return CatchResponse::success($this->warehouse->updateBy($id, array_merge($request->post(), [
-            'company_id' => request()->user()->company_id
+            'company_id' => request()->user()->department_id
         ])));
     }
 
@@ -93,11 +93,21 @@ class Warehouse extends CatchController
     {
         $find = $this->warehouse->find([
             'id' => $id,
-            'company_id' => request()->user()->company_id
+            'company_id' => request()->user()->department_id
         ]);
         if (empty($find)) {
             throw new BusinessException("不存在的数据");
         }
         return CatchResponse::success($this->warehouse->deleteBy($id));
+    }
+
+    public function tableGetWarehouse()
+    {
+        return $this->warehouse->tableGetWarehouse();
+    }
+
+    public function getWarehouseItem()
+    {
+        return CatchResponse::success($this->tableGetWarehouse());
     }
 }

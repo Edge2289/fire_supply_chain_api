@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/2/13
  * Time: 20:48
@@ -22,9 +22,11 @@ class CustomerInfo extends CatchModel
 
     protected $pk = 'id';
 
+    protected $fieldToTime = ['effective_start_date', 'effective_end_date', 'certification_date'];
+
     /**
      * @return \think\model\relation\HasOne
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function hasCustomerLicense()
     {
@@ -34,7 +36,7 @@ class CustomerInfo extends CatchModel
     /**
      * @return mixed|\think\Paginator
      * @throws \think\db\exception\DbException
-     * @author xiejiaqing
+     * @author 1131191695@qq.com
      */
     public function getList()
     {
@@ -42,19 +44,18 @@ class CustomerInfo extends CatchModel
             ->paginate();
     }
 
-    public function getEffectiveStartDateAttr($value)
+    public function getFormLier()
     {
-        return $this->toDate($value);
-    }
-
-    public function getEffectiveEndDateAttr($value)
-    {
-        return $this->toDate($value);
-    }
-
-    public function getCertificationDateAttr($value)
-    {
-        return $this->toDate($value);
+        $data = $this->where("status", 1)
+            ->where("audit_status", 1)->select();
+        $map = [];
+        foreach ($data as $datum) {
+            $map[] = [
+                'value' => (string)$datum['id'],
+                'label' => $datum['company_name'],
+            ];
+        }
+        return $map;
     }
 
 }

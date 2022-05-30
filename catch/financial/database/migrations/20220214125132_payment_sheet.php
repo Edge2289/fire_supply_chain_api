@@ -17,7 +17,7 @@ class PaymentSheet extends Migrator
 {
     public function change()
     {
-        $table = $this->table('payment_sheet', ['engine' => 'Myisam', 'collation' => 'utf8mb4_general_ci', 'comment' => '付款单', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table = $this->table('payment_sheet', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '付款单', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
         $table->addColumn('payment_code', 'string', ['limit' => 30, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '付款单号',])
             ->addColumn('payment_time', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '付款时间',])
             ->addColumn('amount', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'signed' => true, 'comment' => '回款金额',])

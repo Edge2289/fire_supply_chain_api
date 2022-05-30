@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/2/20
  * Time: 20:13
@@ -49,7 +49,8 @@ class Receivable extends CatchTable
             ])
             ->withApiRoute('receivable')
             ->withActions([
-                Actions::normal("新增", "primary", "handleAdd", "el-icon-plus")
+                Actions::normal("新增", "primary", "handleAdd", "el-icon-plus"),
+                Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu'),
             ])
             ->selectionChange()
             ->render();

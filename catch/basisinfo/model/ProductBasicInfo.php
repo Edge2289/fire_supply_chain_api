@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/15
  * Time: 22:32
@@ -19,6 +19,8 @@ use catcher\base\CatchModel;
 class ProductBasicInfo extends CatchModel
 {
     protected $name = "product_basic_info";
+
+    protected $fieldToString = ['factory_id', 'product_category'];
 
     public function withRegistered()
     {
@@ -38,13 +40,13 @@ class ProductBasicInfo extends CatchModel
     public function getList()
     {
         return $this->with([
-            "withRegistered" => function($rQuery) {
+            "withRegistered" => function ($rQuery) {
                 $rQuery->field(['product_id', 'registered_code', 'end_time']);
             },
-            "withRecord" => function($eQuery) {
+            "withRecord" => function ($eQuery) {
                 $eQuery->field(['product_id', 'record_code']);
             },
-            "withFactory" => function($fQuery) {
+            "withFactory" => function ($fQuery) {
                 $fQuery->field(['id', 'company_name']);
             }
         ])->catchSearch()->order("id desc")

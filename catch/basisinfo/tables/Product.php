@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/16
  * Time: 11:04
@@ -37,7 +37,7 @@ class Product extends CatchTable
                 HeaderItem::label('审核信息')->prop('audit_info'),
                 HeaderItem::label('操作')->width(200)->actions([
                     Actions::update("编辑", "editProduct"),
-                    Actions::normal("导出审批", 'success', "facePrint")->icon('el-icon-printer'),
+                    Actions::normal("查看", 'success', "facePrint")->icon('el-icon-printer'),
                 ])
             ])
             ->withSearch([
@@ -55,7 +55,8 @@ class Product extends CatchTable
             ->withApiRoute('product')
             ->withActions([
                 Actions::normal("新增", 'primary', "addProduct")->icon('el-icon-plus'),
-                Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu'),
+                Actions::normal("审核", 'primary', "audit"),
+                Actions::normal("UDI更新", 'primary', "udiUpdate")->icon('el-icon-upload'),
             ])
             ->selectionChange()
             ->render();

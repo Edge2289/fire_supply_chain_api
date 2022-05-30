@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/2/13
  * Time: 21:20
@@ -11,10 +11,13 @@ namespace catchAdmin\financial\controller;
 
 
 use catchAdmin\financial\model\PaymentSheet;
+use catchAdmin\purchase\model\PurchaseOrder;
 use catcher\base\CatchController;
 use catchAdmin\financial\model\Payment as PaymentModel;
 use catcher\CatchResponse;
+use catcher\exceptions\BusinessException;
 use think\Request;
+use think\response\Json;
 
 /**
  * Class Payment
@@ -38,8 +41,8 @@ class Payment extends CatchController
     /**
      * 列表
      *
-     * @return \think\response\Json
-     * @author xiejiaqing
+     * @return Json
+     * @author 1131191695@qq.com
      */
     public function index()
     {
@@ -65,8 +68,8 @@ class Payment extends CatchController
      * 添加
      *
      * @param Request $request
-     * @return \think\response\Json
-     * @author xiejiaqing
+     * @return Json
+     * @author 1131191695@qq.com
      */
     public function save(Request $request)
     {
@@ -75,19 +78,30 @@ class Payment extends CatchController
         try {
             $params['payment_time'] = strtotime($params['payment_time']);
             $purchaseOrder = $params['purchase_order'];
-            $params['payment_code'] = getCode("PS");
             unset($params['purchase_order']);
-            $pk = $this->paymentModel->createBy($params);
-            $purchaseMap = [];
+            if (isset($params['id']) && !empty($params['id'])) {
+                // 存在id
+                $id = $params['id'];
+                // 删除旧的数据
+                $this->paymentSheetModel->destroy(['payment_sheet_id' => $id]);
+                $this->paymentModel->updateBy($id, $params);
+            } else {
+                $params['payment_code'] = getCode("PS");
+                $id = $this->paymentModel->insertGetId($params);
+            }
+            $map = [];
             foreach ($purchaseOrder as $value) {
-                $purchaseMap[] = [
-                    "payment_sheet_id" => $pk,
+                $map[] = [
+                    "payment_sheet_id" => $id,
                     "purchase_order_id" => $value['id'],
                 ];
             }
-            $this->paymentSheetModel->insertAll($purchaseMap);
+            if (empty($map)) {
+                throw new BusinessException("采购订单为空");
+            }
+            $this->paymentSheetModel->insertAll($map);
             $this->paymentModel->commit();
-            return CatchResponse::success(['id' => $pk]);
+            return CatchResponse::success(['id' => $id]);
         } catch (\Exception $exception) {
             $this->paymentModel->rollback();
             return CatchResponse::fail($exception->getMessage());
@@ -95,42 +109,13 @@ class Payment extends CatchController
     }
 
     /**
-     * 更新
-     *
-     * @param Request $request
-     * @return \think\response\Json
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @author xiejiaqing
-     */
-    public function update(Request $request)
-    {
-        $params = $request->param();
-        if ($params['id']) {
-            return CatchResponse::fail("未选择回款单");
-        }
-        $data = $this->paymentModel->findBy($params['id']);
-        if (!$data) {
-            return CatchResponse::fail("数据不存在");
-        }
-        if ($data['audit_status'] == 1) {
-            return CatchResponse::fail("回款单已审核,无法修改");
-        }
-        if ($this->paymentModel->updateBy($params['id'], $params)) {
-            return CatchResponse::success();
-        }
-        return CatchResponse::fail();
-    }
-
-    /**
      * 审核
      *
      * @param Request $request
-     * @return \think\response\Json|void
-     * @author xiejiaqing
+     * @return Json
+     * @author 1131191695@qq.com
      */
-    public function audio(Request $request)
+    public function audit(Request $request)
     {
         $params = $request->param();
         $data = $this->paymentModel->findBy($params['id']);
@@ -138,9 +123,28 @@ class Payment extends CatchController
             return CatchResponse::fail("数据不存在");
         }
         if ($data['audit_status'] == 1) {
-            return CatchResponse::fail("回款单已审核,无法修改");
+            return CatchResponse::fail("付款单已审核,无法修改");
         }
-        // 修改采购订单状态
-        // 修改当前回款单状态
+        $this->paymentModel->startTrans();
+        try {
+            $this->paymentModel->updateBy($params['id'], $params);
+            // 修改采购订单状态
+            $ids = [];
+            foreach ($data->manyPaymentSheet as $value) {
+                $ids[] = $value['purchase_order_id'];
+            }
+            if (!empty($ids)) {
+                // 修改成已开票
+                app(PurchaseOrder::class)->whereIn('id', $ids)->update([
+                    'settlement_status' => 1
+                ]);
+            }
+            // 修改当前回款单状态
+            $this->paymentModel->commit();
+            return CatchResponse::success();
+        } catch (\Exception $exception) {
+            $this->paymentModel->rollback();
+            return CatchResponse::fail();
+        }
     }
 }

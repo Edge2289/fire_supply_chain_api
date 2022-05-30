@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * author: xiejiaqing
+ * author: 1131191695@qq.com
  * Note: Tired as a dog
  * Date: 2022/1/11
  * Time: 21:35
@@ -27,7 +27,7 @@ class Warehouse extends CatchTable
         return $this->getTable('warehouse')
             ->header([
                 HeaderItem::label()->selection(),
-                HeaderItem::label('编号')->prop('id'),
+                HeaderItem::label('id')->prop('id'),
                 HeaderItem::label('仓库编码')->prop('warehouse_code'),
                 HeaderItem::label('仓库名称')->prop('warehouse_name'),
                 HeaderItem::label('仓库类别')->prop('warehouse_type_name'),
