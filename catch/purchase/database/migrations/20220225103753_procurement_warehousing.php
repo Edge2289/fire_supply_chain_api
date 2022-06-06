@@ -34,6 +34,11 @@ class ProcurementWarehousing extends Migrator
             ->addColumn('contact_name', 'string', ['limit' => 100, 'null' => false, 'default' => "", 'signed' => false, 'comment' => '联系人',])
             ->addColumn('phone', 'string', ['limit' => 100, 'null' => false, 'default' => "", 'signed' => false, 'comment' => '电话',])
             ->addColumn('attachment', 'string', ['limit' => 100, 'null' => false, 'default' => "", 'signed' => false, 'comment' => '供应商附件',])
+
+            // 结算状态
+            ->addColumn('amount', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'signed' => true, 'comment' => '金额',])
+            ->addColumn('settlement_amount', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'signed' => true, 'comment' => '结算价格',])
+            ->addColumn('settlement_status', 'integer', ['limit' => MysqlAdapter::INT_TINY, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '结算状态{0:未结,1:已结}',])
             ->addColumn('status', 'integer', ['limit' => MysqlAdapter::INT_TINY, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '状态{0:未完成,1:已完成,2:作废}',])
             ->addColumn('remark', 'string', ['limit' => 100, 'null' => false, 'default' => "", 'signed' => false, 'comment' => '备注',])
             ->addColumn('audit_status', 'integer', ['limit' => MysqlAdapter::INT_TINY, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '审核状态 {0:未审核,1:已审核,2:审核失败}',])

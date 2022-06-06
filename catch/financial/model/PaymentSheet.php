@@ -10,8 +10,8 @@
 namespace catchAdmin\financial\model;
 
 
-use catchAdmin\purchase\model\PurchaseOrder;
 use catcher\base\CatchModel;
+use think\model\relation\HasMany;
 
 /**
  * Class Payment
@@ -22,12 +22,33 @@ class PaymentSheet extends CatchModel
     // 这个根据登陆的账号去获取链接
     protected $connection = 'business';
 
-    protected $name = 'payment_sheet_many_purchase_order';
+    protected $name = 'payment_sheet';
 
     protected $pk = 'id';
 
-    public function hasPurchaseOrder()
+    protected $fieldToTime = ['payment_time'];
+
+    protected $fieldToString = ['customer_id'];
+
+    /**
+     * @return HasMany
+     */
+    public function manyPaymentSheetSource(): HasMany
     {
-        return $this->hasOne(PurchaseOrder::class, "id", "purchase_order_id");
+        return $this->hasMany(PaymentSheetSource::class, "payment_sheet_id", "id");
     }
+
+    /**
+     * @return mixed|\think\Paginator
+     * @throws \think\db\exception\DbException
+     */
+//    public function getList()
+//    {
+//        return $this->with([
+//            "manyPurchaserOrder",
+//            "manyPurchaserOrder.hasPurchaseOrder",
+//            "manyPurchaserOrder.hasPurchaseOrder.hasSupplierLicense"
+//        ])->catchSearch()->order("id desc")
+//            ->paginate();
+//    }
 }

@@ -13,12 +13,12 @@ use think\migration\Migrator;
 use think\migration\db\Column;
 use Phinx\Db\Adapter\MysqlAdapter;
 
-class ReceivableSheetManySalesOrder extends Migrator
+class PaymentSheetSource extends Migrator
 {
     public function change()
     {
-        $table = $this->table('receivable_sheet_source', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '回款单源单', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
-        $table->addColumn('receivable_sheet_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '回款单id',])
+        $table = $this->table('payment_sheet_source', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '付款单源单', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table->addColumn('payment_sheet_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '付款单id',])
             ->addColumn('source_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '源单id',])
             ->addColumn('order_date', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '源单日期',])
             ->addColumn('type', 'string', ['limit' => 30, 'null' => false, 'default' => '', 'signed' => true, 'comment' => '源单类型',])
@@ -34,9 +34,9 @@ class ReceivableSheetManySalesOrder extends Migrator
 
     public function createdCollectionInfo()
     {
-        $table = $this->table('receivable_sheet_collection_info', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '回款单收款信息', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
-        $table->addColumn('receivable_sheet_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '回款单',])
-            ->addColumn('type', 'string', ['limit' => 30, 'null' => false, 'default' => '', 'signed' => true, 'comment' => '源单类型',])
+
+        $table = $this->table('payment_sheet_collection_info', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_general_ci', 'comment' => '付款单收款信息', 'id' => 'id', 'signed' => true, 'primary_key' => ['id']]);
+        $table->addColumn('payment_sheet_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '付款单',])->addColumn('type', 'string', ['limit' => 30, 'null' => false, 'default' => '', 'signed' => true, 'comment' => '源单类型',])
             ->addColumn('payment_code', 'string', ['limit' => 30, 'null' => false, 'default' => '', 'signed' => true, 'comment' => '付款编号',])
             ->addColumn('payment_amount', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'signed' => true, 'comment' => '付款金额',])
             ->addColumn('payment_type', 'string', ['limit' => 200, 'null' => false, 'default' => '', 'signed' => true, 'comment' => '付款方式',])

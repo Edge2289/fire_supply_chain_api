@@ -61,10 +61,12 @@ class SourceList extends CatchController
      */
     public function purchaseOrder()
     {
-        $data = PurchaseOrder::field(['id', 'amount', 'audit_status', 'purchase_code as order_code', 'purchase_date as order_date', 'settlement_status'])
+        $data = PurchaseOrder::field(['id', 'amount', '"采购订单" as type', 'audit_status', 'purchase_code as order_code', 'purchase_date as order_date', 'settlement_status'])
+            ->whereRaw("(amount - settlement_amount) > 0")
             ->whereAuditStatus(1)  // 审核
             ->whereSettlementType(0) // 现结
             ->whereSettlementStatus(0) //
+            ->whereSupplierId(app(Request::class)->get('customer_info_id'))
             ->catchSearch()->order("id desc")
             ->paginate();
         foreach ($data as &$datum) {
@@ -84,13 +86,13 @@ class SourceList extends CatchController
     public function procurement()
     {
         $procurement = new ProcurementWarehousing();
-        $data = $procurement->alias('pw')
-            ->field(['pw.id', '0 as pw.amount', 'pw.audit_status', 'pw.warehouse_entry_code as order_code', 'pw.inspection_date as order_date', 'po.settlement_status'])
-            ->leftJoin("f_purchase_order po", 'po.id = pw.purchase_order_id')
-            ->where('po.audit_status', 1)  // 审核
-            ->where('po.settlement_type', 1) // 现结
-            ->where('po.settlement_status', 1) // 现结
-            ->catchSearch([], 'po')->order("or.id desc")
+        $data = $procurement
+            ->field(['id', 'amount', '"采购入库单" as type', 'audit_status', 'warehouse_entry_code as order_code', 'inspection_date as order_date', 'settlement_status'])
+            ->whereRaw("(amount - settlement_amount) > 0")
+            ->where('audit_status', 1)  // 审核
+            ->where('settlement_status', 0) // 现结
+            ->where('supplier_id', app(Request::class)->get('customer_info_id'))
+            ->catchSearch([])->order("id desc")
             ->paginate();
         foreach ($data as &$datum) {
             $details = $datum->hasOutboundOrderDetails;
@@ -109,10 +111,12 @@ class SourceList extends CatchController
     {
         // 需要订单携带商品数据
         $data = app(SalesOrderModel::class)
-            ->field(['id', 'amount', 'audit_status', 'order_code', 'sales_time as order_date', 'settlement_status'])
+            ->field(['id', 'amount', '"销售订单" as type', 'audit_status', 'order_code', 'sales_time as order_date', 'settlement_status'])
+            ->whereRaw("(amount - settlement_amount) > 0")
             ->whereAuditStatus(1)  // 审核
             ->whereSettlementType(0) // 现结
             ->whereSettlementStatus(0) //
+            ->whereCustomerInfoId(app(Request::class)->get('customer_info_id'))
             ->catchSearch()->order("id desc")
             ->paginate();
         foreach ($data as &$datum) {
@@ -132,13 +136,13 @@ class SourceList extends CatchController
     public function outboundOrder()
     {
         $outboundOrderModel = new OutboundOrder();
-        $data = $outboundOrderModel->alias('or')
-            ->field(['or.id', 'or.amount', 'or.audit_status', 'so.outbound_order_code as order_code', 'outbound_time as order_date', 'so.settlement_status'])
-            ->leftJoin("f_sales_order so", 'so.id = or.sales_order_id')
-            ->where('so.audit_status', 1)  // 审核
-            ->where('so.settlement_type', 1) // 现结
-            ->where('so.settlement_status', 1) // 现结
-            ->catchSearch([], 'so')->order("or.id desc")
+        $data = $outboundOrderModel
+            ->field(['id', '"销售出库单" as type', 'amount', 'audit_status', 'outbound_order_code as order_code', 'outbound_time as order_date', 'settlement_status'])
+            ->whereRaw("(amount - settlement_amount) > 0")
+            ->where('audit_status', 1)  // 审核
+            ->where('so.settlement_status', 0) // 未结
+            ->where('customer_info_id', app(Request::class)->get('customer_info_id'))
+            ->catchSearch([])->order("id desc")
             ->paginate();
         foreach ($data as &$datum) {
             $details = $datum->hasOutboundOrderDetails;
