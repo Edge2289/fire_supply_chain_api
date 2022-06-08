@@ -29,28 +29,27 @@ class Receivable extends CatchTable
                 HeaderItem::label()->selection(),
                 HeaderItem::label('编号')->prop('id'),
                 HeaderItem::label('回款单号')->prop('receivable_code'),
+                HeaderItem::label('源单类型')->prop('source_type'),
                 HeaderItem::label('回款时间')->prop('receivable_time'),
-                HeaderItem::label('回款金额')->prop('amount'),
-                HeaderItem::label('回款类型')->prop('payment_type'),
-                HeaderItem::label('支付方式')->prop('payment_method'),
+                HeaderItem::label('回款金额')->prop('prepaid_amount'),
                 HeaderItem::label('备注')->prop('other'),
                 HeaderItem::label('操作')->width(200)->actions([
                     Actions::update(), Actions::delete()
                 ])
             ])
             ->withSearch([
-                Search::label('回款类型')->select('payment_type', '回款类型', Search::options()->add('常规', "1")
-                    ->add('现金', "2")
-                    ->add('尾款', "3")
-                    ->add('保证金', "4")
-                    ->add('其他', "5")
-                    ->render()),
-                Search::label('回款时间')->datetime('warehouse_name', '仓库名称'),
+                Search::label('源单类型')->select('source_type', '源单类型',
+                    Search::options()
+                        ->add('销售订单', "salesOrder")
+                        ->add('销售出库单', "outboundOrder")
+                        ->render()),
+                Search::label('回款单号')->text('receivable_code', '付款单号'),
             ])
             ->withApiRoute('receivable')
             ->withActions([
                 Actions::normal("新增", "primary", "handleAdd", "el-icon-plus"),
                 Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu'),
+                Actions::normal("作废", 'primary', "invalid")->icon('el-icon-bangzhu'),
             ])
             ->selectionChange()
             ->render();

@@ -38,18 +38,18 @@ class Payment extends CatchTable
                 ])
             ])
             ->withSearch([
-                Search::label('付款类型')->select('payment_type', '回款类型', Search::options()->add('常规', "1")
-                    ->add('现金', "2")
-                    ->add('尾款', "3")
-                    ->add('保证金', "4")
-                    ->add('其他', "5")
-                    ->render()),
-                Search::label('付款时间')->datetime('warehouse_name', '仓库名称'),
+                Search::label('源单类型')->select('source_type', '源单类型',
+                    Search::options()
+                        ->add('采购订单', "purchaseOrder")
+                        ->add('采购入库单', "procurement")
+                        ->render()),
+                Search::label('付款单号')->text('payment_code', '付款单号'),
             ])
             ->withApiRoute('payment')
             ->withActions([
                 Actions::normal("新增", "primary", "handleAdd", "el-icon-plus"),
-                Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu')
+                Actions::normal("审核", 'primary', "audit")->icon('el-icon-bangzhu'),
+                Actions::normal("作废", 'primary', "invalid")->icon('el-icon-bangzhu'),
             ])
             ->selectionChange()
             ->render();

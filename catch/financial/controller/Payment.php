@@ -80,6 +80,9 @@ class Payment extends CatchController
     {
         $params = $request->param();
         $this->paymentSheetModel->startTrans();
+        if ($params['cope_amount'] < $params['prepaid_amount']) {
+            throw new BusinessException("已付金额不能大于应付金额");
+        }
         try {
             $params['payment_time'] = strtotime($params['payment_time']);
             $source = $params['source'];
@@ -112,6 +115,7 @@ class Payment extends CatchController
                     "type" => $value['type'],
                     "order_code" => $value['order_code'],
                     "amount" => $value['amount'],
+                    "payment_amount" => count($source) > 1 ? $value['amount'] : $params['prepaid_amount'],
                     "remark" => $value['remark'] ?? "",
                 ];
                 $sourceAmount = bcadd($sourceAmount, $value['amount'], 2);
@@ -195,12 +199,116 @@ class Payment extends CatchController
             return CatchResponse::fail("付款单已审核,无法修改");
         }
         $this->paymentSheetModel->startTrans();
+
+        // TODO 待修改
         try {
-            $this->paymentSheetModel->updateBy($params['id'], $params);
+            /**
+             * 第一个循环源单变更结算数据
+             *   采购订单的直接判定 结算金额是否一致 以及还有没有其他的付款单
+             */
+            // 判断是否审核成功
+            $this->paymentSheetModel->updateBy($params['id'], [
+                'audit_status' => $params['audit_status'],
+                'audit_info' => $params['audit_info'],
+                'audit_user_id' => request()->user()->id,
+                'audit_user_name' => request()->user()->username,
+            ]);
+
+            if ($params['audit_status'] == 1) {
+                // 审核成功
+                // 修改对应的入库单
+                $table = $data['source_type'] == "purchaseOrder" ? "f_purchase_order" : "f_procurement_warehousing";
+                $purchase_source_id = [];
+                foreach ($data->manyPaymentSheetSource as $value) {
+                    $model = Db::table($table)->where('id', $value['source_id'])->find();
+                    if (!$model) {
+                        continue;
+                    }
+                    $dataMap = $this->paymentSheetModel->alias("ps")
+                        ->field('sum(payment_amount) as payment_amount')
+                        ->leftJoin("f_payment_sheet_source pss", 'ps.id = pss.payment_sheet_id')
+                        ->where('ps.source_type', $data['source_type'])
+                        ->where('ps.audit_status', 1)
+                        ->where('pss.source_id', $value['source_id'])
+                        ->find();
+                    $status = 1;
+                    if ($dataMap['payment_amount'] == $model['amount']) {
+                        // 已结算
+                        $status = 2;
+                    }
+                    Db::table($table)->where('id', $value['source_id'])->update([
+                        'settlement_status' => $status
+                    ]);
+                    if ($data['source_type'] == "procurement") {
+                        if (isset($purchase_source_id[$model['purchase_order_id']])) {
+                            $purchase_source_id[$model['purchase_order_id']][] = $value['source_id'];
+                        } else {
+                            $purchase_source_id[$model['purchase_order_id']] = [$value['source_id']];
+                        }
+                    }
+                }
+                foreach ($purchase_source_id as $purchase_order_id => $sourceId) {
+                    // 这里是 purchase_order_id
+                    $purchaseModel = Db::table('f_purchase_order')->where('id', $purchase_order_id)->find();
+                    $dataMap = $this->paymentSheetModel->alias("ps")
+                        ->field('sum(payment_amount) as payment_amount')
+                        ->leftJoin("f_payment_sheet_source pss", 'ps.id = pss.payment_sheet_id')
+                        ->where('ps.source_type', $data['source_type'])
+                        ->where('ps.audit_status', 1)
+                        ->whereIn('pss.source_id', $sourceId)
+                        ->find();
+                    $status = 1;
+                    if ($dataMap['payment_amount'] == $purchaseModel['amount']) {
+                        // 已结算
+                        $status = 2;
+                    }
+                    // 修改采购订单的数
+                    Db::table('f_purchase_order')->where('id', $model['purchase_order_id'])->update([
+                        'settlement_status' => $status,
+                        'settlement_amount' => $dataMap['payment_amount']
+                    ]);
+                }
+            }
+
+            // 修改当前回款单状态
+            $this->paymentSheetModel->commit();
+            return CatchResponse::success();
+        } catch (\Exception $exception) {
+            $this->paymentSheetModel->rollback();
+            return CatchResponse::fail();
+        }
+    }
+
+    /**
+     * 作废
+     *
+     * @param Request $request
+     * @return Json
+     */
+    public function invalid(Request $request)
+    {
+        $params = $request->param();
+        $data = $this->paymentSheetModel->findBy($params['id']);
+        if (!$data) {
+            return CatchResponse::fail("数据不存在");
+        }
+        if ($data['audit_status'] == 1) {
+            return CatchResponse::fail("付款单已审核,无法修改");
+        }
+        $this->paymentSheetModel->startTrans();
+        try {
             // 修改采购订单状态
-            $ids = [];
+            $sourceIds = [];
             foreach ($data->manyPaymentSheetSource as $value) {
-                $ids[] = $value['purchase_order_id'];
+                $sourceIds[] = $value['source_id'];
+            }
+            $table = $data['source_type'] == "purchaseOrder" ? "f_purchase_order" : "f_procurement_warehousing";
+            if (count($sourceIds) > 1) {
+                // 多源单 直接更新数据
+                Db::execute("update {$table} set settlement_amount = 0 where id in (" . implode(",", $sourceIds) . ")");
+            } else {
+                // 单源单 更新数据
+                Db::execute("update {$table} set settlement_amount = settlement_amount - {$data['prepaid_amount']} where id in (" . implode(",", $sourceIds) . ")");
             }
             if (!empty($ids)) {
                 // 修改成已开票
@@ -208,6 +316,10 @@ class Payment extends CatchController
                     'settlement_status' => 1
                 ]);
             }
+            // 清除数据
+            $this->paymentSheetModel->deleteBy($params['id']);
+            $this->paymentSheetSourceModel->destroy(['payment_sheet_id' => $params['id']]);
+            $this->paymentSheetCollectionInfoModel->destroy(['payment_sheet_id' => $params['id']]);
             // 修改当前回款单状态
             $this->paymentSheetModel->commit();
             return CatchResponse::success();

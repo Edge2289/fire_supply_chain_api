@@ -35,25 +35,6 @@ class SourceList extends CatchController
         ChangeStatus::getInstance()->settlementStatus()->auditStatus()->handle($data);
         return CatchResponse::paginate($data);
     }
-    /** --- 返回的格式 --- */
-
-    /**
-     * 订单日期
-     * 订单编号
-     * 审核状态
-     * 付款状态
-     * 订单金额
-     */
-    /**
-     * 订单编号
-     * 产品编码
-     * 产品名称
-     * 规格
-     * 型号
-     * 数量
-     * 单价
-     * 价税合计
-     */
 
     /**
      * 采购订单
@@ -61,7 +42,7 @@ class SourceList extends CatchController
      */
     public function purchaseOrder()
     {
-        $data = PurchaseOrder::field(['id', 'amount', '"采购订单" as type', 'audit_status', 'purchase_code as order_code', 'purchase_date as order_date', 'settlement_status'])
+        $data = PurchaseOrder::field(['id', '(amount - settlement_amount) amount', '"采购订单" as type', 'audit_status', 'purchase_code as order_code', 'purchase_date as order_date', 'settlement_status'])
             ->whereRaw("(amount - settlement_amount) > 0")
             ->whereAuditStatus(1)  // 审核
             ->whereSettlementType(0) // 现结
@@ -86,13 +67,15 @@ class SourceList extends CatchController
     public function procurement()
     {
         $procurement = new ProcurementWarehousing();
-        $data = $procurement
-            ->field(['id', 'amount', '"采购入库单" as type', 'audit_status', 'warehouse_entry_code as order_code', 'inspection_date as order_date', 'settlement_status'])
-            ->whereRaw("(amount - settlement_amount) > 0")
-            ->where('audit_status', 1)  // 审核
-            ->where('settlement_status', 0) // 现结
-            ->where('supplier_id', app(Request::class)->get('customer_info_id'))
-            ->catchSearch([])->order("id desc")
+        $data = $procurement->alias('pw')
+            ->field(['pw.id', '(pw.amount - pw.settlement_amount) amount', '"采购入库单" as type', 'pw.audit_status', 'pw.warehouse_entry_code as order_code', 'pw.inspection_date as order_date', 'pw.settlement_status'])
+            ->leftJoin("f_purchase_order po", 'po.id = pw.purchase_order_id')
+            ->whereRaw("(pw.amount - pw.settlement_amount) > 0")
+            ->where('pw.audit_status', 1)  // 审核
+            ->where('po.settlement_type', 1) // 月结
+            ->where('pw.settlement_status', 0) // 结算状态
+            ->where('pw.supplier_id', app(Request::class)->get('customer_info_id'))
+            ->catchSearch([], 'pw')->order("or.id desc")
             ->paginate();
         foreach ($data as &$datum) {
             $details = $datum->hasOutboundOrderDetails;
@@ -111,7 +94,7 @@ class SourceList extends CatchController
     {
         // 需要订单携带商品数据
         $data = app(SalesOrderModel::class)
-            ->field(['id', 'amount', '"销售订单" as type', 'audit_status', 'order_code', 'sales_time as order_date', 'settlement_status'])
+            ->field(['id', '(amount - settlement_amount) as amount', '"销售订单" as type', 'audit_status', 'order_code', 'sales_time as order_date', 'settlement_status'])
             ->whereRaw("(amount - settlement_amount) > 0")
             ->whereAuditStatus(1)  // 审核
             ->whereSettlementType(0) // 现结
@@ -137,12 +120,15 @@ class SourceList extends CatchController
     {
         $outboundOrderModel = new OutboundOrder();
         $data = $outboundOrderModel
-            ->field(['id', '"销售出库单" as type', 'amount', 'audit_status', 'outbound_order_code as order_code', 'outbound_time as order_date', 'settlement_status'])
-            ->whereRaw("(amount - settlement_amount) > 0")
-            ->where('audit_status', 1)  // 审核
-            ->where('so.settlement_status', 0) // 未结
-            ->where('customer_info_id', app(Request::class)->get('customer_info_id'))
-            ->catchSearch([])->order("id desc")
+            ->alias('or')
+            ->field(['or.id', '"销售出库单" as type', '(r.amount - or.settlement_amount) as amount', 'or.audit_status', 'so.outbound_order_code as order_code', 'outbound_time as order_date', 'so.settlement_status'])
+            ->leftJoin("f_sales_order so", 'so.id = or.sales_order_id')
+            ->where('or.audit_status', 1)  // 审核
+            ->where('so.settlement_type', 1) // 月结
+            ->where('so.settlement_status', '<>', 2) // 未结
+            ->whereRaw("(or.amount - or.settlement_amount) > 0")
+            ->where('or.customer_info_id', app(Request::class)->get('customer_info_id'))
+            ->catchSearch([], 'or')->order("or.id desc")
             ->paginate();
         foreach ($data as &$datum) {
             $details = $datum->hasOutboundOrderDetails;
@@ -177,4 +163,25 @@ class SourceList extends CatchController
         }
         return $map;
     }
+
+    /** --- 返回的格式 --- */
+
+    /**
+     * 订单日期
+     * 订单编号
+     * 审核状态
+     * 付款状态
+     * 订单金额
+     */
+    /**
+     * 订单编号
+     * 产品编码
+     * 产品名称
+     * 规格
+     * 型号
+     * 数量
+     * 单价
+     * 价税合计
+     */
+
 }

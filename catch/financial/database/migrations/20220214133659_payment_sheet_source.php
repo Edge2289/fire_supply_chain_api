@@ -24,6 +24,7 @@ class PaymentSheetSource extends Migrator
             ->addColumn('type', 'string', ['limit' => 30, 'null' => false, 'default' => '', 'signed' => true, 'comment' => '源单类型',])
             ->addColumn('order_code', 'string', ['limit' => 30, 'null' => false, 'default' => '', 'signed' => true, 'comment' => '源单编号',])
             ->addColumn('amount', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'signed' => true, 'comment' => '源单金额',])
+            ->addColumn('payment_amount', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'signed' => true, 'comment' => '源单金额',])
             ->addColumn('remark', 'string', ['limit' => 200, 'null' => false, 'default' => '', 'signed' => true, 'comment' => '备注',])
             ->addColumn('created_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '创建时间',])
             ->addColumn('updated_at', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'null' => false, 'default' => 0, 'signed' => true, 'comment' => '更新时间',])
