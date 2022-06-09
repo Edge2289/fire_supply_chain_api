@@ -31,7 +31,7 @@ class Invoice extends CatchModel
      * @return HasMany
      * @author 1131191695@qq.com
      */
-    public function manyInvoiceSheet(): HasMany
+    public function manyInvoiceSheetSource(): HasMany
     {
         return $this->hasMany(InvoiceSheet::class, "invoice_sheet_id", "id");
     }

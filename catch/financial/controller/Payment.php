@@ -162,8 +162,8 @@ class Payment extends CatchController
             $this->paymentSheetCollectionInfoModel->insertAll($payMap);
             $this->paymentSheetSourceModel->insertAll($map);
 
-            /**
-             * TODO 新增修改采购单数据
+            /*
+             * 修改采购单数据
              */
             $table = $params['source_type'] == "purchaseOrder" ? "f_purchase_order" : "f_procurement_warehousing";
             if (count($map) > 1) {
@@ -200,7 +200,6 @@ class Payment extends CatchController
         }
         $this->paymentSheetModel->startTrans();
 
-        // TODO 待修改
         try {
             /**
              * 第一个循环源单变更结算数据
@@ -240,22 +239,19 @@ class Payment extends CatchController
                         'settlement_status' => $status
                     ]);
                     if ($data['source_type'] == "procurement") {
-                        if (isset($purchase_source_id[$model['purchase_order_id']])) {
-                            $purchase_source_id[$model['purchase_order_id']][] = $value['source_id'];
-                        } else {
-                            $purchase_source_id[$model['purchase_order_id']] = [$value['source_id']];
-                        }
+                        $purchase_source_id[] = $model['purchase_order_id'];
                     }
                 }
-                foreach ($purchase_source_id as $purchase_order_id => $sourceId) {
+                foreach (array_unique($purchase_source_id) as $purchase_order_id) {
                     // 这里是 purchase_order_id
+                    $sourceId = Db::table('f_procurement_warehousing')->field('id')->where('purchase_order_id', $purchase_order_id)->find();
                     $purchaseModel = Db::table('f_purchase_order')->where('id', $purchase_order_id)->find();
                     $dataMap = $this->paymentSheetModel->alias("ps")
                         ->field('sum(payment_amount) as payment_amount')
                         ->leftJoin("f_payment_sheet_source pss", 'ps.id = pss.payment_sheet_id')
                         ->where('ps.source_type', $data['source_type'])
                         ->where('ps.audit_status', 1)
-                        ->whereIn('pss.source_id', $sourceId)
+                        ->whereIn('pss.source_id', array_column($sourceId, 'id'))
                         ->find();
                     $status = 1;
                     if ($dataMap['payment_amount'] == $purchaseModel['amount']) {
