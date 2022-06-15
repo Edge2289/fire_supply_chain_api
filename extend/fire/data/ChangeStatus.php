@@ -94,7 +94,7 @@ class ChangeStatus
     {
         if (!empty($arguments)) {
             $key = $name . "I";
-            $this->{$key} = $arguments;
+            $this->{$key} = $arguments[0];
         }
         $this->$name = true;
         return $this;
