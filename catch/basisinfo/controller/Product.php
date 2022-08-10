@@ -171,7 +171,7 @@ class Product extends CatchController
                     $skuDatum['product_code'] = getCode("PC");
                 }
                 $skuDatum['product_id'] = $id;
-                $entityOptions = $skuDatum['entityOptions']; //json_decode($skuDatum['entityOptions'], true);
+                $entityOptions = $skuDatum['entityOptions'] ?? []; //json_decode($skuDatum['entityOptions'], true);
                 unset($skuDatum['entity'], $skuDatum['entityOptions']);
                 unset($skuDatum['id'], $skuDatum['created_at'], $skuDatum['updated_at'], $skuDatum['deleted_at']);
                 $skuId = $this->productSku->insertGetId($skuDatum);
