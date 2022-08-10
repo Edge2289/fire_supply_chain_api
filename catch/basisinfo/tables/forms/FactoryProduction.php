@@ -24,7 +24,7 @@ class FactoryProduction extends Form
             self::file("生产许可证", "production_license_url"),
             self::input("license_code", "许可证编号")->col(12)->required(),
             self::input("company_name", "企业名称")->col(12)->required(),
-            self::dateRange("营业期限", "营业期限", "business_start_date", "business_end_date")->required(),
+            self::dateRange("business_start_date", "营业期限", "business_start_date", "business_end_date")->required(),
             self::input("legal_person", "法人")->col(12)->required(),
             self::input("head_name", "企业负责人")->col(12)->required(),
             self::input("production_address", "生产地址")->required(),
