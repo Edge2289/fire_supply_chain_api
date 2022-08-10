@@ -21,7 +21,7 @@ class FactoryProduction extends Form
     public function fields(): array
     {
         return [
-            self::file("生产许可证", "production_license_url")->required(),
+            self::file("生产许可证", "production_license_url"),
             self::input("license_code", "许可证编号")->col(12)->required(),
             self::input("company_name", "企业名称")->col(12)->required(),
             self::dateRange("营业期限", "营业期限", "business_start_date", "business_end_date")->required(),

@@ -143,7 +143,7 @@ class Product extends CatchController
 
         $skuData = $map['skuData'] ?? [];
         unset($map['skuData']);
-        $map['product_category'] = $map['product_category'][0] ?? 0;
+        $map['product_category_id'] = $map['product_category_id'][0] ?? 0;
 
         $this->productBasicInfoModel->startTrans();
         try {

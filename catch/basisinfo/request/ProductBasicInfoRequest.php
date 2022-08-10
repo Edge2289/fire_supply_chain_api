@@ -24,7 +24,7 @@ class ProductBasicInfoRequest extends CatchRequest
             'product_name|产品名称' => 'require|max:200',
             'factory_id|生产厂家' => 'require',
             'storage_conditions|储存条件' => 'require|max:200',
-            'product_category|产品类别' => 'require',
+            'product_category_id|产品类别' => 'require',
             'factory_id|生产产家' => 'require',
             'product_type|产品类型' => 'require',
         ];
