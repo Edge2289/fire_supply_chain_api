@@ -50,9 +50,10 @@ class PurchaseOrder extends CatchController
     {
         $data = $this->purchaseOrderModel->getList();
         foreach ($data as &$datum) {
+            $datum['settlement_status_i'] = $datum['settlement_status'] == 0 ? "未结" : "已结";
             $datum['settlement_type_i'] = $datum['settlement_type'] == 0 ? "现结" : "月结";
         }
-        ChangeStatus::getInstance()->audit()->status()->handle($data);
+        ChangeStatus::getInstance()->auditStatus()->status()->handle($data);
         return CatchResponse::paginate($data);
     }
 

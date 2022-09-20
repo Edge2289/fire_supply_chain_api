@@ -17,11 +17,11 @@ namespace fire\data;
  * @method self invoiceStatus
  * @method self settlementType
  * @method self auditStatus
+ * @method self audit
  * @package fire\data
  */
 class ChangeStatus
 {
-
     private $statusI = [
         "未完成", "已完成", "作废"
     ];
@@ -92,6 +92,9 @@ class ChangeStatus
      */
     public function __call($name, $arguments)
     {
+        if ($name == 'audit') {
+            $name = 'auditStatus';
+        }
         if (!empty($arguments)) {
             $key = $name . "I";
             $this->{$key} = $arguments[0];

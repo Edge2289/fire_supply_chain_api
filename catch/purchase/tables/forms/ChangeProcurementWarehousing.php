@@ -45,11 +45,11 @@ class ChangeProcurementWarehousing extends Form
                 ->options(
                     $this->warehouse->tableGetWarehouse()
                 )->
-                col(8)->required(),
+                col(8),
             self::select("supplier_id", "供应商")
                 ->options(
                     app(SupplierLicense::class)->getSupplier()
-                )->col(8)->required()->appendEmit('change'),
+                )->col(8)->appendEmit('change'),
             self::select("purchase_order_id", "采购订单")
                 ->options(
                     $this->purchaseOrder->tableGetPurchaseOrderLists()
