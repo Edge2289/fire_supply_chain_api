@@ -78,7 +78,7 @@ class ProcurementWarehousing extends CatchController
         foreach ($data as &$datum) {
             $warehouseData = $this->warehouse->where("id", $datum["warehouse_id"])->find();
             $datum['warehouse_name'] = $warehouseData['warehouse_name'] ?? "";
-            $datum['purchase_code'] = $datum->hasPurchaseOrder->purchase_code;
+            $datum['purchase_code'] = $datum->hasPurchaseOrder->purchase_code ?? '';
         }
 
         ChangeStatus::getInstance()->audit()->status()->handle($data);
