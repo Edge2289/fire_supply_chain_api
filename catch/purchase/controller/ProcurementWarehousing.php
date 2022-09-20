@@ -117,7 +117,7 @@ class ProcurementWarehousing extends CatchController
                 $this->procurementWarehousing->updateBy($params['id'], $params);
                 $id = $params['id'];
                 // 删除
-                $this->procurementWarehousingDetails->where("procurement_warehousing_id", $params['id'])->delete();
+                $this->procurementWarehousingDetails->destroy(['procurement_warehousing_id' => $params['id']]);
             } else {
                 $params["warehouse_entry_code"] = getCode("PW");
                 $id = $this->procurementWarehousing->insertGetId($params);
