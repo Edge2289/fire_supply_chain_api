@@ -22,7 +22,6 @@ class FactoryRecord extends Form
     {
         return [
             self::hidden("factory_id", 0),
-            self::file("备案凭证", "record_license_url")->required(),
             self::input("record_code", "备案号")->col(12)->required(),
             self::input("company_name", "企业名称")->col(12)->required(),
             self::input("legal_person", "法人")->col(12)->required(),
@@ -30,7 +29,7 @@ class FactoryRecord extends Form
             self::input("production_address", "生产地址")->required(),
             self::textarea("production_scope", "生产范围")->required(),
             self::input("record_department", "备案部门")->required(),
-            self::date("record_date", "备案日期")->col(12),
+            self::date("record_date", "备案日期")->editable(true)->col(12),
         ];
     }
 }

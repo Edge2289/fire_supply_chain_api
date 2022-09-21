@@ -22,7 +22,7 @@ class ChangeInvoice extends Form
     public function fields(): array
     {
         return [
-            self::date("invoice_time", "发票时间")->col(12)->required(),
+            self::date("invoice_time", "发票时间")->editable(true)->col(12)->required(),
             self::input("amount", "发票金额")->col(12)->required(),
             self::select("customer_info_id", "客户")
                 ->options(

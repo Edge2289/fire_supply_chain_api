@@ -38,8 +38,8 @@ class ProductRegistered extends Form
             self::input("registered_proxy_address", "代理人住址")->required(),
             self::textarea("comprise_desc", "结构及组成")->required(),
             self::textarea("product_desc", "适用范围")->required(),
-            self::date("registered_time", "批准日期")->col(12)->required(),
-            self::date("end_time", "有效期至")->col(12)->required(),
+            self::date("registered_time", "批准日期")->editable(true)->col(12)->required(),
+            self::date("end_time", "有效期至")->editable(true)->col(12)->required(),
             self::input("registered_department", "审批部门"),
             self::input("registered_remark", "备注"),
         ];

@@ -27,7 +27,7 @@ class ProductCategory extends CatchTable
         return $this->getTable('productCategory')
             ->header([
                 HeaderItem::label('名称')->prop('name'),
-                HeaderItem::label('权重')->prop('sort'),
+                HeaderItem::label('序号')->prop('sort'),
                 HeaderItem::label('备注')->prop('note'),
                 HeaderItem::label('操作')->width(250)->actions([
                     Actions::update(),

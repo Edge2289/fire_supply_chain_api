@@ -36,7 +36,7 @@ class ChangeProcurementWarehousing extends Form
     public function fields(): array
     {
         return [
-            self::date("put_date", "单据日期")->col(8)->required(),
+            self::date("put_date", "单据日期")->editable(true)->col(8)->required(),
             self::select("put_user_id", "经手人")
                 ->options(
                     get_company_employees()
@@ -56,7 +56,7 @@ class ChangeProcurementWarehousing extends Form
                 )->
                 col(8)->required()->appendEmit('change'),
             self::textarea("remark", "备注"),
-            self::date("inspection_date", "收/验货日期")->col(8),
+            self::date("inspection_date", "收/验货日期")->editable(true)->col(8),
             self::select("inspection_user_id", "收/验货人员")
                 ->options(
                     get_company_employees()

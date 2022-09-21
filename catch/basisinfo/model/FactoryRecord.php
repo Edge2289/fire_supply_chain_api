@@ -25,7 +25,6 @@ class FactoryRecord extends CatchModel
     protected $field = [
         'id',
         'factory_id',
-        'record_license_url',
         'record_code',
         'company_name',
         'legal_person',

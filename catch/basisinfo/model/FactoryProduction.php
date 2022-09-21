@@ -25,7 +25,6 @@ class FactoryProduction extends CatchModel
     protected $field = [
         'id',
         'factory_id',
-        'production_license_url',
         'license_code',
         'business_start_date',
         'business_end_date',

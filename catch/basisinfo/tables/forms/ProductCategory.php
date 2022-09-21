@@ -30,7 +30,7 @@ class ProductCategory extends Form
                 'checkStrictly' => true
             ]))->filterable(true)->clearable(true)->style(['width' => '100%']),
 
-            self::input('sort', '权重')->required(),
+            self::input('sort', '序号'),
             self::input('note', '备注'),
 
         ];

@@ -26,7 +26,7 @@ class ChangePayment extends Form
                 ->options(
                     app(SupplierLicense::class)->getSupplier()
                 )->col(8)->clearable(true)->required()->appendEmit('change'),
-            self::date("payment_time", "时间")->col(8)->required(),
+            self::date("payment_time", "时间")->editable(true)->col(8)->required(),
             self::input("payment_code", "单据编号")->disabled(true)->col(8),
             self::input("other", "备注")->required(),
         ];

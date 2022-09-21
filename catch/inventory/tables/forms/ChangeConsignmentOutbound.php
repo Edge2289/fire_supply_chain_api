@@ -35,7 +35,7 @@ class ChangeConsignmentOutbound extends Form
     public function fields(): array
     {
         return [
-            self::date("outbound_time", "出库日期")->col(12)->required(),
+            self::date("outbound_time", "出库日期")->editable(true)->col(12)->required(),
             self::select("salesman_id", "出库人员")
                 ->options(
                 // 获取自身公司下的员工

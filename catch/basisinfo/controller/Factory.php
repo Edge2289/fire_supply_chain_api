@@ -11,6 +11,7 @@ namespace catchAdmin\basisinfo\controller;
 
 
 use app\Request;
+use catchAdmin\basisinfo\model\FactoryAttachmentUrl;
 use catchAdmin\basisinfo\model\FactoryProduction;
 use catchAdmin\basisinfo\model\FactoryRecord;
 use catchAdmin\basisinfo\request\FactoryRequest;
@@ -31,16 +32,19 @@ class Factory extends CatchController
     public $factory;
     public $factoryRecord;
     public $factoryProduction;
+    public $attachmentUrl;
 
     public function __construct(
-        FactoryModel      $factory,
-        FactoryProduction $factoryProduction,
-        FactoryRecord     $factoryRecord
+        FactoryModel         $factory,
+        FactoryProduction    $factoryProduction,
+        FactoryRecord        $factoryRecord,
+        FactoryAttachmentUrl $attachmentUrl
     )
     {
         $this->factory = $factory;
         $this->factoryRecord = $factoryRecord;
         $this->factoryProduction = $factoryProduction;
+        $this->attachmentUrl = $attachmentUrl;
     }
 
     /**
@@ -92,20 +96,20 @@ class Factory extends CatchController
             }
 
             if (!empty($data['data_maintenance'])) {
-                $data['data_maintenance'] = array_filter(explode(",", $data['data_maintenance']));
+                $dataMaintenance = array_filter(explode(",", $data['data_maintenance']));
             }
             $data['factory_type'] = (string)$data['factory_type'];
             $factoryData['factory'] = $data;
             if ($data['factory_type'] != 2) {
                 // 如果是国外公司，直接返回
-                foreach ($data['data_maintenance'] ?: [] as $value) {
+                foreach ($dataMaintenance ?: [] as $value) {
                     if ($value == 1) {
                         $map[] = [
                             "id" => 2,
                             "name" => "生产许可",
                             "component" => "production_license",
                         ];
-                    } else {
+                    } else if ($value == 2) {
                         $map[] = [
                             "id" => 3,
                             "name" => "备案凭证",
@@ -114,6 +118,11 @@ class Factory extends CatchController
                     }
                 }
                 $this->factoryAuxiliary($id, $factoryData);
+                $map[] = [
+                    "id" => 4,
+                    "name" => "附件信息",
+                    "component" => "attachmentUrl",
+                ];
             }
         }
 
@@ -137,6 +146,7 @@ class Factory extends CatchController
     {
         $factoryData['productionLicense'] = $this->factoryProduction->where("factory_id", $id)->find();
         $factoryData['record'] = $this->factoryRecord->where("factory_id", $id)->find();
+        $factoryData['attachmentUrlData'] = $this->attachmentUrl->where("factory_id", $id)->find();
     }
 
     /**
@@ -218,7 +228,7 @@ class Factory extends CatchController
             $map['establish_date'] = strtotime($map['establish_date']);
             $map['registration_date'] = isset($map['registration_date']) ? strtotime($map['registration_date']) : 0;
             unset($map['form_factory_type']);
-            $map['data_maintenance'] = implode(",", $map['data_maintenance']);
+            $map['data_maintenance'] = is_string($map['data_maintenance']) ? $map['data_maintenance'] : implode(",", $map['data_maintenance']);
         }
         if (isset($map['id']) && !empty($map['id'])) {
             $data = $this->factory->where('id', $map['id'])->find();
@@ -249,6 +259,25 @@ class Factory extends CatchController
             return $this->factoryProduction->updateBy($data['id'], $data);
         }
         return $this->factoryProduction->storeBy($data);
+    }
+
+    /**
+     * 附件
+     *
+     * @param array $data
+     * @return bool|int
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @author 1131191695@qq.com
+     */
+    protected function attachmentUrlCall(array $data)
+    {
+        if ($data['id']) {
+            // 存在
+            return $this->attachmentUrl->updateBy($data['id'], $data);
+        }
+        return $this->attachmentUrl->storeBy($data);
     }
 
     /**

@@ -32,7 +32,7 @@ class ChangePurchase extends Form
     public function fields(): array
     {
         return [
-            self::date("purchase_date", "单据日期")->col(12)->required(),
+            self::date("purchase_date", "单据日期")->editable(true)->col(12)->required(),
             self::select("user_id", "采购人员")
                 ->options(
                     get_company_employees()

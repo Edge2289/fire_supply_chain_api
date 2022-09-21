@@ -30,9 +30,9 @@ class CustomerHospital extends Form
             self::input("legal_person", "法人")->required(),
             self::input("incharge_person", "主要负责人")->required(),
             self::textarea("detailed_address", "地址")->required(),
-            self::date("effective_start_date", "有限期限(开始)")->col(12)->required(),
-            self::date("effective_end_date", "有限期限(结束)")->col(12)->required(),
-            self::date("certification_date", "发证日期")->col(12),
+            self::date("effective_start_date", "有限期限(开始)")->editable(true)->col(12)->required(),
+            self::date("effective_end_date", "有限期限(结束)")->editable(true)->col(12)->required(),
+            self::date("certification_date", "发证日期")->editable(true)->col(12),
             self::input("certification_department", "发证机关")->col(12),
             self::input("business_scope", "诊疗科目")->col(12),
         ];

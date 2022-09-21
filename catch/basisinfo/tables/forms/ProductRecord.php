@@ -31,7 +31,7 @@ class ProductRecord extends Form
             self::input("product_desc", "产品描述")->col(12)->required(),
             self::input("preliminary_use", "预备用途")->col(12)->required(),
             self::input("record_department", "备案单位")->col(12)->required(),
-            self::date("record_time", "备案日期")->col(12)->required(),
+            self::date("record_time", "备案日期")->editable(true)->col(12)->required(),
             self::input("record_remark", "备注")->col(12)->required(),
         ];
     }

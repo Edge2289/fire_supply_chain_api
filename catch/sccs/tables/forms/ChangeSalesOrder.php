@@ -33,7 +33,7 @@ class ChangeSalesOrder extends Form
     public function fields(): array
     {
         return [
-            self::date("sales_time", "单据日期")->col(8)->required(),
+            self::date("sales_time", "单据日期")->editable(true)->col(8)->required(),
 //            self::select("salesman_id", "销售人员")
 //                ->options(
 //                // 获取自身公司下的员工

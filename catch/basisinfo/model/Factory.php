@@ -28,8 +28,6 @@ class Factory extends CatchModel
         'factory_type',
         'company_name',
         'company_name_en',
-        'business_license_url',
-        'contract_url',
         'unified_code',
         'residence',
         'legal_person',
