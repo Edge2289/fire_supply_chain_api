@@ -30,7 +30,6 @@ class Product extends CatchTable
                 HeaderItem::label('序号')->prop('id'),
                 HeaderItem::label('产品名称')->prop('product_name'),
                 HeaderItem::label('注册证号')->prop('registered_code'),
-                HeaderItem::label('备案凭证号')->prop('record_code'),
                 HeaderItem::label('生产厂家')->prop('factory_company_name'),
                 HeaderItem::label('有效期')->prop('end_time'),
                 HeaderItem::label('审核状态')->prop('audit_status_i'),

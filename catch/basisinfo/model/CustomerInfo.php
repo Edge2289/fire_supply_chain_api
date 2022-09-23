@@ -44,15 +44,28 @@ class CustomerInfo extends CatchModel
             ->paginate();
     }
 
+    /**
+     * 组件客户接口
+     *
+     * @return array
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
     public function getFormLier()
     {
         $data = $this->where("status", 1)
             ->where("audit_status", 1)->select();
         $map = [];
+
         foreach ($data as $datum) {
+            $company_name = $datum['company_name'];
+            if ($datum['customer_type'] == 1) {
+                $company_name = $datum['hasCustomerLicense']["company_name"] ?? '';
+            }
             $map[] = [
                 'value' => (string)$datum['id'],
-                'label' => $datum['company_name'],
+                'label' => $company_name,
             ];
         }
         return $map;

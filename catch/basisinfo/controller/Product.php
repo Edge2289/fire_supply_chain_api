@@ -73,9 +73,8 @@ class Product extends CatchController
         $data = $this->productBasicInfoModel->getList();
         foreach ($data as &$datum) {
             $datum['factory_company_name'] = $datum['withFactory']['company_name'] ?? "";
-            $datum['registered_code'] = $datum['withRegistered']['registered_code'] ?? "";
+            $datum['registered_code'] = $datum['data_maintenance'] == 1 ? ($datum['withRegistered']['registered_code'] ?? "") : ($datum['withRecord']['record_code'] ?? "");
             $datum['end_time'] = $datum['withRegistered']['end_time'] ?? "";
-            $datum['record_code'] = $datum['withRecord']['record_code'] ?? "";
 
             unset($datum['withFactory']);
             unset($datum['withRecord']);

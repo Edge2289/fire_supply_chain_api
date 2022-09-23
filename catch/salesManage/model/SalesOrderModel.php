@@ -100,7 +100,11 @@ class SalesOrderModel extends CatchModel
                 $details[] = $detail;
             }
             $datum['supplier_name'] = $datum["hasSupplierLicense"]["company_name"] ?? "";
-            $datum['customer_name'] = $datum["hasCustomerInfo"]["company_name"] ?? "";
+
+            $datum['customer_name'] = $datum['company_name'];
+            if ($datum['customer_type'] == 1) {
+                $datum['customer_name'] = $datum['hasCustomerLicense']["company_name"] ?? '';
+            }
 
             $datum['goods_details'] = $goodsDetails;
             $datum['detail'] = implode(PHP_EOL, $details);
