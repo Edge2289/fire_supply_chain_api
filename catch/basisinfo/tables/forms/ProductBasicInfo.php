@@ -24,7 +24,7 @@ class ProductBasicInfo extends Form
     {
         return [
             self::input("product_name", "产品名称")->col(12)->required(),
-            self::input("goods_name", "商品名称")->col(12)->required(),
+            self::input("goods_name", "商品名称")->col(12),
             self::select("factory_id", "生产厂家")->col(12)->clearable(true)->options(
                 function () {
                     $data = [];
@@ -36,7 +36,7 @@ class ProductBasicInfo extends Form
                     }
                     return $data;
                 }
-            )->required(),
+            )->filterable(true)->required(),
             self::select("product_type", "产品类型", "1")->col(12)->options(
                 self::options()->add('III类', "1")
                     ->add('II类', "2")

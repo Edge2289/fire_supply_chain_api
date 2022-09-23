@@ -24,7 +24,7 @@ class ProductSku extends CatchModel
     protected $pk = 'id';
 
     protected $fieldNumberToEmpty = [
-        'unit_price_1', 'unit_price_2', 'unit_price_3', 'unit_price_4',
+        'unit_price_1', 'unit_price_2', 'unit_price_3',
         'procurement_price_1', 'procurement_price_2',
     ];
 

@@ -29,7 +29,7 @@ class ProductSku extends Migrator
             ->addColumn('unit_price_1', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'null' => false, 'signed' => true, 'comment' => '单价1',])
             ->addColumn('unit_price_2', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'null' => false, 'signed' => true, 'comment' => '单价2',])
             ->addColumn('unit_price_3', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'null' => false, 'signed' => true, 'comment' => '单价3',])
-            ->addColumn('unit_price_4', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'null' => false, 'signed' => true, 'comment' => '单价4',])
+            ->addColumn('insurance_code', 'string', ['limit' => 100, 'null' => false, 'default' => '', 'signed' => false, 'comment' => '医保代码',])
             ->addColumn('procurement_price_1', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'null' => false, 'signed' => false, 'comment' => '采购价1',])
             ->addColumn('procurement_price_2', 'decimal', ['precision' => 8, 'scale' => 2, 'default' => 0, 'null' => false, 'signed' => false, 'comment' => '采购价2',])
             ->addColumn('validity_num', 'string', ['limit' => 60, 'default' => "", 'signed' => false, 'comment' => '有效期数',])

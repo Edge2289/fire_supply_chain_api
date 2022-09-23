@@ -21,7 +21,7 @@ class ProductRecord extends Form
     public function fields(): array
     {
         return [
-            self::input("record_product_categories", "产品分类")->col(12)->required(),
+//            self::input("record_product_categories", "产品分类")->col(12)->required(),
             self::input("record_code", "备案号")->col(12)->required(),
             self::input("recorder_org_code", "组织机构代码")->col(12)->required(),
             self::input("record_name", "备案人名称")->col(12)->required(),

@@ -158,8 +158,8 @@ class Product extends CatchController
                 }
                 $id = $map['id'];
                 // 清除数据
-                Db::table("f_product_sku")->where("product_id", $id)->delete();
-                Db::table("f_product_entity")->where("product_id", $id)->delete();
+                $this->productSku->destroy(["product_id" => $id]);
+                $this->productEntity->destroy(["product_id" => $id]);
             } else {
                 $id = $this->productBasicInfoModel->storeBy($map);
             }
@@ -174,6 +174,7 @@ class Product extends CatchController
                 $entityOptions = $skuDatum['entityOptions'] ?? []; //json_decode($skuDatum['entityOptions'], true);
                 unset($skuDatum['entity'], $skuDatum['entityOptions']);
                 unset($skuDatum['id'], $skuDatum['created_at'], $skuDatum['updated_at'], $skuDatum['deleted_at']);
+                unset($skuDatum['tax_rate']);
                 $skuId = $this->productSku->insertGetId($skuDatum);
                 $map = [];
                 foreach ($entityOptions as $value) {
@@ -366,7 +367,7 @@ class Product extends CatchController
             }
         }
         if (isset($productData['basic_info'])) {
-            $productData['basic_info']['product_category'] = [(int)$productData['basic_info']['product_category']];
+            $productData['basic_info']['product_category_id'] = [(int)$productData['basic_info']['product_category_id']];
         }
         return CatchResponse::success([
             'componentData' => $map,
@@ -457,7 +458,7 @@ class Product extends CatchController
                 "f_product_sku.id", "f_product_sku.product_id", "f_product_sku.product_code",
                 "f_product_sku.sku_code", "f_product_sku.item_number", "pbi.product_name", "f_product_sku.udi",
                 "f_product_sku.unit_price_1", "f_product_sku.unit_price_2", "f_product_sku.unit_price_3",
-                "f_product_sku.unit_price_4", "f_product_sku.procurement_price_1", "f_product_sku.procurement_price_2",
+                "f_product_sku.procurement_price_1", "f_product_sku.procurement_price_2",
             ])
             ->paginate();
         $data->map(function ($datum) {
@@ -465,7 +466,7 @@ class Product extends CatchController
             // 价格问题
             $unit_price = [];
             $procurement_price = [];
-            for ($i = 1; $i < 5; $i++) {
+            for ($i = 1; $i < 4; $i++) {
                 $unit_price[] = [
                     "label" => $i,
                     "value" => $datum['unit_price_' . $i] ?? 0
