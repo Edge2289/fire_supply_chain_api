@@ -111,6 +111,7 @@ class PurchaseOrder extends CatchController
             if (empty($gId)) {
                 throw new \Exception("采购订单商品添加失败");
             }
+            $this->purchaseOrderModel->updateBy($id, ['amount' => (string)$totalPrice, 'num' => $totalNum]);
             // 提交事务
             $this->purchaseOrderModel->commit();
         } catch (\Exception $exception) {
