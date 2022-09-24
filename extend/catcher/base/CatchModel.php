@@ -125,7 +125,7 @@ abstract class CatchModel extends \think\Model
         for ($i = 1; $i < 3; $i++) {
             $procurement_price[] = [
                 "label" => $i,
-                "value" => $goodsDetailsData['hasProductSkuData']['procurement_price_' . $i]
+                "value" => $goodsDetailsData['hasProductSkuData']['procurement_price_' . $i] ?? 0
             ];
         }
         $data = [
