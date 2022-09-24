@@ -90,7 +90,7 @@ class PurchaseOrder extends CatchModel
                 $goodsDetails[] = $dataMap;
                 $details[] = $detail;
             }
-            $datum['supplier_name'] = $datum["hasSupplierLicense"]["company_name"];
+            $datum['supplier_name'] = $datum["hasSupplierLicense"]["company_name"] ?? '';
 
             $datum['goods_details'] = $goodsDetails;
             $datum['detail'] = implode(PHP_EOL, $details);

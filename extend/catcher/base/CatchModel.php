@@ -116,7 +116,7 @@ abstract class CatchModel extends \think\Model
         // 含税单价
         $unit_price = [];
         $procurement_price = [];
-        for ($i = 1; $i < 5; $i++) {
+        for ($i = 1; $i < 4; $i++) {
             $unit_price[] = [
                 "label" => $i,
                 "value" => $goodsDetailsData['hasProductSkuData']['unit_price_' . $i] ?? 0
