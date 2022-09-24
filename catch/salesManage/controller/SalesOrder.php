@@ -331,6 +331,16 @@ class SalesOrder extends CatchController
                 $details['selectedBatchNumber'] = $selectedBatchNumber;
                 $details['outbound_quantity'] = ($hasSalesOrderDetail["quantity"] - ($hasSalesOrderDetail["delivery_number"] - $selectedNumber));
             }
+            $entityName = '';
+            $zhuijia = [];
+            foreach ($details['hasProductEntity'] as $i => $xx) {
+                if ($i == 0) {
+                    $entityName = $xx['deputy_unit_name'];
+                    continue;
+                }
+                $zhuijia[] = "({$xx['deputy_unit_name']}={$xx['proportion']})";
+            }
+            $details['entityName'] = $entityName . implode('/', $zhuijia);
             $goodsDetails[] = $details;
         }
         return CatchResponse::success($this->fillTurnSalesData([

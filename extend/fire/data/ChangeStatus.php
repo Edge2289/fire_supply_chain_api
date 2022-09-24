@@ -51,13 +51,14 @@ class ChangeStatus
     {
         foreach ($data as &$datum) {
             foreach ($this->getStatusMap() as $statusDatum) {
+
                 if ($this->{$statusDatum} ?? false) {
                     $name = $statusDatum . "I";
                     // 不存在
                     if (!($this->{$name} ?? false)) {
                         continue;
                     }
-                    $datum[uncamelize($name)] = $this->{$name}[$datum['audit_status']];
+                    $datum[uncamelize($name)] = $this->{$name}[$datum[toUnderscore($statusDatum)]];
                 }
             }
         }

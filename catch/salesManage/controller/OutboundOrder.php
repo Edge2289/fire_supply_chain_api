@@ -100,10 +100,10 @@ class OutboundOrder extends CatchController
                 $this->restoreOutBoundOrder($params['id']);
             }
             $salesOrderData = $this->salesOrderModel->getFindByKey($params['sales_order_id']);
-            if ($salesOrderData['status'] != 1) {
+            if ($salesOrderData['status'] != 0) {
                 throw new BusinessException("订单不是未完成，无法出库");
             }
-            if ($salesOrderData['audit_status'] != 2) {
+            if ($salesOrderData['audit_status'] != 1) {
                 throw new BusinessException("订单未审核, 无法出库");
             }
             if ($salesOrderData['settlement_type'] == 0 && $salesOrderData['settlement_status'] == 0) {

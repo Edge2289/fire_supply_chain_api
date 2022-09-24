@@ -87,7 +87,7 @@ class SalesOrderModel extends CatchModel
         $data = $this->catchSearch($data)->with(
             [
                 "hasSalesOrderDetails", "hasSalesOrderDetails.hasProductData", "hasSalesOrderDetails.hasProductSkuData",
-                "hasSupplierLicense", "hasCustomerInfo"
+                "hasSupplierLicense", "hasCustomerInfo", "hasCustomerInfo.hasCustomerLicense"
             ]
         )->order("id desc")
             ->paginate();
@@ -101,14 +101,14 @@ class SalesOrderModel extends CatchModel
             }
             $datum['supplier_name'] = $datum["hasSupplierLicense"]["company_name"] ?? "";
 
-            $datum['customer_name'] = $datum['company_name'];
-            if ($datum['customer_type'] == 1) {
-                $datum['customer_name'] = $datum['hasCustomerLicense']["company_name"] ?? '';
+            $datum['customer_name'] = $datum['hasCustomerInfo']['company_name'];
+            if ($datum['hasCustomerInfo']['customer_type'] == 1) {
+                $datum['customer_name'] = $datum['hasCustomerInfo']['hasCustomerLicense']["company_name"] ?? '';
             }
 
             $datum['goods_details'] = $goodsDetails;
             $datum['detail'] = implode(PHP_EOL, $details);
-            unset($datum['hasSalesOrderDetails'], $datum["hasSupplierLicense"]);
+            unset($datum['hasSalesOrderDetails'], $datum["hasSupplierLicense"], $datum['hasCustomerInfo']);
         }
         return $data;
     }
