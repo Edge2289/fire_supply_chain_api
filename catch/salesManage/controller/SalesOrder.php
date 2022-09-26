@@ -109,6 +109,8 @@ class SalesOrder extends CatchController
             // 重新添加商品数据
             $skuIds = [];
             $map = [];
+            $totalNum = 0;
+            $totalPrice = 0;
             foreach ($goodsDetails as $goodsDetail) {
                 if (in_array($goodsDetail['id'], $skuIds)) {
                     throw new BusinessException("商品数据重复");
@@ -131,6 +133,8 @@ class SalesOrder extends CatchController
                     'delivery_number' => 0,
                     'note' => $goodsDetail['note'] ?? "",
                 ];
+                $totalNum += $goodsDetail['quantity'];
+                $totalPrice += $goodsDetail['unit_price'];
             }
             if (empty($map)) {
                 throw new BusinessException("商品数据为空");
@@ -139,6 +143,10 @@ class SalesOrder extends CatchController
             if (empty($gId)) {
                 throw new \Exception("销售订单商品添加失败");
             }
+            $this->salesOrderModel->updateBy($id, [
+                'num' => $totalNum,
+                'amount' => $totalPrice,
+            ]);
             // 提交事务
             $this->salesOrderModel->commit();
         } catch (\Exception $exception) {
