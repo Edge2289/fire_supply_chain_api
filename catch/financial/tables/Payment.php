@@ -28,7 +28,7 @@ class Payment extends CatchTable
                 HeaderItem::label()->selection(),
                 HeaderItem::label('编号')->prop('id'),
                 HeaderItem::label('付款单号')->prop('payment_code'),
-                HeaderItem::label('源单类型')->prop('source_type'),
+                HeaderItem::label('源单类型')->prop('source_type_name'),
                 HeaderItem::label('付款时间')->prop('payment_time'),
                 HeaderItem::label('付款金额')->prop('prepaid_amount'),
                 HeaderItem::label('备注')->prop('other'),

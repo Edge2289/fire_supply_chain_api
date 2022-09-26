@@ -50,7 +50,15 @@ class Receivable extends CatchController
      */
     public function index()
     {
-        return CatchResponse::paginate($this->receivableSheet->getList());
+        $type = [
+            'salesOrder' => '销售订单',
+            'outboundOrder' => '销售出库单',
+        ];
+        $data = $this->receivableSheet->getList();
+        foreach ($data as &$datum) {
+            $datum['source_type_name'] = $type[$datum['source_type']] ?? "有误";
+        }
+        return CatchResponse::paginate($data);
     }
 
     /**
@@ -81,7 +89,7 @@ class Receivable extends CatchController
                 $this->receivableSheetCollectionInfo->destroy(['receivable_sheet_id' => $id]);
                 $this->receivableSheet->updateBy($id, $params);
             } else {
-                $params['payment_code'] = getCode("PS");
+                $params['receivable_code'] = getCode("PS");
                 $id = $this->receivableSheet->insertGetId($params);
             }
             /*

@@ -29,7 +29,7 @@ class Receivable extends CatchTable
                 HeaderItem::label()->selection(),
                 HeaderItem::label('编号')->prop('id'),
                 HeaderItem::label('回款单号')->prop('receivable_code'),
-                HeaderItem::label('源单类型')->prop('source_type'),
+                HeaderItem::label('源单类型')->prop('source_type_name'),
                 HeaderItem::label('回款时间')->prop('receivable_time'),
                 HeaderItem::label('回款金额')->prop('prepaid_amount'),
                 HeaderItem::label('备注')->prop('other'),

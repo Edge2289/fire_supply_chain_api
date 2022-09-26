@@ -53,6 +53,7 @@ class SourceList extends CatchController
         foreach ($data as &$datum) {
             $details = $datum->hasPurchaseOrderDetails;
             $datum['details'] = $this->getDetails($datum, $details);
+            $datum['order_date'] = date("Y-m-d", $datum['order_date']);
             unset($datum->hasPurchaseOrderDetails);
         }
         return $data;
@@ -80,6 +81,7 @@ class SourceList extends CatchController
         foreach ($data as &$datum) {
             $details = $datum->hasOutboundOrderDetails;
             $datum['details'] = $this->getDetails($datum, $details);
+            $datum['order_date'] = date("Y-m-d", $datum['order_date']);
             unset($datum->hasOutboundOrderDetails);
         }
         return $data;
@@ -105,6 +107,7 @@ class SourceList extends CatchController
         foreach ($data as &$datum) {
             $details = $datum->hasSalesOrderDetails;
             $datum['details'] = $this->getDetails($datum, $details);
+            $datum['order_date'] = date("Y-m-d", $datum['order_date']);
             unset($datum->hasSalesOrderDetails);
         }
         return $data;
@@ -128,11 +131,12 @@ class SourceList extends CatchController
             ->where('so.settlement_status', '<>', 2) // 未结
             ->whereRaw("(or.amount - or.settlement_amount) > 0")
             ->where('or.customer_info_id', app(Request::class)->get('customer_info_id'))
-            ->catchSearch([], 'or')->order("or.id desc")
+            ->order("or.id desc")
             ->paginate();
         foreach ($data as &$datum) {
             $details = $datum->hasOutboundOrderDetails;
             $datum['details'] = $this->getDetails($datum, $details);
+            $datum['order_date'] = date("Y-m-d", $datum['order_date']);
             unset($datum->hasOutboundOrderDetails);
         }
         return $data;

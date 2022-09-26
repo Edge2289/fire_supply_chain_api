@@ -51,6 +51,10 @@ class Payment extends CatchController
      */
     public function index()
     {
+        $type = [
+            'purchaseOrder' => '采购订单',
+            'procurement' => '采购入库单',
+        ];
         $data = $this->paymentSheetModel->getList();
         foreach ($data as &$datum) {
             $map = [];
@@ -63,6 +67,7 @@ class Payment extends CatchController
                 $value['hasPurchaseOrder']['hasSupplierLicense'] = $hasSupplierLicense;
                 $map[] = $value['hasPurchaseOrder'];
             }
+            $datum['source_type_name'] = $type[$datum['source_type']] ?? "有误";
             unset($datum['manyPurchaserOrder']);
             $datum['hasPurchaseOrder'] = $map;
         }
