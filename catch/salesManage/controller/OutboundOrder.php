@@ -123,8 +123,8 @@ class OutboundOrder extends CatchController
                 'customer_info_id' => $salesOrderData['customer_info_id'],
                 'warehouse_id' => $params['warehouse_id'],
                 'remark' => $params['remark'],
-                'logistics_code' => $params['logistics_code'],
-                'logistics_number' => $params['logistics_number'],
+                'logistics_code' => $params['logistics_code'] ?? '',
+                'logistics_number' => $params['logistics_number'] ?? '',
             ];
             $warehouseData = $this->warehouse->getFindByKey($params['warehouse_id']);
             if (!$warehouseData) {
