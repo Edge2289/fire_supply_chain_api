@@ -21,6 +21,7 @@ use catcher\base\CatchController;
 use catchAdmin\salesManage\model\OutboundOrder as OutboundOrderModel;
 use catcher\CatchResponse;
 use catcher\exceptions\BusinessException;
+use catcher\Utils;
 use fire\data\ChangeStatus;
 use think\db\exception\DbException;
 use think\facade\Cache;
@@ -163,7 +164,7 @@ class OutboundOrder extends CatchController
                         'product_code' => $goods_detail['product_code'],
                         'item_number' => $goods_detail['item_number'],
                         'sku_code' => $goods_detail['sku_code'],
-                        'tax_rate' => $goods_detail['tax_rate'],
+                        'tax_rate' => Utils::config('product.tax'),
                         'unit_price' => $goods_detail['unit_price'],
                         'amount' => bcmul($goods_detail['unit_price'], $value['out_number'], 2),
                         'quantity' => $value['out_number'],
