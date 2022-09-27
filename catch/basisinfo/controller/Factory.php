@@ -254,6 +254,8 @@ class Factory extends CatchController
      */
     protected function productionLicenseCall(array $data)
     {
+        $data['business_start_date'] = strtotime($data['business_start_date']);
+        $data['business_end_date'] = strtotime($data['business_end_date']);
         if ($data['id']) {
             // 存在
             return $this->factoryProduction->updateBy($data['id'], $data);
