@@ -104,14 +104,7 @@ class Customer extends CatchController
                 $id = $this->customerInfoModel->insertGetId(['customer_type' => $type]);
             }
             $map = $request->param();
-            if ($type == 2) {
-                // 医院内容
-                $map['effective_end_date'] = strtotime($map['effective_end_date']);
-                $map['effective_start_date'] = strtotime($map['effective_start_date']);
-                $map['certification_date'] = strtotime($map['certification_date']);
-                unset($map['id']);
-                $result = $this->customerInfoModel->updateBy($id, $map);
-            } else {
+            if ($type == 1) {
                 // 经销商内容 只要不是医院内容的话 则从suppliers_type 获取变更内容
                 $type = $request->param('suppliers_type') ?? "";
                 if (empty($type)) {
@@ -120,6 +113,13 @@ class Customer extends CatchController
                 $result = $this->{$type}(array_merge($map, [
                     "customer_info_id" => $id
                 ]));
+            } else {
+                // 医院内容
+                $map['effective_end_date'] = strtotime($map['effective_end_date']);
+                $map['effective_start_date'] = strtotime($map['effective_start_date']);
+                $map['certification_date'] = strtotime($map['certification_date']);
+                unset($map['id']);
+                $result = $this->customerInfoModel->updateBy($id, $map);
             }
             $this->customerInfoModel->commit();
         } catch (\Exception $exception) {
@@ -154,7 +154,7 @@ class Customer extends CatchController
             return CatchResponse::fail("缺失客户类型");
         }
         $map = $request->param();
-        if ($type == 2) {
+        if ($type != 1) {
             if (!$id) {
                 return CatchResponse::fail("缺失客户id");
             }
