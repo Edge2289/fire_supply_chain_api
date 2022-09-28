@@ -68,13 +68,18 @@ class Customer extends CatchController
     public function index()
     {
         $data = $this->customerInfoModel->getList();
+        $customer_type = [
+            1 => '经销商',
+            2 => '医院(非公立)',
+            3 => '医院(公立)',
+        ];
         foreach ($data as &$datum) {
             if ($datum['customer_type'] == 1) {
                 $datum['company_name'] = $datum['hasCustomerLicense']["company_name"] ?? '';
                 $datum['effective_end_date'] = ($datum['hasCustomerLicense']['business_date_long'] ?? 0) == 1 ? "长期" : $datum['business_end_date'];
                 $datum['legal_person'] = $datum['hasCustomerLicense']['legal_person'] ?? '';
             }
-            $datum['customer_type'] = $datum['customer_type'] == 1 ? "经销商" : "医院";
+            $datum['customer_type'] = $customer_type[$datum['customer_type']];
         }
         ChangeStatus::getInstance()->audit()->handle($data);
         return CatchResponse::paginate($data);

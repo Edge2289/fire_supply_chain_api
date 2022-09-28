@@ -43,6 +43,22 @@ class Suppliers extends CatchController
     public $suppleInfoModel;
     public $businessAttachmentModel;
 
+    private $attr = [
+        "business_license_url" => "营业执照",
+        "production_license_url" => "医疗器械经营许可证/生产许可证",
+        "record_certificate_url" => "第二类医疗器械经营备案凭证/生产备案凭证",
+        "basic_deposit_account_url" => "基本存款账户信息",
+        "person_authorization_url" => "法人委托授权书+身份证复印件",
+        "out_invoice_url" => "开票资料",
+        "system_survey_form_url" => "质量体系调查表",
+        "annual_report_url" => "年度报告",
+        "supplier_power_attorney_url" => "供应商授权书",
+        "quality_assurance_url" => "质保协议",
+        "after_sales_service_agreement_url" => "售后服务协议",
+        "invoice_template_url" => "出库单模板",
+        "delivery_template_url" => "出库单模板"
+    ];
+
     public function __construct(
         SupplierLicense     $supplier,
         EquipmentClass      $equipmentClassModel,
@@ -68,8 +84,11 @@ class Suppliers extends CatchController
     {
         $data = $this->supplier->getList();
         ChangeStatus::getInstance()->audit()->status([
-            "未开启", "使用中"
+            "未开启", "启用中"
         ])->handle($data);
+        foreach ($data as &$datum) {
+            ($datum['audit_status'] == 1) && $datum['audit_info'] = '通过';
+        }
         return CatchResponse::paginate($data);
     }
 
@@ -140,6 +159,9 @@ class Suppliers extends CatchController
      */
     public function businessLicenseCall(array $params)
     {
+        if (!isset($params['company_type']) || empty($params['company_type'])) {
+            $params['company_type'] = "经营企业";
+        }
         $params['business_date_long'] = $params['business_date_long'] ? 1 : 0;
         $params['data_maintenance'] = implode(",", $params['data_maintenance']);
         $params['registration_date'] = isset($params['registration_date']) ? strtotime($params['registration_date']) : 0;
@@ -256,19 +278,11 @@ class Suppliers extends CatchController
      */
     public function businessAttachmentCall(array $params)
     {
-        $map = [];
-        foreach ($params as $key => $param) {
-            if (strpos($key, "check") === false) {
-                $map[$key] = $param;
-                continue;
-            }
-            $map[$key] = empty($param) ? 0 : $param[0];
-        }
-        unset($map['suppliers_type']);
+        unset($params['suppliers_type']);
         if (isset($params['id']) && !empty($params['id'])) {
-            return $this->businessAttachmentModel->updateBy($params['id'], $map);
+            return $this->businessAttachmentModel->updateBy($params['id'], $params);
         } else {
-            return $this->businessAttachmentModel->insert($map);
+            return $this->businessAttachmentModel->insert($params);
         }
     }
 
@@ -404,15 +418,6 @@ class Suppliers extends CatchController
             5 => [
                 'name' => 'businessAttachmentData',
                 'model' => $this->businessAttachmentModel,
-                'handle' => function ($data) {
-                    foreach ($data as $key => $param) {
-                        if (strpos($key, "check") === false) {
-                            continue;
-                        }
-                        $data[$key] = [$param];
-                    }
-                    return $data;
-                }
             ],
         ];
         foreach ($ids as $id) {
@@ -428,6 +433,27 @@ class Suppliers extends CatchController
             }
             $businessData[$infoHandle[$id]['name']] = $data ?: "";
         }
+        $businessData['businessAttachmentData'] = $this->getDefaultAtta($businessData['businessAttachmentData']);
+    }
+
+    /**
+     * 获取默认资质附件
+     *
+     * @param $businessAttachmentData
+     * @return array
+     */
+    public function getDefaultAtta($businessAttachmentData)
+    {
+        $map = [];
+        foreach ($this->attr as $k => $value) {
+            $url = $businessAttachmentData[$k] ?? '';
+            $map[] = [
+                'name' => $value,
+                'key' => $k,
+                'url' => $url
+            ];
+        }
+        return $map;
     }
 
     /**
@@ -538,4 +564,29 @@ class Suppliers extends CatchController
         return CatchResponse::fail("操作失败");
     }
 
+    /**
+     * 上传附件调整
+     *
+     * @param Request $request
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function uploadAtt(Request $request)
+    {
+        $data = $request->param();
+        $model = $this->businessAttachmentModel->where('business_license_id', $data['business_license_id'])->find();
+        if ($model) {
+            $this->businessAttachmentModel->updateBy($model['id'], [
+                $data['nKey'] => $data['url']
+            ]);
+        } else {
+            $this->businessAttachmentModel->insert([
+                'business_license_id' => $data['business_license_id'],
+                $data['nKey'] => $data['url']
+            ]);
+        }
+        return CatchResponse::ok('文件上传成功');
+    }
 }

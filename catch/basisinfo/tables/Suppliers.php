@@ -28,24 +28,24 @@ class Suppliers extends CatchTable
             ->header([
                 HeaderItem::label()->selection(),
                 HeaderItem::label('编号')->prop('id'),
-                HeaderItem::label('统一社会信用代码')->prop('unified_code'),
+//                HeaderItem::label('统一社会信用代码')->prop('unified_code'),
                 HeaderItem::label('企业名称')->prop('company_name'),
-//                HeaderItem::label('企业类型')->prop('company_type'),
-                HeaderItem::label('法人')->prop('legal_person'),
+                HeaderItem::label('企业类型')->prop('company_type'),
+//                HeaderItem::label('法人')->prop('legal_person'),
 //                HeaderItem::label('经营范围')->prop('business_scope'),
-                HeaderItem::label('登记日期')->prop('establish_date'),
+//                HeaderItem::label('登记日期')->prop('establish_date'),
                 HeaderItem::label('审核状态')->prop('audit_status_i'),
-                HeaderItem::label('状态')->prop('status_i'),
                 HeaderItem::label('审核信息')->prop('audit_info'),
+                HeaderItem::label('状态')->prop('status_i'),
                 HeaderItem::label('操作')->width(200)->actions([
+                    Actions::normal("查看", 'success', "facePrint"),
                     Actions::update("编辑", "editSuppliers"),
-                    Actions::normal("查看", 'success', "facePrint")->icon('el-icon-printer'),
                 ])
             ])
             ->withSearch([
                 Search::label('企业名称')->text('company_name', '企业名称'),
                 Search::label('企业类型')->text('email', '企业类型'),
-                Search::label('法人')->text('legal_person', '法人'),
+//                Search::label('法人')->text('legal_person', '法人'),
                 Search::label('状态')->select('status', '请选择供应商状态',
                     Search::options()->add('全部', '')
                         ->add('停用', 0)

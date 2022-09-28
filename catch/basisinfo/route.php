@@ -14,6 +14,7 @@ $router->group(function () use ($router) {
     $router->group(function () use ($router) {
         $router->get('suppliers', '\catchAdmin\basisinfo\controller\Suppliers@index'); // 列表
         $router->post('suppliers', '\catchAdmin\basisinfo\controller\Suppliers@save'); // 保存
+        $router->post('suppliers/uploadAtt/<id>', '\catchAdmin\basisinfo\controller\Suppliers@uploadAtt'); // 更新附件
         $router->put('suppliers/<id>', '\catchAdmin\basisinfo\controller\Suppliers@update'); // 更新
         $router->delete('suppliers/<id>', '\catchAdmin\basisinfo\controller\Suppliers@delete'); // 删除
         $router->post('suppliers/audit/<id>', '\catchAdmin\basisinfo\controller\Suppliers@auditSuppliers'); // 审核供应商

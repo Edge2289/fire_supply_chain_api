@@ -25,13 +25,16 @@ class QualificationFile extends Form
             "business_license_url" => "营业执照",
             "production_license_url" => "医疗器械经营许可证/生产许可证",
             "record_certificate_url" => "第二类医疗器械经营备案凭证/生产备案凭证",
-            "invoice_information_url" => "开票资料",
+            "basic_deposit_account_url" => "基本存款账户信息",
             "person_authorization_url" => "法人委托授权书",
-            "assurance_agreement_url" => "质量保证协议书",
-            "delivery_template_url" => "出库单模板",
-            "seal_filing_template_url" => "印章备案模板",
+            "out_invoice_url" => "开票资料",
             "system_survey_form_url" => "质量体系调查表",
             "annual_report_url" => "年度报告",
+            "supplier_power_attorney_url" => "供应商授权书",
+            "quality_assurance_url" => "质保协议",
+            "after_sales_service_agreement_url" => "售后服务协议",
+            "invoice_template_url" => "出库单模板",
+            "delivery_template_url" => "出库单模板"
         ];
         $assemblyImageData = [
             self::hidden("business_license_id", 0)
