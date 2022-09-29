@@ -14,6 +14,7 @@ use app\Request;
 use catchAdmin\basisinfo\model\CustomerAttachment;
 use catchAdmin\basisinfo\model\CustomerInfo;
 use catchAdmin\basisinfo\model\CustomerOperating;
+use catchAdmin\basisinfo\model\CustomerPracticingLicense;
 use catchAdmin\basisinfo\model\CustomerRegistration;
 use catchAdmin\basisinfo\model\CustomerSuppleInfo;
 use catchAdmin\basisinfo\model\EquipmentClass;
@@ -26,6 +27,7 @@ use catchAdmin\basisinfo\model\CustomerLicense;
 use catcher\CatchResponse;
 use catcher\exceptions\BusinessException;
 use fire\data\ChangeStatus;
+use think\Db;
 
 /**
  * 客户管理
@@ -53,6 +55,7 @@ class Customer extends CatchController
         "system_survey_form_url" => "质量体系调查表",
         "record_form_seal_url" => "印章备案表",
         "annual_report_url" => "年度报告",
+        "practicing_license_institution_url" => "医疗机构执业许可证",
     ];
 
     public function __construct(
@@ -122,6 +125,8 @@ class Customer extends CatchController
             $this->customerInfoModel->startTrans();
             if (!$id) {
                 $id = $this->customerInfoModel->insertGetId(['customer_type' => $type]);
+            } else {
+                $type = $this->customerInfoModel->where('id', $id)->find()['customer_type'];
             }
             $map = $request->param();
             if ($type == 1) {
@@ -134,12 +139,21 @@ class Customer extends CatchController
                     "customer_info_id" => $id
                 ]));
             } else {
-                // 医院内容
-                $map['effective_end_date'] = strtotime($map['effective_end_date']);
-                $map['effective_start_date'] = strtotime($map['effective_start_date']);
-                $map['certification_date'] = strtotime($map['certification_date']);
-                unset($map['id']);
-                $result = $this->customerInfoModel->updateBy($id, $map);
+                $type = $request->param('suppliers_type') ?? "";
+                if ($type == 'practicing_license') {
+                    // 医疗机构
+                    $result = $this->{$type}(array_merge($map, [
+                        "customer_info_id" => $id
+                    ]));
+                } else {
+                    // 医院内容
+                    $map['effective_end_date'] = strtotime($map['effective_end_date']);
+                    $map['effective_start_date'] = strtotime($map['effective_start_date']);
+                    $map['certification_date'] = strtotime($map['certification_date']);
+                    $map['data_maintenance'] = implode(",", $map['data_maintenance']);
+                    unset($map['id']);
+                    $result = $this->customerInfoModel->updateBy($id, $map);
+                }
             }
             $this->customerInfoModel->commit();
         } catch (\Exception $exception) {
@@ -175,28 +189,33 @@ class Customer extends CatchController
         }
         $map = $request->param();
         if ($type != 1) {
-            if (!$id) {
-                return CatchResponse::fail("缺失客户id");
+            $type = $request->param('suppliers_type') ?? "";
+            if ($type == 'practicing_license') {
+                // 医疗机构
+                $result = $this->{$type}($map);
+            } else {
+                if (!$id) {
+                    return CatchResponse::fail("缺失客户id");
+                }
+                $data = $this->customerInfoModel->findBy($id);
+                if (empty($data)) {
+                    return CatchResponse::fail("客户数据不存在");
+                }
+                // 医院内容
+                $map['data_maintenance'] = implode(",", $map['data_maintenance']);
+                $map['effective_end_date'] = strtotime($map['effective_end_date']);
+                $map['effective_start_date'] = strtotime($map['effective_start_date']);
+                $map['certification_date'] = strtotime($map['certification_date']);
+                unset($map['id']);
+                $result = $this->customerInfoModel->updateBy($id, $map);
             }
-            $data = $this->customerInfoModel->findBy($id);
-            if (empty($data)) {
-                return CatchResponse::fail("客户数据不存在");
-            }
-            // 医院内容
-            $map['effective_end_date'] = strtotime($map['effective_end_date']);
-            $map['effective_start_date'] = strtotime($map['effective_start_date']);
-            $map['certification_date'] = strtotime($map['certification_date']);
-            unset($map['id']);
-            $result = $this->customerInfoModel->updateBy($id, $map);
         } else {
             // 经销商内容 只要不是医院内容的话 则从suppliers_type 获取变更内容
             $type = $request->param('suppliers_type') ?? "";
             if (empty($type)) {
                 return CatchResponse::fail("请求类型缺失");
             }
-            $result = $this->{$type}(array_merge($map, [
-                "customer_info_id" => $id
-            ]));
+            $result = $this->{$type}($map);
         }
         if ($result) {
             return CatchResponse::success([
@@ -326,25 +345,20 @@ class Customer extends CatchController
         $params['business_start_date'] = strtotime($params['business_start_date']);
         if (!empty($params['business_end_date'])) {
             $params['business_end_date'] = strtotime($params['business_end_date']);
+        } else {
+            $params['business_end_date'] = 0;
         }
         $params['establish_date'] = strtotime($params['establish_date']);
-        unset($params['suppliers_type']);
+        unset($params['suppliers_type'], $params['customer_type']);
 
-//        $where = $this->customerSuppleInfo->where("unified_code", $params['unified_code']);
-//        if (isset($params['id']) && !empty($params['id'])) {
-//            $where = $where->where("id", "<>", $params['id']);
-//        }
         $this->validator(CustomerSupplierLicenseRequest::class, $params);
-//        $data = $where->find();
-//        if (!empty($data)) {
-//            throw new BusinessException("统一社会信用码已存在");
-//        }
         if (isset($params['id']) && !empty($params['id'])) {
-            $data = $this->customerLicenseModel->where('id', $params['id'])->find();
-            if (!$data) {
+            $model = $this->customerLicenseModel->where('customer_info_id', $params['customer_info_id'])->find();
+            if (!$model) {
                 throw new BusinessException("数据不存在");
             }
-            return $this->customerLicenseModel->updateBy($params['id'], $params);
+            unset($params['created_at']);
+            return $model->update($params, ['customer_info_id' => $params['id']]);
         } else {
             return $this->customerLicenseModel->storeBy($params);
         }
@@ -374,6 +388,30 @@ class Customer extends CatchController
             return $this->operatingLicenseModel->updateBy($params['id'], $params);
         } else {
             return $this->operatingLicenseModel->storeBy($params);
+        }
+    }
+
+    /**
+     * 医疗机构执业许可证
+     *
+     * @param array $params
+     * @return bool|int|string
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function practicingLicenseCall(array $params)
+    {
+        unset($params['suppliers_type']);
+        $params['equipment_class'] = implode(",", $params['equipment_class']);
+        if (isset($params['id']) && !empty($params['id'])) {
+            unset($params['created_at']);
+            $params['updated_at'] = time();
+            return CustomerPracticingLicense::where('id', $params['id'])->update($params);
+        } else {
+            $params['created_at'] = time();
+            unset($params['id']);
+            return CustomerPracticingLicense::insertGetId($params);
         }
     }
 
@@ -412,7 +450,7 @@ class Customer extends CatchController
      */
     public function suppleInfoCall(array $params)
     {
-        $params['license_end_date'] = strtotime($params['license_end_date']);
+        $params['license_end_date'] = empty($params['license_end_date']) ? 0 : strtotime($params['license_end_date']);
         $params['license_start_date'] = strtotime($params['license_start_date']);
         if (!empty($params['license_end_date'])) {
             $params['license_end_date'] = strtotime($params['license_end_date']);
@@ -495,9 +533,34 @@ class Customer extends CatchController
                     $map = array_merge($map, $mustNeed);
                     $businessData['businessLicenseData'] = $dataLicense;
                 }
-                $this->getBusinessLicenseData($id, $businessData, array_column($map, 'id'));
-            } else {
                 $businessData['hospitalData'] = $data;
+                $this->getBusinessLicenseData($id, $businessData, array_column($map, 'id'), $data['customer_type']);
+            } else {
+                $data['data_maintenance'] = array_map(function ($v) {
+                    return (int)$v;
+                }, explode(",", $data['data_maintenance']));
+                $businessData['hospitalData'] = $data;
+                if ($data['data_maintenance'] != '' && $data['data_maintenance'][0] != 0) {
+                    array_push($map, [
+                        "id" => 6,
+                        "name" => "医疗机构执业许可证",
+                        "component" => "practicing_license",
+                    ],
+                        [
+                            "id" => 5,
+                            "name" => "资质与附件",
+                            "component" => "attachment",
+                        ]);
+                    $businessData['practicingLicenseData'] = CustomerPracticingLicense::where('customer_info_id', $id)->find();
+                    if (!empty($businessData['practicingLicenseData']['equipment_class'])) {
+
+                        foreach (explode(",", $businessData['practicingLicenseData']['equipment_class']) as $equipment_class) {
+                            $equipmentClass[] = (int)$equipment_class;
+                        }
+                        $businessData['practicingLicenseData']['equipment_class'] = $equipmentClass;
+                    }
+                    $businessData['businessAttachmentData'] = $this->getDefaultAtta($this->businessAttachmentModel->where('customer_info_id', $id)->find(), $data['customer_type']);
+                }
             }
             $businessData['id'] = $id;
         }
@@ -556,7 +619,7 @@ class Customer extends CatchController
      * @param array $ids
      * @author 1131191695@qq.com
      */
-    private function getBusinessLicenseData(int $customer_info_id, array &$businessData, array $ids): void
+    private function getBusinessLicenseData(int $customer_info_id, array &$businessData, array $ids, $customer_type): void
     {
         /**
          * 2  经营许可证 OperatingLicense
@@ -613,19 +676,23 @@ class Customer extends CatchController
             }
             $businessData[$infoHandle[$id]['name']] = $data ?: "";
         }
-        $businessData['businessAttachmentData'] = $this->getDefaultAtta($businessData['businessAttachmentData']);
+        $businessData['businessAttachmentData'] = $this->getDefaultAtta($businessData['businessAttachmentData'], $customer_type);
     }
 
     /**
      * 获取默认资质附件
      *
      * @param $businessAttachmentData
+     * @param $customer_type
      * @return array
      */
-    public function getDefaultAtta($businessAttachmentData)
+    public function getDefaultAtta($businessAttachmentData, $customer_type)
     {
         $map = [];
         foreach ($this->attr as $k => $value) {
+            if ($customer_type != 1 && $k != 'practicing_license_institution_url') {
+                continue;
+            }
             $url = $businessAttachmentData[$k] ?? '';
             $map[] = [
                 'name' => $value,

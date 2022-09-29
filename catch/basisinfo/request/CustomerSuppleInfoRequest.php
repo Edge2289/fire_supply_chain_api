@@ -31,7 +31,7 @@ class CustomerSuppleInfoRequest extends CatchRequest
             'name|被授权人姓名' => 'require|max:100',
             'certid|证件号码' => 'require',
             'phone|手机号' => 'require|max:200',
-            'email|邮箱' => 'require|max:200',
+            'email|邮箱' => 'max:200',
             'license_start_date|授权日期' => 'require|max:200',
             'invoice_head|发票抬头' => 'require|max:200',
             'invoice_no|税号' => 'require|max:200',

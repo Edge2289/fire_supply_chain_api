@@ -11,6 +11,7 @@ namespace catchAdmin\basisinfo\tables\forms;
 
 
 use catcher\library\form\Form;
+use FormBuilder\Factory\Elm;
 
 /**
  * Class CustomerHospital
@@ -35,6 +36,13 @@ class CustomerHospital extends Form
             self::date("certification_date", "发证日期")->editable(true)->col(12),
             self::input("certification_department", "发证机关")->col(12),
             self::input("business_scope", "诊疗科目")->col(12),
+            self::checkbox("data_maintenance", '资料维护')
+                ->options(function () {
+                    return [
+                        Elm::option(3, "医疗机构执业许可证")
+                    ];
+                })
+                ->col(24)->required()
         ];
     }
 }
