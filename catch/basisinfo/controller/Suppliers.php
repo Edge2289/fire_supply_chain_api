@@ -55,7 +55,7 @@ class Suppliers extends CatchController
         "supplier_power_attorney_url" => "供应商授权书",
         "quality_assurance_url" => "质保协议",
         "after_sales_service_agreement_url" => "售后服务协议",
-        "invoice_template_url" => "出库单模板",
+        "invoice_template_url" => "发票模板",
         "delivery_template_url" => "出库单模板"
     ];
 
