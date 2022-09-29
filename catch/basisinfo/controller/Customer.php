@@ -43,6 +43,18 @@ class Customer extends CatchController
     public $businessAttachmentModel;
     public $customerSuppleInfo;
 
+    private $attr = [
+        "business_license_url" => "营业执照",
+        "production_license_url" => "医疗器械经营许可证",
+        "record_certificate_url" => "医疗器械经营备案凭证",
+        "basic_deposit_account_url" => "基本存款账户信息",
+        "person_authorization_url" => "法人委托授权书+身份证复印件",
+        "out_invoice_url" => "开票资料",
+        "system_survey_form_url" => "质量体系调查表",
+        "record_form_seal_url" => "印章备案表",
+        "annual_report_url" => "年度报告",
+    ];
+
     public function __construct(
         CustomerLicense      $customerLicenseModel,
         EquipmentClass       $equipmentClassModel,
@@ -78,10 +90,13 @@ class Customer extends CatchController
                 $datum['company_name'] = $datum['hasCustomerLicense']["company_name"] ?? '';
                 $datum['effective_end_date'] = ($datum['hasCustomerLicense']['business_date_long'] ?? 0) == 1 ? "长期" : $datum['business_end_date'];
                 $datum['legal_person'] = $datum['hasCustomerLicense']['legal_person'] ?? '';
+                ($datum['audit_status'] == 1) && $datum['audit_info'] = '通过';
             }
             $datum['customer_type'] = $customer_type[$datum['customer_type']];
         }
-        ChangeStatus::getInstance()->audit()->handle($data);
+        ChangeStatus::getInstance()->audit()->status([
+            "未开启", "启用中"
+        ])->handle($data);
         return CatchResponse::paginate($data);
     }
 
@@ -223,14 +238,73 @@ class Customer extends CatchController
         return CatchResponse::fail("操作失败");
     }
 
-    public function open()
+    /**
+     * 开启
+     *
+     * @param Request $request
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function open(Request $request)
     {
-
+        $data = $request->param();
+        if (!isset($data['id']) || empty($data['id'])) {
+            throw new BusinessException("请选择客户进行操作");
+        }
+        $supplierData = $this->customerInfoModel->findBy($data['id']);
+        if (empty($supplierData)) {
+            throw new BusinessException("不存在客户");
+        }
+        // 开启的供应商必须要是审核过后的
+        // 审核状态 {0:未审核,1:已审核,2:审核失败}
+        if ($supplierData['audit_status'] != 1) {
+            throw new BusinessException("审核状态不是已审核，无法开启");
+        }
+        if ($supplierData['status'] == 1) {
+            throw new BusinessException("已开启");
+        }
+        // 开启
+        $b = $this->customerInfoModel->updateBy($data['id'], [
+            'status' => 1
+        ]);
+        if ($b) {
+            return CatchResponse::success();
+        }
+        return CatchResponse::fail("操作失败");
     }
 
-    public function disabled()
+    /**
+     * 停用
+     *
+     * @param Request $request
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function disabled(Request $request)
     {
-
+        $data = $request->param();
+        if (!isset($data['id']) || empty($data['id'])) {
+            throw new BusinessException("请选择客户进行操作");
+        }
+        $supplierData = $this->customerInfoModel->findBy($data['id']);
+        if (empty($supplierData)) {
+            throw new BusinessException("不存在客户");
+        }
+        if ($supplierData['status'] == 0) {
+            throw new BusinessException("未开启无法停用");
+        }
+        // 开启
+        $b = $this->customerInfoModel->updateBy($data['id'], [
+            'status' => 0
+        ]);
+        if ($b) {
+            return CatchResponse::success();
+        }
+        return CatchResponse::fail("操作失败");
     }
 //    ----------------- 额外 --------------------
 
@@ -524,15 +598,6 @@ class Customer extends CatchController
             5 => [
                 'name' => 'businessAttachmentData',
                 'model' => $this->businessAttachmentModel,
-                'handle' => function ($data) {
-                    foreach ($data as $key => $param) {
-                        if (strpos($key, "check") === false) {
-                            continue;
-                        }
-                        $data[$key] = [$param];
-                    }
-                    return $data;
-                }
             ],
         ];
         foreach ($ids as $id) {
@@ -548,6 +613,27 @@ class Customer extends CatchController
             }
             $businessData[$infoHandle[$id]['name']] = $data ?: "";
         }
+        $businessData['businessAttachmentData'] = $this->getDefaultAtta($businessData['businessAttachmentData']);
+    }
+
+    /**
+     * 获取默认资质附件
+     *
+     * @param $businessAttachmentData
+     * @return array
+     */
+    public function getDefaultAtta($businessAttachmentData)
+    {
+        $map = [];
+        foreach ($this->attr as $k => $value) {
+            $url = $businessAttachmentData[$k] ?? '';
+            $map[] = [
+                'name' => $value,
+                'key' => $k,
+                'url' => $url
+            ];
+        }
+        return $map;
     }
 
     /**
@@ -562,5 +648,32 @@ class Customer extends CatchController
     public function getBusinessScope(): array
     {
         return $this->equipmentClassModel->select()->toArray();
+    }
+
+
+    /**
+     * 上传附件调整
+     *
+     * @param Request $request
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function uploadAtt(Request $request)
+    {
+        $data = $request->param();
+        $model = $this->businessAttachmentModel->where('customer_info_id', $data['customer_info_id'])->find();
+        if ($model) {
+            $this->businessAttachmentModel->updateBy($model['id'], [
+                $data['nKey'] => $data['url']
+            ]);
+        } else {
+            $this->businessAttachmentModel->insert([
+                'customer_info_id' => $data['customer_info_id'],
+                $data['nKey'] => $data['url']
+            ]);
+        }
+        return CatchResponse::ok('文件上传成功');
     }
 }

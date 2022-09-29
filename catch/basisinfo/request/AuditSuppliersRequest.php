@@ -23,7 +23,7 @@ class AuditSuppliersRequest extends CatchRequest
         return [
             'id|营业执照id' => 'require',
             'audit_status|审核状态' => 'require',
-            'audit_info|审核信息' => 'require|max:100'
+            'audit_info|审核信息' => 'max:100'
         ];
     }
 

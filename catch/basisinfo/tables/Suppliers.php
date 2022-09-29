@@ -37,9 +37,10 @@ class Suppliers extends CatchTable
                 HeaderItem::label('审核状态')->prop('audit_status_i'),
                 HeaderItem::label('审核信息')->prop('audit_info'),
                 HeaderItem::label('状态')->prop('status_i'),
-                HeaderItem::label('操作')->width(200)->actions([
-                    Actions::normal("查看", 'success', "facePrint"),
-                    Actions::update("编辑", "editSuppliers"),
+                HeaderItem::label('操作')->width(300)->actions([
+                    Actions::normal("查看", 'primary', "show"),
+                    Actions::normal("编辑", 'info', "edit"),
+                    Actions::normal("导出审批表", 'success', "facePrint")->icon('el-icon-printer'),
                 ])
             ])
             ->withSearch([

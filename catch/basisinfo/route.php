@@ -41,6 +41,7 @@ $router->group(function () use ($router) {
     $router->group(function () use ($router) {
         $router->get('customer', '\catchAdmin\basisinfo\controller\Customer@index'); // 客户列表
         $router->post('customer', '\catchAdmin\basisinfo\controller\Customer@save'); // 客户保存
+        $router->post('customer/uploadAtt/<id>', '\catchAdmin\basisinfo\controller\Customer@uploadAtt'); // 更新附件
         $router->put('customer/<id>', '\catchAdmin\basisinfo\controller\Customer@update'); // 客户变更
         $router->post('customer/audit/<id>', '\catchAdmin\basisinfo\controller\Customer@audit'); // 审核客户
         $router->post('customer/open/<id>', '\catchAdmin\basisinfo\controller\Customer@open'); // 启用客户
