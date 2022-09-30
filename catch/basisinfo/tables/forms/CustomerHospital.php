@@ -22,10 +22,10 @@ class CustomerHospital extends Form
     public function fields(): array
     {
         return [
-            self::input("operating_license_code", "营业执照")->col(12),
-            self::input("company_name", "公司名称")->col(12),
-            self::input("business_types", "医疗机构类别")->col(12),
-            self::input("business_nature", "经营性质")->col(12),
+//            self::input("operating_license_code", "营业执照")->col(12),
+//            self::input("company_name", "公司名称")->col(12),
+//            self::input("business_types", "医疗机构类别")->col(12),
+//            self::input("business_nature", "经营性质")->col(12),
             self::input("hos_name", "医疗机构名称")->col(12)->required(),
             self::input("hos_code", "登记号")->col(12)->required(),
             self::input("legal_person", "法人")->col(12)->required(),
@@ -36,13 +36,13 @@ class CustomerHospital extends Form
             self::date("certification_date", "发证日期")->editable(true)->col(12),
             self::input("certification_department", "发证机关")->col(12),
             self::input("business_scope", "诊疗科目")->col(12),
-            self::checkbox("data_maintenance", '资料维护')
-                ->options(function () {
-                    return [
-                        Elm::option(3, "医疗机构执业许可证")
-                    ];
-                })
-                ->col(24)->required()
+//            self::checkbox("data_maintenance", '资料维护')
+//                ->options(function () {
+//                    return [
+//                        Elm::option(3, "医疗机构执业许可证")
+//                    ];
+//                })
+//                ->col(24)->required()
         ];
     }
 }

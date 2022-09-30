@@ -135,10 +135,7 @@ function getCustomerName($customerModel)
     if ($customerModel == null) {
         return "";
     }
-    $company_name = $customerModel['company_name'] ?? "";
-    if ($customerModel['customer_type'] == 1) {
-        $company_name = $customerModel->hasCustomerLicense["company_name"] ?? '';
-    }
+    $company_name = $customerModel->hasCustomerLicense["company_name"] ?? '';
     if ($customerModel['customer_type'] == 3) {
         $company_name = $customerModel['hos_name'] ?? "";
     }
