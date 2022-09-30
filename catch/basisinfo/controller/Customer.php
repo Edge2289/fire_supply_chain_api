@@ -89,7 +89,7 @@ class Customer extends CatchController
             3 => '医院(公立)',
         ];
         foreach ($data as &$datum) {
-            if ($datum['customer_type'] == 1) {
+            if ($datum['customer_type'] != 3) {
                 $datum['company_name'] = $datum['hasCustomerLicense']["company_name"] ?? '';
                 $datum['effective_end_date'] = ($datum['hasCustomerLicense']['business_date_long'] ?? 0) == 1 ? "长期" : $datum['business_end_date'];
                 $datum['legal_person'] = $datum['hasCustomerLicense']['legal_person'] ?? '';
