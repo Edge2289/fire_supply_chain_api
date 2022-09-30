@@ -28,7 +28,7 @@ class Customer extends CatchTable
             ->header([
                 HeaderItem::label()->selection(),
                 HeaderItem::label('编号')->prop('id'),
-                HeaderItem::label('企业名称')->prop('company_name'),
+                HeaderItem::label('客户名称')->prop('company_name'),
                 HeaderItem::label('客户类型')->prop('customer_type'),
 //                HeaderItem::label('有效期(结束)')->prop('effective_end_date'),
 //                HeaderItem::label('法人')->prop('legal_person'),

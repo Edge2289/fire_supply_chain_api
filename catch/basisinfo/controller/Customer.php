@@ -84,7 +84,7 @@ class Customer extends CatchController
     {
         $data = $this->customerInfoModel->getList();
         $customer_type = [
-            1 => '经销商',
+            1 => '经营企业',
             2 => '医院(非公立)',
             3 => '医院(公立)',
         ];

@@ -124,6 +124,27 @@ function getFactoryName(int $factoryId)
     }
 }
 
+/**
+ * 获取客户名称
+ *
+ * @param $customerModel
+ * @return mixed|string
+ */
+function getCustomerName($customerModel)
+{
+    if ($customerModel == null) {
+        return "";
+    }
+    $company_name = $customerModel['company_name'] ?? "";
+    if ($customerModel['customer_type'] == 1) {
+        $company_name = $customerModel->hasCustomerLicense["company_name"] ?? '';
+    }
+    if ($customerModel['customer_type'] == 3) {
+        $company_name = $customerModel['hos_name'] ?? "";
+    }
+    return $company_name;
+}
+
 //驼峰命名转下划线命名
 function toUnderscore($str)
 {
