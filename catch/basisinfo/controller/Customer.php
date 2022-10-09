@@ -180,7 +180,11 @@ class Customer extends CatchController
             return CatchResponse::fail("缺失客户类型");
         }
         $map = $request->param();
-        if ($type != 3) {
+        if (isset($map['customer_info_id'])) {
+            $id = $map['customer_info_id'];
+            $type = $this->customerInfoModel->where('id', $map['customer_info_id'])->find()['customer_type'];
+        }
+        if ($type == 3) {
             if (!$id) {
                 return CatchResponse::fail("缺失客户id");
             }
@@ -389,8 +393,10 @@ class Customer extends CatchController
      */
     public function practicingLicenseCall(array $params)
     {
+        $params['effective_end_date'] = strtotime($params['effective_end_date']);
+        $params['effective_start_date'] = strtotime($params['effective_start_date']);
+        $params['certification_date'] = strtotime($params['certification_date']);
         unset($params['suppliers_type']);
-        $params['equipment_class'] = implode(",", $params['equipment_class']);
         if (isset($params['id']) && !empty($params['id'])) {
             unset($params['created_at']);
             $params['updated_at'] = time();
@@ -691,8 +697,18 @@ class Customer extends CatchController
     {
         $map = [];
         foreach ($this->attr as $k => $value) {
-            if ($customer_type != 1 && $k != 'practicing_license_institution_url') {
-                continue;
+            if ($customer_type == 2 && $k == 'business_license_url') {
+
+            }
+            if ($customer_type == 2) {
+                if (!in_array($k, ['business_license_url', 'practicing_license_institution_url'])) {
+                    continue;
+                }
+            }
+            if ($customer_type == 3) {
+                if ($k != 'practicing_license_institution_url') {
+                    continue;
+                }
             }
             $url = $businessAttachmentData[$k] ?? '';
             $map[] = [
