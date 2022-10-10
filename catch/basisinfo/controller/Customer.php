@@ -143,7 +143,6 @@ class Customer extends CatchController
                 $map['effective_end_date'] = strtotime($map['effective_end_date']);
                 $map['effective_start_date'] = strtotime($map['effective_start_date']);
                 $map['certification_date'] = strtotime($map['certification_date']);
-                $map['data_maintenance'] = implode(",", $map['data_maintenance']);
                 unset($map['id']);
                 $result = $this->customerInfoModel->updateBy($id, $map);
             }
@@ -193,7 +192,6 @@ class Customer extends CatchController
                 return CatchResponse::fail("客户数据不存在");
             }
             // 医院内容
-            $map['data_maintenance'] = implode(",", $map['data_maintenance']);
             $map['effective_end_date'] = strtotime($map['effective_end_date']);
             $map['effective_start_date'] = strtotime($map['effective_start_date']);
             $map['certification_date'] = strtotime($map['certification_date']);
@@ -529,31 +527,14 @@ class Customer extends CatchController
                 $businessData['hospitalData'] = $data;
                 $this->getBusinessLicenseData($id, $businessData, array_column($map, 'id'), $data['customer_type']);
             } else {
-//                $data['data_maintenance'] = array_map(function ($v) {
-//                    return (int)$v;
-//                }, explode(",", $data['data_maintenance']));
                 $businessData['hospitalData'] = $data;
-//                if ($data['data_maintenance'] != '' && $data['data_maintenance'][0] != 0) {
-//                    array_push($map, [
-//                        "id" => 6,
-//                        "name" => "医疗机构执业许可证",
-//                        "component" => "practicing_license",
-//                    ],
-//                        [
-//                            "id" => 5,
-//                            "name" => "资质与附件",
-//                            "component" => "attachment",
-//                        ]);
-//                    $businessData['practicingLicenseData'] = CustomerPracticingLicense::where('customer_info_id', $id)->find();
-//                    if (!empty($businessData['practicingLicenseData']['equipment_class'])) {
-//
-//                        foreach (explode(",", $businessData['practicingLicenseData']['equipment_class']) as $equipment_class) {
-//                            $equipmentClass[] = (int)$equipment_class;
-//                        }
-//                        $businessData['practicingLicenseData']['equipment_class'] = $equipmentClass;
-//                    }
-//                    $businessData['businessAttachmentData'] = $this->getDefaultAtta($this->businessAttachmentModel->where('customer_info_id', $id)->find(), $data['customer_type']);
-//                }
+                array_push($map, [
+                    "id" => 5,
+                    "name" => "资质与附件",
+                    "component" => "attachment",
+                ]);
+                $businessData['practicingLicenseData'] = CustomerPracticingLicense::where('customer_info_id', $id)->find();
+                $businessData['businessAttachmentData'] = $this->getDefaultAtta($this->businessAttachmentModel->where('customer_info_id', $id)->find(), $data['customer_type']);
             }
             $businessData['id'] = $id;
         }
@@ -622,7 +603,8 @@ class Customer extends CatchController
      * @param array $ids
      * @author 1131191695@qq.com
      */
-    private function getBusinessLicenseData(int $customer_info_id, array &$businessData, array $ids, $customer_type): void
+    private
+    function getBusinessLicenseData(int $customer_info_id, array &$businessData, array $ids, $customer_type): void
     {
         /**
          * 2  经营许可证 OperatingLicense
@@ -693,7 +675,8 @@ class Customer extends CatchController
      * @param $customer_type
      * @return array
      */
-    public function getDefaultAtta($businessAttachmentData, $customer_type)
+    public
+    function getDefaultAtta($businessAttachmentData, $customer_type)
     {
         $map = [];
         foreach ($this->attr as $k => $value) {
@@ -729,7 +712,8 @@ class Customer extends CatchController
      * @throws \think\db\exception\ModelNotFoundException
      * @author 1131191695@qq.com
      */
-    public function getBusinessScope(): array
+    public
+    function getBusinessScope(): array
     {
         return $this->equipmentClassModel->select()->toArray();
     }
@@ -744,7 +728,8 @@ class Customer extends CatchController
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function uploadAtt(Request $request)
+    public
+    function uploadAtt(Request $request)
     {
         $data = $request->param();
         $model = $this->businessAttachmentModel->where('customer_info_id', $data['customer_info_id'])->find();

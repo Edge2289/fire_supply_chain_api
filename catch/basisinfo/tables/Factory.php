@@ -35,8 +35,9 @@ class Factory extends CatchTable
                 HeaderItem::label('厂家类型')->prop('factory_type_name'),
                 HeaderItem::label('审核状态')->prop('audit_status_i'),
                 HeaderItem::label('审核信息')->prop('audit_info'),
-                HeaderItem::label('操作')->width(200)->actions([
-                    Actions::update("编辑", "editFactory"),
+                HeaderItem::label('操作')->width(300)->actions([
+                    Actions::normal("查看", 'primary', "show"),
+                    Actions::normal("编辑", 'info', "editFactory"),
                     Actions::normal("导出审批", 'success', "facePrint")->icon('el-icon-printer'),
                 ])
             ])
