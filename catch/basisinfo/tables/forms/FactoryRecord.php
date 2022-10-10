@@ -20,7 +20,8 @@ class FactoryRecord extends Form
 {
     public function fields(): array
     {
-        return [
+        $i = $_GET['i'];
+        $data = [
             self::hidden("factory_id", 0),
             self::input("record_code", "备案号")->col(12)->required(),
             self::input("company_name", "企业名称")->col(12)->required(),
@@ -31,5 +32,13 @@ class FactoryRecord extends Form
             self::input("record_department", "备案部门")->required(),
             self::date("record_date", "备案日期")->editable(true)->col(12),
         ];
+        if ($i == 2) {
+            $map = [];
+            foreach ($data as $v) {
+                $map[] = $v->disabled(true);
+            }
+            $data = $map;
+        }
+        return $data;
     }
 }

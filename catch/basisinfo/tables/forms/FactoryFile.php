@@ -23,6 +23,7 @@ class FactoryFile extends Form
     public function fields(): array
     {
         $id = $_GET['id'];
+        $i = $_GET['i'];
         $data = app(Factory::class)->findBy($id);
         $imageData = [
             "business_license_url" => "营业执照",
@@ -46,6 +47,9 @@ class FactoryFile extends Form
             $that = self::image($v, $k)->style('label-width="140px"')->col(12);
             if ($k != 'contract_url') {
                 $that = $that->required();
+            }
+            if ($i == 2) {
+                $that = $that->disabled(true);
             }
             $assemblyImageData[] = $that;
         }

@@ -20,7 +20,8 @@ class FactoryProduction extends Form
 {
     public function fields(): array
     {
-        return [
+        $i = $_GET['i'];
+        $data = [
             self::input("license_code", "许可证编号")->col(12)->required(),
             self::input("company_name", "企业名称")->col(12)->required(),
             self::date("business_start_date", "有效期限(开始)")->col(12)->editable(true),
@@ -33,5 +34,13 @@ class FactoryProduction extends Form
             self::input("license_department", "发证部门")->col(12),
             self::input("license_date", "发证日期")->col(12),
         ];
+        if ($i == 2) {
+            $map = [];
+            foreach ($data as $v) {
+                $map[] = $v->disabled(true);
+            }
+            $data = $map;
+        }
+        return $data;
     }
 }
