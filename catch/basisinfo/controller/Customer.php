@@ -89,6 +89,7 @@ class Customer extends CatchController
             3 => '医院(公立)',
         ];
         foreach ($data as &$datum) {
+            $datum['company_name'] = $datum['hos_name'];
             if ($datum['customer_type'] != 3) {
                 $datum['company_name'] = $datum['hasCustomerLicense']["company_name"] ?? '';
                 $datum['effective_end_date'] = ($datum['hasCustomerLicense']['business_date_long'] ?? 0) == 1 ? "长期" : $datum['business_end_date'];
@@ -513,6 +514,7 @@ class Customer extends CatchController
                 // 数据不存在
                 return CatchResponse::fail("数据不存在");
             }
+            $data['company_name'] = $data['hos_name'];
             if ($data['customer_type'] != 3) {
                 $dataLicense = $this->customerLicenseModel->where("customer_info_id", $id)->find();
                 if (empty($dataLicense)) {
