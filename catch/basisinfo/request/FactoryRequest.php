@@ -29,7 +29,7 @@ class FactoryRequest extends CatchRequest
             'unified_code|统一社会信用代码' => 'require|unique:' . Factory::class,
             'residence|住所' => 'require|max:200',
             'legal_person|法人' => 'require|max:200',
-            'establish_date|登记日期' => 'require',
+//            'establish_date|登记日期' => 'require',
             'business_start_date|营业期限' => 'require',
             'business_scope|经营范围' => 'require|max:2000',
             'data_maintenance|资料维护' => 'require',

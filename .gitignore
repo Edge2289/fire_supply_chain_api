@@ -10,3 +10,4 @@ composer.lock
 /public/storage
 /public/tinymce
 /dist
+.DS_Store
